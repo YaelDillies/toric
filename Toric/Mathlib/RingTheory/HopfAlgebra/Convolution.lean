@@ -28,18 +28,38 @@ open scoped ConvolutionProduct RingTheory.LinearMap
 variable {R A C : Type*} [CommSemiring R]
 
 namespace HopfAlgebra
-variable [CommSemiring A] [HopfAlgebra R A]
+
+section Semiring
+
+variable [Semiring A] [HopfAlgebra R A]
+
+lemma antipode_comp_mul_comp_comm :
+    antipode R ∘ₗ .mul' R A ∘ₗ (TensorProduct.comm R A A).toLinearMap =
+      .mul' R A ∘ₗ map (antipode R) (antipode R) := by
+  apply left_inv_eq_right_inv (a := LinearMap.mul' R A ∘ₗ TensorProduct.comm R A A) <;> ext a b
+  · simp [((ℛ R a).tmul (ℛ R b)).convMul_apply, ← Bialgebra.counit_mul,
+      ← sum_antipode_mul_eq_algebraMap_counit ((ℛ R b).mul (ℛ R a)),
+      ← Finset.map_swap_product (ℛ R b).index (ℛ R a).index]
+  · simp [((ℛ R a).tmul (ℛ R b)).convMul_apply,
+      ← Finset.map_swap_product (ℛ R a).index (ℛ R b).index,
+      Finset.sum_product (ℛ R b).index, ← Finset.mul_sum, mul_assoc ((ℛ R b).left _),
+      ← mul_assoc ((ℛ R a).left _), ← Finset.sum_mul, sum_mul_antipode_eq_algebraMap_counit,
+      ← (Algebra.commute_algebraMap_left (ε a) (_ : A)).left_comm,
+      ← (Algebra.commute_algebraMap_left (ε a) (_ : A)).eq]
 
 lemma antipode_mul_antidistrib (a b : A) : antipode R (a * b) = antipode R b * antipode R a := by
-  let α := antipode R ∘ₗ .mul' R A
-  let β : A ⊗[R] A →ₗ[R] A := .mul' R A ∘ₗ map (antipode R) (antipode R) ∘ₗ TensorProduct.comm R A A
-  suffices α = β from congr($this (a ⊗ₜ b))
-  apply left_inv_eq_right_inv (a := LinearMap.mul' R A) <;> ext a b
-  · simp [α, ((ℛ R a).tmul (ℛ R b)).convMul_apply, ← Bialgebra.counit_mul, mul_comm b a,
-      ← sum_antipode_mul_eq_algebraMap_counit ((ℛ R a).mul (ℛ R b))]
-  · simp [((ℛ R a).tmul (ℛ R b)).convMul_apply, mul_comm, mul_mul_mul_comm, Finset.sum_mul_sum,
-      ← Finset.sum_product', β, ← sum_mul_antipode_eq_algebraMap_counit (ℛ R a),
-      ← sum_mul_antipode_eq_algebraMap_counit (ℛ R b)]
+  exact congr($antipode_comp_mul_comp_comm (b ⊗ₜ a))
+
+variable (R A) in
+@[simps!]
+def antipodeOpAlgHom : A →ₐ[R] Aᵐᵒᵖ := .ofLinearMap
+    ((MulOpposite.opLinearEquiv R).toLinearMap ∘ₗ antipode R)
+    (MulOpposite.op_injective (by simp))
+    (fun x y ↦ MulOpposite.op_injective (by simp [antipode_mul_antidistrib]))
+
+end Semiring
+
+variable [CommSemiring A] [HopfAlgebra R A]
 
 lemma antipode_mul_distrib (a b : A) : antipode R (a * b) = antipode R a * antipode R b := by
   rw [antipode_mul_antidistrib, mul_comm]
@@ -110,7 +130,25 @@ lemma comul_right_inv : δ₁ * 𝑭 = 1 := calc
 end LinearMap
 
 namespace AlgHom
-variable [CommSemiring A] [Semiring C] [Bialgebra R C] [HopfAlgebra R A]
+
+variable [CommSemiring A] [CommSemiring C] [Bialgebra R C] [HopfAlgebra R A]
+
+instance convInv : Inv (A →ₐ[R] C) where inv f := f.comp (HopfAlgebra.antipodeAlgHom R A)
+
+instance : Group (A →ₐ[R] C) where
+  inv_mul_cancel f := by
+    have H : (lmul' R).comp (Algebra.TensorProduct.map f f) = f.comp (lmul' R) := by ext <;> simp
+    trans ((lmul' R).comp (Algebra.TensorProduct.map f f)).comp ((Algebra.TensorProduct.map
+      (HopfAlgebra.antipodeAlgHom R A) (.id _ _)).comp (comulAlgHom R A))
+    · rw [AlgHom.comp_assoc, ← AlgHom.comp_assoc (Algebra.TensorProduct.map f f),
+        ← Algebra.TensorProduct.map_comp]; rfl
+    rw [H, AlgHom.comp_assoc, ← AlgHom.toLinearMap_injective.eq_iff]
+    change f.toLinearMap.comp (antipode R (A := A) * .id) = (1 : A →ₗ[R] C)
+    rw [LinearMap.antipode_mul_id]
+    ext
+    simp
+
+instance [IsCocomm R A] : CommGroup (A →ₐ[R] C) where
 
 lemma antipode_id_cancel : HopfAlgebra.antipodeAlgHom R A * AlgHom.id R A = 1 := by
   apply AlgHom.toLinearMap_injective
@@ -122,47 +160,136 @@ lemma counitAlgHom_comp_antipodeAlgHom :
     (counitAlgHom R A).comp (HopfAlgebra.antipodeAlgHom R A) = counitAlgHom R A :=
   AlgHom.toLinearMap_injective <| by simp
 
-private lemma inv_convMul_cancel (f : C →ₐc[R] A) :
-    (.comp (HopfAlgebra.antipodeAlgHom R A) f : C →ₐ[R] A) * f = 1 := calc
-  _ = (.comp (HopfAlgebra.antipodeAlgHom R A) f : C →ₐ[R] A) * (.comp (.id R A) f) := by simp
-  _ = .comp (lmul' R) (.comp (Algebra.TensorProduct.map (HopfAlgebra.antipodeAlgHom R A)
-       (.id R A)) <| .comp (Algebra.TensorProduct.map f f) (comulAlgHom R C)) := by
-    rw [convMul_def, Algebra.TensorProduct.map_comp]
-    simp only [comp_assoc]
-  _ = (HopfAlgebra.antipodeAlgHom R A * AlgHom.id R A).comp f := by
-    simp only [convMul_def, BialgHomClass.map_comp_comulAlgHom]
-    simp only [comp_assoc]
-  _ = _ := by simp [antipode_id_cancel, convOne_def, comp_assoc]
-
 end AlgHom
 
-namespace BialgHom
-variable [CommSemiring A] [CommSemiring C]
-
 section HopfAlgebra
-variable [HopfAlgebra R A] [HopfAlgebra R C] [IsCocomm R C]
 
-/-- The antipode of a commutative cocommutative Hopf algebra as a coalgebra hom. -/
+section Semiring
+
+variable [Semiring A] [Semiring C] [HopfAlgebra R A] [HopfAlgebra R C]
+
+@[coassoc_simps] --todo : add the assoc version
+lemma HopfAlgebra.mul_antipode_rTensor_comul'.{u, v} {R : Type u} {A : Type v}
+    {_ : CommSemiring R} {_ : Semiring A} [self : HopfAlgebra R A] :
+    LinearMap.mul' R A ∘ₗ TensorProduct.map (HopfAlgebraStruct.antipode R) .id ∘ₗ
+      CoalgebraStruct.comul = Algebra.linearMap R A ∘ₗ CoalgebraStruct.counit :=
+  HopfAlgebra.mul_antipode_rTensor_comul ..
+
+@[coassoc_simps] --todo : add the assoc version
+lemma HopfAlgebra.mul_antipode_lTensor_comul'.{u, v} {R : Type u} {A : Type v}
+    {_ : CommSemiring R} {_ : Semiring A} [self : HopfAlgebra R A] :
+    LinearMap.mul' R A ∘ₗ TensorProduct.map .id (HopfAlgebraStruct.antipode R) ∘ₗ
+      CoalgebraStruct.comul = Algebra.linearMap R A ∘ₗ CoalgebraStruct.counit :=
+  HopfAlgebra.mul_antipode_lTensor_comul ..
+
+lemma Algebra.linearMap_tensorProduct {R A B : Type*} [CommSemiring R]
+    [Semiring A] [Semiring B] [Algebra R A] [Algebra R B] :
+    Algebra.linearMap R (A ⊗[R] B) = (Algebra.linearMap R A ⊗ₘ Algebra.linearMap R B) ∘ₗ
+      (_root_.TensorProduct.lid _ _).symm.toLinearMap := by
+  ext
+  simp
+
+lemma Bialgebra.mul'_comp_map_comul_comul {R C : Type*} [CommSemiring R]
+    [Semiring C] [Bialgebra R C] :
+    LinearMap.mul' R (C ⊗[R] C) ∘ₗ (δ ⊗ₘ δ) = δ ∘ₗ LinearMap.mul' R C := by
+  ext; simp
+
+lemma map_antipode_antipode_comp_comul' :
+    (TensorProduct.comm R C C).toLinearMap ∘ₗ (antipode R ⊗ₘ antipode R) ∘ₗ δ =
+    δ ∘ₗ antipode R := by
+  apply left_inv_eq_right_inv (a := comul)
+  · trans (Algebra.linearMap R C ⊗ₘ LinearMap.mul' R C ∘ₗ (antipode R ⊗ₘ LinearMap.id)) ∘ₗ
+      (TensorProduct.assoc R R C C).toLinearMap ∘ₗ
+      ((TensorProduct.comm R C R).toLinearMap ∘ₗ (.id ⊗ₘ ε) ∘ₗ δ ⊗ₘ LinearMap.id) ∘ₗ δ
+    · simp only [coassoc_simps, LinearMap.mul'_tensor, LinearMap.convMul_def]
+    · rw [map_counit_comp_comul_right]
+      simp only [coassoc_simps, LinearMap.convOne_def, Algebra.linearMap_tensorProduct]
+  · trans (LinearMap.mul' R (C ⊗[R] C) ∘ₗ (δ ⊗ₘ δ)) ∘ₗ (.id ⊗ₘ antipode R) ∘ₗ δ
+    · simp only [LinearMap.convMul_def, coassoc_simps]
+    trans (δ ∘ₗ Algebra.linearMap R C) ∘ₗ ε
+    · rw [Bialgebra.mul'_comp_map_comul_comul]
+      simp [coassoc_simps]
+    · congr
+      ext
+      simp [TensorProduct.one_def]
+
+open MulOpposite
+
+lemma map_antipode_antipode_comp_comul : (antipode R ⊗ₘ antipode R) ∘ₗ δ =
+    (TensorProduct.comm R C C).toLinearMap ∘ₗ δ ∘ₗ antipode R := by
+  rw [← map_antipode_antipode_comp_comul']
+  simp [coassoc_simps]
+
+/-- The antipode as a coalgebra hom. -/
+def antipodeCoalgHom [IsCocomm R C] : C →ₗc[R] C where
+  __ := antipode R
+  map_smul' := _
+  counit_comp := counit_comp_antipode
+  map_comp_comul := by
+    dsimp
+    rw [map_antipode_antipode_comp_comul, ← LinearMap.comp_assoc, comm_comp_comul]
+
+lemma LinearMap.algHom_comp_convOne
+    {R A B C : Type*} [CommSemiring R] [AddCommMonoid A] [Semiring B] [Semiring C]
+    [Module R A] [Coalgebra R A] [Algebra R B] [Algebra R C] (f : B →ₐ[R] C) :
+    f.toLinearMap.comp (1 : A →ₗ[R] B) = 1 := by
+  ext
+  exact (f : B →ₐ[R] C).commutes _
+
+lemma LinearMap.convOne_comp_coalgHom
+    {R A B C : Type*} [CommSemiring R] [AddCommMonoid A] [AddCommMonoid B] [Semiring C]
+    [Module R A] [Coalgebra R A] [Module R B] [Coalgebra R B]
+    [Algebra R C] (f : A →ₗc[R] B) :
+    (1 : B →ₗ[R] C).comp f.toLinearMap = 1 := by
+  ext
+  exact congr(algebraMap R C ($(f.counit_comp) _))
+
+lemma BialgHom.comp_antipode (f : A →ₐc[R] C) :
+    f.toLinearMap.comp (antipode R) = (antipode R).comp f.toLinearMap := by
+  apply left_inv_eq_right_inv (a := f.toLinearMap)
+  · refine (LinearMap.algHom_comp_convMul_distrib (f : A →ₐ[R] C) (antipode R) .id).symm.trans ?_
+    rw [LinearMap.antipode_mul_id, LinearMap.algHom_comp_convOne]
+  · refine (LinearMap.convMul_comp_coalgHom_distrib .id (antipode R) f.toCoalgHom).symm.trans ?_
+    rw [LinearMap.id_mul_antipode, LinearMap.convOne_comp_coalgHom]
+
+end Semiring
+section CommSemiring
+
+variable [CommSemiring A] [CommSemiring C] [HopfAlgebra R A] [HopfAlgebra R C]
+
+/-- The antipode as a coalgebra hom. -/
 def antipodeBialgHom : C →ₐc[R] C where
   __ := antipodeAlgHom R (A := C)
   map_smul' := _
   counit_comp := counit_comp_antipode
   map_comp_comul := by
-    apply left_inv_eq_right_inv (a := comul)
-    · sorry
-    · sorry
+    dsimp
+    rw [map_antipode_antipode_comp_comul, ← LinearMap.comp_assoc, comm_comp_comul]
 
-instance : Inv (C →ₐc[R] A) where inv := antipodeBialgHom.comp
+instance [IsCocomm R A] : Inv (C →ₐc[R] A) where inv := antipodeBialgHom.comp
 
-set_option linter.unusedSectionVars false in
-lemma inv_def (f : C →ₐc[R] A) : f⁻¹ = antipodeBialgHom.comp f := rfl
+instance [IsCocomm R C] : Inv (C →ₐc[R] A) where
+  inv f := (f.comp (antipodeBialgHom)).copy (antipode R ∘ f) congr($(f.comp_antipode.symm))
 
-set_option linter.unusedSectionVars false in
-@[simp] lemma inv_apply (f : C →ₐc[R] A) (c : C) : f⁻¹ c = antipode R (f c) := rfl
+lemma inv_def [IsCocomm R A] (f : C →ₐc[R] A) : f⁻¹ = antipodeBialgHom.comp f := rfl
 
-private lemma inv_convMul_cancel (f : C →ₐc[R] A) : f⁻¹ * f = 1 := sorry
+@[simp] lemma inv_apply [IsCocomm R A] (f : C →ₐc[R] A) (c : C) : f⁻¹ c = antipode R (f c) := rfl
 
-instance : CommGroup (C →ₐc[R] A) where inv_mul_cancel := inv_convMul_cancel
+@[simp]
+lemma toAlgHom_inv [IsCocomm R A] (f : C →ₐc[R] A) : (↑(f⁻¹) : C →ₐ[R] A) = (↑f)⁻¹ := by
+  ext x
+  exact congr($(f.comp_antipode) x).symm
+
+@[simp]
+lemma toAlgHom_inv' [IsCocomm R C] (f : C →ₐc[R] A) : (↑(f⁻¹) : C →ₐ[R] A) = (↑f)⁻¹ := by
+  ext x
+  exact congr($(f.comp_antipode) x).symm
+
+instance [IsCocomm R C] : CommGroup (C →ₐc[R] A) where
+  inv_mul_cancel f := by
+    ext x
+    simpa only [← toAlgHom_inv'] using congr($(inv_mul_cancel (f : C →ₐ[R] A)) x)
+
+end CommSemiring
 
 end HopfAlgebra
-end BialgHom

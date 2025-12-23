@@ -42,6 +42,29 @@ def mulCoalgHom : A ⊗[R] A →ₗc[R] A where
 
 @[simp] lemma mulCoalgHom_apply (a b : A) : mulCoalgHom R A (a ⊗ₜ b) = a * b := rfl
 
+/-- Representations of `a` and `b` yield a representation of `a ⊗ b`. -/
+@[simps]
+protected def _root_.Coalgebra.Repr.tmul (ℛa : Coalgebra.Repr R a) (ℛb : Coalgebra.Repr R b) :
+    Coalgebra.Repr R (a ⊗ₜ[R] b) where
+  ι := ℛa.ι × ℛb.ι
+  index := ℛa.index ×ˢ ℛb.index
+  left i := ℛa.left i.1 ⊗ₜ ℛb.left i.2
+  right i := ℛa.right i.1 ⊗ₜ ℛb.right i.2
+  eq := by
+    simp only [comul_def, LinearMap.coe_comp, LinearEquiv.coe_coe, Function.comp_apply,
+      AlgebraTensorModule.map_tmul]
+    rw [← ℛa.eq, ← ℛb.eq]
+    simp_rw [sum_tmul, tmul_sum, ← Finset.sum_product', map_sum]
+    simp
+
+variable {R A B : Type*} [CommSemiring R] [Semiring A] [Semiring B] [Bialgebra R A]
+  [Bialgebra R B] {a a₁ a₂ : A} {b : B}
+
+/-- Representations of `a₁` and `a₂` yield a representation of `a₁ * a₂`. -/
+@[simps!, simps! index] protected noncomputable
+def _root_.Coalgebra.Repr.mul (ℛ₁ : Coalgebra.Repr R a₁) (ℛ₂ : Coalgebra.Repr R a₂) :
+    Coalgebra.Repr R (a₁ * a₂) := (ℛ₁.tmul ℛ₂).induced (R := R) (mulCoalgHom R A)
+
 end Semiring
 
 section CommSemiring
@@ -74,29 +97,6 @@ variable (R A) in
 lemma comm_comp_comulBialgHom [IsCocomm R A] :
     (TensorProduct.comm R A A).toBialgHom.comp (comulBialgHom R A) = comulBialgHom R A := by
   ext; exact comm_comul _ _
-
-/-- Representations of `a` and `b` yield a representation of `a ⊗ b`. -/
-@[simps]
-protected def _root_.Coalgebra.Repr.tmul (ℛa : Coalgebra.Repr R a) (ℛb : Coalgebra.Repr R b) :
-    Coalgebra.Repr R (a ⊗ₜ[R] b) where
-  ι := ℛa.ι × ℛb.ι
-  index := ℛa.index ×ˢ ℛb.index
-  left i := ℛa.left i.1 ⊗ₜ ℛb.left i.2
-  right i := ℛa.right i.1 ⊗ₜ ℛb.right i.2
-  eq := by
-    simp only [comul_def, LinearMap.coe_comp, LinearEquiv.coe_coe, Function.comp_apply,
-      AlgebraTensorModule.map_tmul]
-    rw [← ℛa.eq, ← ℛb.eq]
-    simp_rw [sum_tmul, tmul_sum, ← Finset.sum_product', map_sum]
-    simp
-
-variable {R A B : Type*} [CommSemiring R] [CommSemiring A] [CommSemiring B] [Bialgebra R A]
-  [Bialgebra R B] {a a₁ a₂ : A} {b : B}
-
-/-- Representations of `a₁` and `a₂` yield a representation of `a₁ * a₂`. -/
-@[simps!, simps! index] protected noncomputable
-def _root_.Coalgebra.Repr.mul (ℛ₁ : Coalgebra.Repr R a₁) (ℛ₂ : Coalgebra.Repr R a₂) :
-    Coalgebra.Repr R (a₁ * a₂) := (ℛ₁.tmul ℛ₂).induced (R := R) (mulCoalgHom R A)
 
 end CommSemiring
 end Bialgebra
