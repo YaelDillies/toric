@@ -1,6 +1,6 @@
 name = "Toric"
 keywords = ["math", "algebraic-geometry", "convex-geometry", "algebraic-group", "convex-cone", "hopf-algebra"]
-defaultTargets = ["Toric"]
+defaultTargets = ["Toric", "HopfAlgAffGrpSchPaper"]
 
 [leanOptions]
 # Pretty-prints `fun a ↦ b`
@@ -24,3 +24,6 @@ git = "https://github.com/PatrickMassot/checkdecls.git"
 
 [[lean_lib]]
 name = "Toric"
+
+[[lean_lib]]
+name = "HopfAlgAffGrpSchPaper"
