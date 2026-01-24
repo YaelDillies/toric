@@ -161,7 +161,7 @@ def diagFunctor : AddCommGrpCatᵒᵖ ⥤ Grp (Over S) :=
     (diagFunctor S).obj M = ⟨(Diag S M.unop).asOver S⟩ := rfl
 
 @[simp] lemma diagFunctor_map {M N : AddCommGrpCatᵒᵖ} (f : M ⟶ N) :
-    (diagFunctor S).map f = ⟨(Diag.map S f.unop.hom).asOver S⟩ := rfl
+    (diagFunctor S).map f = Grp.homMk ((Diag.map S f.unop.hom).asOver S) := rfl
 
 instance (M : AddCommMonCatᵒᵖ) : IsCommMonObj ((diagMonFunctor S).obj M).X :=
   inferInstanceAs (IsCommMonObj (asOver (Diag S M.unop) S))
@@ -217,7 +217,7 @@ def diagFunctorIso :
       (specULiftZIsTerminal.hom_ext _ _)
 
 lemma diagFunctorIso_app (M : AddCommGrpCatᵒᵖ) :
-    ((diagFunctorIso R).app M).hom.hom.left = (diagSpecIso R M.unop).hom := rfl
+    ((diagFunctorIso R).app M).hom.hom.hom.left = (diagSpecIso R M.unop).hom := rfl
 
 instance faithful_diagFunctor {R : Type*} [CommRing R] [Nontrivial R] :
     (diagFunctor Spec(R)).Faithful :=
@@ -243,7 +243,7 @@ instance [IsCommMonObj (G'.asOver S)] : AddCommGroup (HomGrp G G' S) := by
 def HomGrp.ofHom (f : G ⟶ G') [f.IsOver S] [IsMonHom (f.asOver S)] : HomGrp G G' S :=
   Additive.ofMul (Grp.homMk (f.asOver S))
 
-def HomGrp.hom (f : HomGrp G G' S) : G ⟶ G' := f.toMul.hom.left
+def HomGrp.hom (f : HomGrp G G' S) : G ⟶ G' := f.toMul.hom.hom.left
 
 @[simp]
 lemma HomGrp.hom_ofHom (f : G ⟶ G') [f.IsOver S] [IsMonHom (f.asOver S)] :

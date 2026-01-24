@@ -201,11 +201,11 @@ variable (R) in
   unitIso_inv_app counitIso_hom_app counitIso_inv_app]
 def commHopfAlgCatEquivCogrpCommAlgCat : CommHopfAlgCat R ≌ (Grp (CommAlgCat R)ᵒᵖ)ᵒᵖ where
   functor.obj A := .op <| .mk <| .op <| .of R A
-  functor.map {A B} f := .op <| .mk' <| .op <| CommAlgCat.ofHom f.hom
+  functor.map {A B} f := .op <| .mk <| .mk' <| .op <| CommAlgCat.ofHom f.hom
   inverse.obj A := .of R A.unop.X.unop
-  inverse.map {A B} f := CommHopfAlgCat.ofHom <| .ofAlgHom f.unop.hom.unop.hom
-    congr(($(IsMonHom.one_hom (f := f.unop.hom))).unop.hom)
-    congr(($((IsMonHom.mul_hom (f := f.unop.hom)).symm)).unop.hom)
+  inverse.map {A B} f := CommHopfAlgCat.ofHom <| .ofAlgHom f.unop.hom.hom.unop.hom
+    congr(($(IsMonHom.one_hom (f := f.unop.hom.hom))).unop.hom)
+    congr(($((IsMonHom.mul_hom (f := f.unop.hom.hom)).symm)).unop.hom)
   unitIso.hom := 𝟙 _
   unitIso.inv := 𝟙 _
   counitIso.hom := 𝟙 _
