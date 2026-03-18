@@ -56,6 +56,8 @@ jobs:
           website-directory: ./website
           project-name: Toric
           relevant-labels: toric
+          include-drafts: true
+          branch-name: master
 
       - name: File dependencies
         if: github.ref == 'refs/heads/master'
