@@ -55,6 +55,7 @@ jobs:
         with:
           website-directory: ./website
           project-name: Toric
+          relevant-labels: toric
 
       - name: File dependencies
         if: github.ref == 'refs/heads/master'
