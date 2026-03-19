@@ -51,9 +51,13 @@ jobs:
 
       - name: Upstreaming dashboard
         if: github.ref == 'refs/heads/master'
-        run: |
-          mkdir -p website/_includes
-          python3 scripts/upstreaming_dashboard.py
+        uses: leanprover-community/upstreaming-dashboard-action@main
+        with:
+          website-directory: ./website
+          project-name: Toric
+          relevant-labels: toric
+          include-drafts: true
+          branch-name: master
 
       - name: File dependencies
         if: github.ref == 'refs/heads/master'
