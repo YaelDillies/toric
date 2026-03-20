@@ -26,8 +26,8 @@ authors:
     given-names: Justus
   - family-names: Yang
     given-names: Andrew
-repository-code: https://github.com/YaelDillies/Toric
-url: https://github.com/YaelDillies/Toric
+repository-code: https://github.com/YaelDillies/toric
+url: https://github.com/YaelDillies/toric
 abstract: >
   A collaborative project to formalise the basic theory of toric varieties,
   using the Lean 4 theorem prover.

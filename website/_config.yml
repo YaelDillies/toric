@@ -22,7 +22,7 @@ title: Toric varieties in Lean
 #email: your-email@example.com
 description: Formalisation of toric varieties in Lean 4
 baseurl: "" # the subpath of your site, e.g. /blog
-url: "https://yaeldillies.github.io/Toric/" # the base hostname & protocol for your site, e.g. http://example.com
+url: "https://yaeldillies.github.io/toric/" # the base hostname & protocol for your site, e.g. http://example.com
 #twitter_username: jekyllrb
 github_username: YaelDillies
 repository: YaelDillies/Toric

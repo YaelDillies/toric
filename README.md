@@ -1,7 +1,7 @@
 # Toric varieties in Lean
 
-[![.github/workflows/push.yml](https://github.com/YaelDillies/Toric/actions/workflows/push.yml/badge.svg)](https://github.com/YaelDillies/Toric/actions/workflows/push.yml)
-[![Gitpod Ready-to-Code](https://img.shields.io/badge/Gitpod-ready--to--code-blue?logo=gitpod)](https://gitpod.io/#https://github.com/YaelDillies/Toric)
+[![.github/workflows/push.yml](https://github.com/YaelDillies/toric/actions/workflows/push.yml/badge.svg)](https://github.com/YaelDillies/toric/actions/workflows/push.yml)
+[![Gitpod Ready-to-Code](https://img.shields.io/badge/Gitpod-ready--to--code-blue?logo=gitpod)](https://gitpod.io/#https://github.com/YaelDillies/toric)
 
 This repository aims at formalising the theory of toric varieties.
 
@@ -24,7 +24,7 @@ Our project is backed by [mathlib](https://leanprover-community.github.io), the 
 The Lean code is located within the `Toric` folder. Within it, one can find:
 * A `Mathlib` subfolder for the **prerequisites** to be upstreamed to mathlib. Lemmas that belong in an existing mathlib file `Mathlib.X` will be located in `Toric.Mathlib.X`. We aim to preserve the property that `Toric.Mathlib.X` only imports `Mathlib.X` and files of the form `Toric.Mathlib.Y` where `Mathlib.X` (transitively) imports `Mathlib.Y`. Prerequisites that do not belong in any existing mathlib file are placed in subtheory folders. See below.
 
-See the [upstreaming dashboard](https://yaeldillies.github.io/Toric/upstreaming) for more information.
+See the [upstreaming dashboard](https://yaeldillies.github.io/toric/upstreaming) for more information.
 
 ## Interacting with the project
 
