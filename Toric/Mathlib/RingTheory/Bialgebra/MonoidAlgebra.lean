@@ -90,7 +90,7 @@ variable [Algebra R A] [Monoid M]
 variable (R M A) in
 /-- `MonoidAlgebra.lift` as a `MulEquiv`. -/
 def liftMulEquiv : (M →* A) ≃* (R[M] →ₐ[R] A) where
-  __ := lift R M A
+  __ := lift R A M
   map_mul' f g := by ext; simp [AlgHom.convMul_apply]
 
 @[simp]
@@ -418,7 +418,7 @@ variable (R A) [CommSemiring R] [Semiring A] [Bialgebra R A]
 /-- The `R`-algebra map from the group algebra on the group-like elements of `A` to `A`. -/
 @[simps!]
 noncomputable def liftGroupLikeAlgHom : MonoidAlgebra R (GroupLike R A) →ₐ[R] A :=
-  lift R (GroupLike R A) A { toFun g := g.1, map_one' := by simp, map_mul' := by simp }
+  lift R A (GroupLike R A) { toFun g := g.1, map_one' := by simp, map_mul' := by simp }
 
 /-- The `R`-bialgebra map from the group algebra on the group-like elements of `A` to `A`. -/
 @[simps!]
