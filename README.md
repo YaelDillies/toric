@@ -26,18 +26,16 @@ The Lean code is located within the `Toric` folder. Within it, one can find:
 
 See the [upstreaming dashboard](https://yaeldillies.github.io/toric/upstreaming) for more information.
 
-## Interacting with the project
-
-### Getting the project
+## Getting the project
 
 To build the Lean files of this project, you need to have a working version of Lean.
-See [the installation instructions](https://leanprover-community.github.io/get_started.html) (under Regular install).
-Alternatively, click on the button below to open a Gitpod workspace containing the project.
+See [the installation instructions](https://lean-lang.org/install/).
+Alternatively, click on the button below to open an Ona workspace containing the project.
 
-[![Open in Gitpod](https://gitpod.io/button/open-in-gitpod.svg)](https://gitpod.io/#https://github.com/YaelDillies/LeanAPAP)
+[![Open in Gitpod](https://gitpod.io/button/open-in-gitpod.svg)](https://gitpod.io/#https://github.com/YaelDillies/toric)
 
 In either case, run `lake exe cache get` and then `lake build` to build the project.
 
-### Contributing
+## Contributing
 
 **This project is open to contribution**.
