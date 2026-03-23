@@ -22,8 +22,8 @@ f * g = f g
 
 suppress_compilation
 
-open Algebra Coalgebra Bialgebra HopfAlgebra TensorProduct
-open scoped ConvolutionProduct RingTheory.LinearMap
+open Algebra Coalgebra Bialgebra HopfAlgebra TensorProduct WithConv
+open scoped RingTheory.LinearMap
 
 variable {R A C : Type*} [CommSemiring R]
 
@@ -33,8 +33,8 @@ variable [CommSemiring A] [HopfAlgebra R A]
 lemma antipode_mul_antidistrib (a b : A) : antipode R (a * b) = antipode R b * antipode R a := by
   let α := antipode R ∘ₗ .mul' R A
   let β : A ⊗[R] A →ₗ[R] A := .mul' R A ∘ₗ map (antipode R) (antipode R) ∘ₗ TensorProduct.comm R A A
-  suffices α = β from congr($this (a ⊗ₜ b))
-  apply left_inv_eq_right_inv (a := LinearMap.mul' R A) <;> ext a b
+  suffices h : toConv α = toConv β from congr($h (a ⊗ₜ b))
+  apply left_inv_eq_right_inv (a := toConv (LinearMap.mul' R A : A ⊗[R] A →ₗ[R] A)) <;> ext a b
   · simp [α, ((ℛ R a).tmul (ℛ R b)).convMul_apply, ← Bialgebra.counit_mul, mul_comm b a,
       ← sum_antipode_mul_eq_algebraMap_counit ((ℛ R a).mul (ℛ R b))]
   · simp [((ℛ R a).tmul (ℛ R b)).convMul_apply, mul_comm, mul_mul_mul_comm, Finset.sum_mul_sum,
@@ -66,11 +66,11 @@ local infix:70 " ⊗ₘ " => TensorProduct.map
 
 variable [Semiring C] [HopfAlgebra R C]
 
-@[simp] lemma antipode_mul_id : antipode R (A := C) * id = 1 := by
-  ext; simp [convMul_def, ← LinearMap.rTensor_def]
+@[simp] lemma antipode_mul_id : toConv (antipode R (A := C)) * toConv id = 1 := by
+  ext c; rw [(ℛ R c).convMul_apply]; simp [sum_antipode_mul_eq_algebraMap_counit (ℛ R c)]
 
-@[simp] lemma id_mul_antipode : id * antipode R (A := C) = 1 := by
-  ext; simp [convMul_def, ← LinearMap.lTensor_def]
+@[simp] lemma id_mul_antipode : toConv id * toConv (antipode R (A := C)) = 1 := by
+  ext c; rw [(ℛ R c).convMul_apply]; simp [sum_mul_antipode_eq_algebraMap_counit (ℛ R c)]
 
 end LinearMap
 
@@ -93,19 +93,20 @@ local notation "𝑺" => antipode R (A := C)
 local notation "𝑭" => δ₁ ∘ₗ 𝑺
 local notation "𝑮" => (𝑺 ⊗ₘ 𝑺) ∘ₗ (β C C) ∘ₗ δ₁
 
-lemma comul_right_inv : δ₁ * 𝑭 = 1 := calc
-    μ₂ ∘ₗ (δ₁ ⊗ₘ (δ₁ ∘ₗ 𝑺)) ∘ₗ δ₁
-  _ = μ₂ ∘ₗ ((δ₁ ∘ₗ id) ⊗ₘ (δ₁ ∘ₗ 𝑺)) ∘ₗ δ₁ := rfl
-  _ = μ₂ ∘ₗ (δ₁ ⊗ₘ δ₁) ∘ₗ (id ⊗ₘ 𝑺) ∘ₗ δ₁ := by
-    simp only [_root_.TensorProduct.map_comp, comp_assoc]
-  _ = δ₁ ∘ₗ μ₁ ∘ₗ (id ⊗ₘ 𝑺) ∘ₗ δ₁ := by
-      have : μ₂ ∘ₗ (δ₁ ⊗ₘ δ₁) = δ₁ ∘ₗ μ₁ := by ext; simp
-      simp [this, ← comp_assoc]
-  _ = δ₁ ∘ₗ (id * 𝑺) := rfl
-  _ = δ₁ ∘ₗ η₁ ∘ₗ ε₁ := by simp [convOne_def]
-  _ = η₂ ∘ₗ ε₁ := by
-      have : δ₁ ∘ₗ η₁ = η₂ := by ext; simp; rfl
-      simp [this, ← comp_assoc]
+lemma comul_right_inv : toConv δ₁ * toConv 𝑭 = 1 := by
+  apply WithConv.ext
+  simp only [LinearMap.convMul_def, LinearMap.convOne_def, ofConv_toConv]
+  calc μ₂ ∘ₗ map δ₁ (δ₁ ∘ₗ 𝑺) ∘ₗ δ₁
+      = μ₂ ∘ₗ ((δ₁ ∘ₗ id) ⊗ₘ (δ₁ ∘ₗ 𝑺)) ∘ₗ δ₁ := rfl
+    _ = μ₂ ∘ₗ (δ₁ ⊗ₘ δ₁) ∘ₗ (id ⊗ₘ 𝑺) ∘ₗ δ₁ := by
+        simp only [_root_.TensorProduct.map_comp, comp_assoc]
+    _ = δ₁ ∘ₗ μ₁ ∘ₗ (id ⊗ₘ 𝑺) ∘ₗ δ₁ := by
+        have : μ₂ ∘ₗ (δ₁ ⊗ₘ δ₁) = δ₁ ∘ₗ μ₁ := by ext; simp
+        simp [this, ← comp_assoc]
+    _ = δ₁ ∘ₗ (toConv id * toConv 𝑺).ofConv := by simp [LinearMap.convMul_def]
+    _ = δ₁ ∘ₗ (1 : WithConv (C →ₗ[R] C)).ofConv := by rw [id_mul_antipode]
+    _ = Algebra.linearMap R (C ⊗[R] C) ∘ₗ ε₁ := by
+        simp [LinearMap.convOne_def, show δ₁ ∘ₗ η₁ = η₂ from by ext; simp; rfl, ← comp_assoc]
 
 end LinearMap
 
@@ -114,9 +115,9 @@ variable [CommSemiring A] [Semiring C] [Bialgebra R C] [HopfAlgebra R A]
 
 lemma antipode_id_cancel : HopfAlgebra.antipodeAlgHom R A * AlgHom.id R A = 1 := by
   apply AlgHom.toLinearMap_injective
-  rw [toLinearMap_convMul]
-  ext
-  simp [LinearMap.antipode_mul_id, AlgHom.convOne_apply]
+  apply WithConv.toConv_injective
+  rw [AlgHom.toLinearMap_convMul, AlgHom.toLinearMap_convOne]
+  simp [LinearMap.antipode_mul_id]
 
 lemma counitAlgHom_comp_antipodeAlgHom :
     (counitAlgHom R A).comp (HopfAlgebra.antipodeAlgHom R A) = counitAlgHom R A :=
@@ -147,10 +148,7 @@ def antipodeBialgHom : C →ₐc[R] C where
   __ := antipodeAlgHom R (A := C)
   map_smul' := _
   counit_comp := counit_comp_antipode
-  map_comp_comul := by
-    apply left_inv_eq_right_inv (a := comul)
-    · sorry
-    · sorry
+  map_comp_comul := by sorry
 
 instance : Inv (C →ₐc[R] A) where inv := antipodeBialgHom.comp
 

@@ -104,8 +104,9 @@ variable [Bialgebra R A]
 @[simp]
 lemma convMul_bialgHom_single [CommMonoid M] (f g : R[M] →ₐc[R] A) (x : M) :
     (f * g) (single x 1) = f (single x 1) * g (single x 1) := by
-  simp [← BialgHom.toCoalgHom_apply, ← CoalgHom.coe_toLinearMap, ← CoalgHom.toLinearMap_eq_coe,
-    -LinearMap.coe_coe, BialgHom.toLinearMap_convMul]
+  simp only [BialgHom.convMul_def, BialgHom.coe_comp, Function.comp_apply]
+  change mulBialgHom R A (Bialgebra.TensorProduct.map f g (comul (single x 1))) = _
+  simp [MonoidAlgebra.comul_single, Bialgebra.TensorProduct.map_tmul]
 
 end CommSemiring
 
@@ -294,14 +295,14 @@ variable [CommSemiring A]
 
 @[simp]
 lemma convMul_algHom_single [Algebra R A] [AddMonoid M] (f g : R[M] →ₐ[R] A) (x : M) :
-    (f * g) (single x 1) = f (single x 1) * g (single x 1) := by
-  simp [-AlgHom.coe_toLinearMap, ← AlgHom.toLinearMap_apply, AlgHom.toLinearMap_convMul]
+    (f * g) (single x 1) = f (single x 1) * g (single x 1) := by simp [AlgHom.convMul_apply]
 
 @[simp]
 lemma convMul_bialgHom_single [Bialgebra R A] [AddCommMonoid M] (f g : R[M] →ₐc[R] A) (x : M) :
     (f * g) (single x 1) = f (single x 1) * g (single x 1) := by
-  simp [← BialgHom.toCoalgHom_apply, ← CoalgHom.coe_toLinearMap, ← CoalgHom.toLinearMap_eq_coe,
-    -LinearMap.coe_coe, BialgHom.toLinearMap_convMul]
+  simp only [BialgHom.convMul_def, BialgHom.coe_comp, Function.comp_apply]
+  change mulBialgHom R A (Bialgebra.TensorProduct.map f g (comul (single x 1))) = _
+  simp [AddMonoidAlgebra.comul_single, Bialgebra.TensorProduct.map_tmul]
 
 end CommSemiring
 

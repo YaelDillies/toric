@@ -24,8 +24,7 @@ f * g = f g
 
 suppress_compilation
 
-open Algebra Coalgebra Bialgebra TensorProduct
-open scoped ConvolutionProduct
+open Algebra Coalgebra Bialgebra TensorProduct WithConv
 
 variable {R A B C : Type*} [CommSemiring R]
 
@@ -53,11 +52,12 @@ lemma convMul_apply (f g : C →ₐ[R] A) (c : C) :
   congr 1
   ext <;> simp
 
-lemma toLinearMap_convOne : (1 : C →ₐ[R] A) = (1 : C →ₗ[R] A) := rfl
+lemma toLinearMap_convOne : toConv (1 : C →ₐ[R] A).toLinearMap = 1 := rfl
 lemma toLinearMap_convMul (f g : C →ₐ[R] A) :
-    (f * g).toLinearMap = f.toLinearMap * g.toLinearMap := rfl
+    toConv (f * g).toLinearMap = toConv f.toLinearMap * toConv g.toLinearMap := rfl
 
-lemma toLinearMap_convPow (f : C →ₐ[R] A) : ∀ n : ℕ, (f ^ n).toLinearMap = f.toLinearMap ^ n
+lemma toLinearMap_convPow (f : C →ₐ[R] A) :
+    ∀ n : ℕ, toConv (f ^ n).toLinearMap = toConv f.toLinearMap ^ n
   | 0 => rfl
   | n + 1 => by simp only [convPow_succ, toLinearMap_convMul, toLinearMap_convPow, pow_succ]
 
@@ -75,15 +75,24 @@ lemma convMul_distrib_comp [Bialgebra R B] (f g : C →ₐ A) (h : B →ₐc[R] 
 lemma comp_convMul_distrib [Algebra R B] (f g : C →ₐ[R] A) (h : A →ₐ[R] B) :
     h.comp (f * g) = h.comp f * h.comp g := by
   apply toLinearMap_injective
-  simp [toLinearMap_convMul, LinearMap.algHom_comp_convMul_distrib]
+  apply WithConv.toConv_injective
+  simp only [AlgHom.comp_toLinearMap]
+  rw [show (f * g).toLinearMap = (toConv f.toLinearMap * toConv g.toLinearMap).ofConv from
+        congr_arg WithConv.ofConv (toLinearMap_convMul f g),
+      LinearMap.algHom_comp_convMul_distrib]
+  simp only [WithConv.toConv_ofConv]
+  rw [toLinearMap_convMul (h.comp f) (h.comp g)]
+  simp [AlgHom.comp_toLinearMap]
 
 instance : Monoid (C →ₐ[R] A) :=
-  toLinearMap_injective.monoid _ toLinearMap_convOne toLinearMap_convMul toLinearMap_convPow
+  (toConv_injective.comp toLinearMap_injective).monoid _
+    toLinearMap_convOne toLinearMap_convMul toLinearMap_convPow
 
 variable [IsCocomm R C]
 
 instance : CommMonoid (C →ₐ[R] A) :=
-  toLinearMap_injective.commMonoid _ toLinearMap_convOne toLinearMap_convMul toLinearMap_convPow
+  (toConv_injective.comp toLinearMap_injective).commMonoid _
+    toLinearMap_convOne toLinearMap_convMul toLinearMap_convPow
 
 end AlgHom
 
@@ -96,7 +105,7 @@ lemma convOne_def : (1 : C →ₐc[R] A) = (unitBialgHom R A).comp (counitBialgH
 
 @[simp] lemma convOne_apply (c : C) : (1 : C →ₐc[R] A) c = algebraMap R A (counit c) := rfl
 
-lemma toLinearMap_convOne : (1 : C →ₐc[R] A).toLinearMap = (1 : C →ₗ[R] A) := rfl
+lemma toLinearMap_convOne : toConv (1 : C →ₐc[R] A).toLinearMap = 1 := rfl
 
 variable [IsCocomm R C]
 
@@ -113,13 +122,15 @@ lemma convMul_def (f g : C →ₐc[R] A) :
 private lemma convPow_succ (f : C →ₐc[R] A) (n : ℕ) : f ^ (n + 1) = (f ^ n) * f := rfl
 
 lemma toLinearMap_convMul (f g : C →ₐc[R] A) :
-    (f * g).toLinearMap = f.toLinearMap * g.toLinearMap := rfl
+    toConv (f * g).toLinearMap = toConv f.toLinearMap * toConv g.toLinearMap := rfl
 
-lemma toLinearMap_convPow (f : C →ₐc[R] A) : ∀ n, (f ^ n).toLinearMap = f.toLinearMap ^ n
+lemma toLinearMap_convPow (f : C →ₐc[R] A) :
+    ∀ n, toConv (f ^ n).toLinearMap = toConv f.toLinearMap ^ n
   | 0 => rfl
   | n + 1 => by simp only [convPow_succ, pow_succ, toLinearMap_convMul, toLinearMap_convPow]
 
 instance : CommMonoid (C →ₐc[R] A) :=
-  coe_linearMap_injective.commMonoid _ toLinearMap_convOne toLinearMap_convMul toLinearMap_convPow
+  (toConv_injective.comp coe_linearMap_injective).commMonoid _
+    toLinearMap_convOne toLinearMap_convMul toLinearMap_convPow
 
 end BialgHom

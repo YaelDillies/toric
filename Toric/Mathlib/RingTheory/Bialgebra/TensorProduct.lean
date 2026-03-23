@@ -1,4 +1,5 @@
 import Mathlib.RingTheory.Bialgebra.TensorProduct
+import Mathlib.Tactic.SuppressCompilation
 import Toric.Mathlib.RingTheory.Coalgebra.Hom
 import Toric.Mathlib.RingTheory.TensorProduct.Maps
 

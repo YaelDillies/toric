@@ -166,6 +166,12 @@ private def complexEquivFun : SO2Ring ℂ →ₐc[ℂ] MonoidAlgebra ℂ (Multip
         smul_smul]
       module
 
+-- FIXME: raised heartbeats (?)
+set_option maxHeartbeats 800000 in
+-- `IsScalarTower R S[X] A[X]` instances added in
+-- https://github.com/leanprover-community/mathlib4/commit/a4330c9914a12dd2bb7122a4f10b004b489f306f
+-- greatly expand the typeclass search space for `DistribSMul ℂ (SO2Ring ℂ)`.
+set_option synthInstance.maxHeartbeats 400000 in
 attribute [-ext] AdjoinRoot.algHom_ext' in
 /-- `SO2Ring ℂ` is isomorphic to Laurent series `ℂ[ℤ]`. -/
 def complexEquiv : SO2Ring ℂ ≃ₐc[ℂ] ℂ[ℤ] where
