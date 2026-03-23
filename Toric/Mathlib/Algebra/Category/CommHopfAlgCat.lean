@@ -3,10 +3,12 @@ Copyright (c) 2025 Yaël Dillies, Michał Mrugała. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Yaël Dillies, Michał Mrugała
 -/
-import Mathlib.Algebra.Category.CommBialgCat
-import Mathlib.CategoryTheory.Monoidal.Grp_
-import Mathlib.RingTheory.HopfAlgebra.TensorProduct
-import Toric.Mathlib.RingTheory.HopfAlgebra.Convolution
+module
+
+public import Mathlib.Algebra.Category.CommBialgCat
+public import Mathlib.CategoryTheory.Monoidal.Grp_
+public import Mathlib.RingTheory.HopfAlgebra.TensorProduct
+public import Toric.Mathlib.RingTheory.HopfAlgebra.Convolution
 
 /-!
 # The category of commutative Hopf algebras over a commutative ring
@@ -15,21 +17,22 @@ This file defines the bundled category `CommHopfAlgCat` of commutative Hopf alge
 commutative ring `R` along with the forgetful functor to `CommBialgCat`.
 -/
 
-noncomputable section
+@[expose] public noncomputable section
 
 open CategoryTheory Coalgebra HopfAlgebra Limits
 
 universe v u
 variable {R : Type u} [CommRing R]
 
-variable (R) in
 /-- The category of commutative `R`-Hopf algebras and their morphisms. -/
-structure CommHopfAlgCat where
-  private mk ::
+structure CommHopfAlgCat (R : Type u) [CommRing R] where
+  /-- Turn an unbundled `R`-Hopf algebra into the corresponding object in the category of
+  `R`-Hopf algebras. -/
+  of (R) ::
   /-- The underlying type. -/
-  carrier : Type v
-  [commRing : CommRing carrier]
-  [hopfAlgebra : HopfAlgebra R carrier]
+  protected X : Type v
+  [commRing : CommRing X]
+  [hopfAlgebra : HopfAlgebra R X]
 
 namespace CommHopfAlgCat
 variable {A B C : CommHopfAlgCat.{v} R} {X Y Z : Type v} [CommRing X] [HopfAlgebra R X]
@@ -39,16 +42,9 @@ attribute [instance] commRing hopfAlgebra
 
 initialize_simps_projections CommHopfAlgCat (-commRing, -hopfAlgebra)
 
-instance : CoeSort (CommHopfAlgCat R) (Type v) := ⟨carrier⟩
+instance : CoeSort (CommHopfAlgCat R) (Type v) := ⟨CommHopfAlgCat.X⟩
 
-attribute [coe] CommHopfAlgCat.carrier
-
-variable (R) in
-/-- Turn an unbundled `R`-Hopf algebra into the corresponding object in the category of
-`R`-Hopf algebras.
-
-This is the preferred way to construct a term of `CommHopfAlgCat R`. -/
-abbrev of (X : Type v) [CommRing X] [HopfAlgebra R X] : CommHopfAlgCat.{v} R := ⟨X⟩
+attribute [coe] CommHopfAlgCat.X
 
 variable (R) in
 lemma coe_of (X : Type v) [CommRing X] [HopfAlgebra R X] : (of R X : Type v) = X := rfl
@@ -56,7 +52,7 @@ lemma coe_of (X : Type v) [CommRing X] [HopfAlgebra R X] : (of R X : Type v) = X
 /-- The type of morphisms in `CommHopfAlgCat R`. -/
 @[ext]
 structure Hom (A B : CommHopfAlgCat.{v} R) where
-  private mk ::
+  mk ::
   /-- The underlying bialgebra map. -/
   hom' : A →ₐc[R] B
 

@@ -3,12 +3,18 @@ Copyright (c) 2025 Patrick Luo. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Patrick Luo
 -/
-import Mathlib.Algebra.AffineMonoid.Embedding
-import Toric.ToricVariety.Defs
+module
+
+public import Mathlib.Algebra.AffineMonoid.Embedding
+public import Mathlib.GroupTheory.MonoidLocalization.Finite
+public import Mathlib.LinearAlgebra.FreeModule.PID
+public import Toric.ToricVariety.Defs
 
 /-!
 # Affine monoids give rise to toric varieties
 -/
+
+public section
 
 suppress_compilation
 

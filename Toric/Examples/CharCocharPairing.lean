@@ -3,7 +3,9 @@ Copyright (c) 2025 Yaël Dillies. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Yaël Dillies
 -/
-import Toric.GroupScheme.Character
+module
+
+public import Toric.GroupScheme.Character
 
 /-!
 # Demo of the perfect pairing between characters and cocharacters of a torus

@@ -3,8 +3,10 @@ Copyright (c) 2025 Sophie Morel. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Sophie Morel
 -/
-import Mathlib.RingTheory.HopfAlgebra.GroupLike
-import Toric.Mathlib.RingTheory.Bialgebra.MonoidAlgebra
+module
+
+public import Mathlib.RingTheory.HopfAlgebra.GroupLike
+public import Toric.Mathlib.RingTheory.Bialgebra.MonoidAlgebra
 
 /-!
 # Diagonalizable bialgebras
@@ -23,6 +25,8 @@ because group-like elements are linearly independent.
 
 Note that the last result is false in general.
 -/
+
+@[expose] public section
 
 open Function MonoidAlgebra
 

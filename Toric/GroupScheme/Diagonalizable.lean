@@ -3,14 +3,16 @@ Copyright (c) 2025 Yaël Dillies, Michał Mrugała, Sophie Morel, Andrew Yang. A
 Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Yaël Dillies, Michał Mrugała, Sophie Morel, Andrew Yang
 -/
-import Mathlib.Algebra.Category.Grp.EquivalenceGroupAddGroup
-import Mathlib.AlgebraicGeometry.Limits
-import Toric.GroupScheme.MonoidAlgebra
+module
+
+public import Mathlib.Algebra.Category.Grp.EquivalenceGroupAddGroup
+public import Mathlib.AlgebraicGeometry.Limits
+public import Toric.GroupScheme.MonoidAlgebra
+
+@[expose] public noncomputable section
 
 open AlgebraicGeometry CategoryTheory Bialgebra Opposite Limits
 open scoped AddMonoidAlgebra MonObj SpecOfNotation
-
-noncomputable section
 
 universe u
 

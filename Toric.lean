@@ -1,26 +1,28 @@
-import Toric.Examples.CharCocharPairing
-import Toric.Examples.SO2
-import Toric.GroupScheme.Character
-import Toric.GroupScheme.Diagonalizable
-import Toric.GroupScheme.HopfAffine
-import Toric.GroupScheme.MonoidAlgebra
-import Toric.GroupScheme.Torus
-import Toric.Hopf.Diagonalisable
-import Toric.Hopf.GrpAlg
-import Toric.Imports
-import Toric.Mathlib.Algebra.Category.CommHopfAlgCat
-import Toric.Mathlib.Algebra.Polynomial.Bivariate
-import Toric.Mathlib.RingTheory.AdjoinRoot
-import Toric.Mathlib.RingTheory.Bialgebra.Convolution
-import Toric.Mathlib.RingTheory.Bialgebra.MonoidAlgebra
-import Toric.Mathlib.RingTheory.Bialgebra.TensorProduct
-import Toric.Mathlib.RingTheory.Coalgebra.CoassocSimps
-import Toric.Mathlib.RingTheory.Coalgebra.Hom
-import Toric.Mathlib.RingTheory.Coalgebra.SimpAttr
-import Toric.Mathlib.RingTheory.HopfAlgebra.Convolution
-import Toric.Mathlib.RingTheory.TensorProduct.Maps
-import Toric.MvLaurentPolynomial
-import Toric.SphericalVariety
-import Toric.ToricIdeal
-import Toric.ToricVariety.Defs
-import Toric.ToricVariety.FromMonoid
+module
+
+public import Toric.Examples.CharCocharPairing
+public import Toric.Examples.SO2
+public import Toric.GroupScheme.Character
+public import Toric.GroupScheme.Diagonalizable
+public import Toric.GroupScheme.HopfAffine
+public import Toric.GroupScheme.MonoidAlgebra
+public import Toric.GroupScheme.Torus
+public import Toric.Hopf.Diagonalisable
+public import Toric.Hopf.GrpAlg
+public import Toric.Imports
+public import Toric.Mathlib.Algebra.Category.CommHopfAlgCat
+public import Toric.Mathlib.Algebra.Polynomial.Bivariate
+public import Toric.Mathlib.RingTheory.AdjoinRoot
+public import Toric.Mathlib.RingTheory.Bialgebra.Convolution
+public import Toric.Mathlib.RingTheory.Bialgebra.MonoidAlgebra
+public import Toric.Mathlib.RingTheory.Bialgebra.TensorProduct
+public import Toric.Mathlib.RingTheory.Coalgebra.CoassocSimps
+public import Toric.Mathlib.RingTheory.Coalgebra.Hom
+public import Toric.Mathlib.RingTheory.Coalgebra.SimpAttr
+public import Toric.Mathlib.RingTheory.HopfAlgebra.Convolution
+public import Toric.Mathlib.RingTheory.TensorProduct.Maps
+public import Toric.MvLaurentPolynomial
+public import Toric.SphericalVariety
+public import Toric.ToricIdeal
+public import Toric.ToricVariety.Defs
+public import Toric.ToricVariety.FromMonoid

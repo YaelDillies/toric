@@ -3,12 +3,14 @@ Copyright (c) 2025 Yaël Dillies, Michał Mrugała, Andrew Yang. All rights rese
 Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Yaël Dillies, Michał Mrugała, Andrew Yang
 -/
-import Mathlib.LinearAlgebra.Complex.FiniteDimensional
-import Mathlib.LinearAlgebra.UnitaryGroup
-import Mathlib.RingTheory.HopfAlgebra.GroupLike
-import Toric.GroupScheme.Torus
-import Toric.Mathlib.Algebra.Polynomial.Bivariate
-import Toric.Mathlib.RingTheory.AdjoinRoot
+module
+
+public import Mathlib.LinearAlgebra.Complex.FiniteDimensional
+public import Mathlib.LinearAlgebra.UnitaryGroup
+public import Mathlib.RingTheory.HopfAlgebra.GroupLike
+public import Toric.GroupScheme.Torus
+public import Toric.Mathlib.Algebra.Polynomial.Bivariate
+public import Toric.Mathlib.RingTheory.AdjoinRoot
 
 /-!
 # Demo of `SO(2, ℝ)` as a non-split torus
@@ -18,7 +20,7 @@ and show that `SO(2, ℂ)` is a split torus while `SO(2, ℝ)` isn't, which impl
 a non-split torus.
 -/
 
-noncomputable section
+public noncomputable section
 
 local notation3:max R "[X][Y]" => Polynomial (Polynomial R)
 local notation3:max "Y" => Polynomial.C (Polynomial.X)
@@ -41,13 +43,14 @@ instance : Algebra R (SO2Ring S) := by delta SO2Ring; infer_instance
 instance : IsScalarTower R S (SO2Ring S) := by delta SO2Ring; infer_instance
 
 /-- The quotient map from `R[X, Y]` to `SO2Ring R`. -/
+@[expose]
 def mk : R[X][Y] →ₐ[R] SO2Ring R := Ideal.Quotient.mkₐ R _
 
 /-- `X` as an element of `SO2Ring R`. -/
-nonrec def X : SO2Ring R := .mk X
+@[expose] nonrec def X : SO2Ring R := .mk X
 
 /-- `Y` as an element of `SO2Ring R`. -/
-nonrec def «Y» : SO2Ring R := .mk Y
+@[expose] nonrec def «Y» : SO2Ring R := .mk Y
 
 @[simp] lemma X_def : mk .X = .X (R := R) := rfl
 @[simp] lemma Y_def : mk Y = .Y (R := R) := rfl
@@ -55,6 +58,7 @@ nonrec def «Y» : SO2Ring R := .mk Y
 -- TODO: make equiv
 /-- Lift two elements of `S` with squares summing to `1` to an algebra hom from `SO2Ring R` to `S`.
 -/
+@[expose]
 def liftₐ (x y : S) (H : x ^ 2 + y ^ 2 = 1) : SO2Ring R →ₐ[R] S :=
   Ideal.Quotient.liftₐ _ (aevalAEval x y)
     (show Ideal.span _ ≤ RingHom.ker _ by simp [Ideal.span_le, Set.singleton_subset_iff, H])
@@ -80,6 +84,7 @@ lemma algebraMap_ext {A : Type*} [Semiring A] [Algebra R A] {f g : SO2Ring R →
   simp_rw [SO2Ring] at f g; apply Ideal.Quotient.algHom_ext; ext <;> assumption
 
 /-- The comultiplication on `SO2Ring R`, given by `X ↦ X ⊗ X - Y ⊗ Y, Y ↦ X ⊗ Y + Y ⊗ X`. -/
+@[expose]
 def comulAlgHom : SO2Ring R →ₐ[R] SO2Ring R ⊗[R] SO2Ring R := by
   refine liftₐ (.X ⊗ₜ .X - .Y ⊗ₜ .Y) (.X ⊗ₜ .Y + .Y ⊗ₜ .X) ?_
   ring_nf
@@ -97,6 +102,7 @@ lemma comulAlgHom_apply_Y : comulAlgHom (R := R) .Y = (.X ⊗ₜ .Y + .Y ⊗ₜ 
   simp [comulAlgHom]
 
 /-- The counit on `SO2Ring R`, given by `X ↦ 1, Y ↦ 0`. -/
+@[expose]
 def counitAlgHom : SO2Ring R →ₐ[R] R := liftₐ 1 0 (by simp)
 
 @[simp] lemma counitAlgHom.apply_X : counitAlgHom (R := R) .X = 1 := by simp [counitAlgHom]
@@ -111,6 +117,7 @@ instance : Bialgebra R (SO2Ring R) := by
 @[simp] lemma counit_def : counit (R := R) (A := SO2Ring R) = counitAlgHom (R := R) := rfl
 
 /-- The comultiplication on `SO2Ring R`, given by `X ↦ X, Y ↦ -Y`. -/
+@[expose]
 def antipodeAlgHom : SO2Ring R →ₐ[R] SO2Ring R := liftₐ .X (-.Y) (by simp)
 
 @[simp] lemma antipodeAlgHom_X : antipodeAlgHom (R := R) .X = X := by simp [antipodeAlgHom]
@@ -130,7 +137,7 @@ instance : HopfAlgebra R (SO2Ring R) := by
 /-! #### `SO(2, ℂ)` -/
 
 /-- The group-like element `X + iY` of `SO2Ring ℂ`. -/
-@[simps!]
+@[simps!, expose]
 def T : GroupLike ℂ (SO2Ring ℂ) where
   val := .X + Complex.I • .Y
   isGroupLikeElem_val.counit_eq_one := by simp
@@ -246,6 +253,7 @@ lemma baseChangeAlgEquiv_Y : (baseChangeAlgEquiv R S) (1 ⊗ₜ «Y») = «Y» :
 attribute [-ext] AdjoinRoot.algHom_ext' in
 variable (R S) in
 /-- `SO2Ring` is invariant under base change of bialgebras. -/
+@[expose]
 def baseChangeBialgEquiv : S ⊗[R] SO2Ring R ≃ₐc[S] SO2Ring S :=
   .ofAlgEquiv (baseChangeAlgEquiv R S) (by aesop) (by aesop (add simp [tmul_add, tmul_sub]))
 
@@ -273,6 +281,7 @@ scoped notation3 "SO₂("R")" => Spec <| .of <| SO2Ring R
 /-! #### `SO(2, ℂ)` is a split torus -/
 
 /-- The isomorphism between `SO₂(ℂ)` and the 1-dimensional `ℂ`-torus. -/
+@[expose]
 def so₂ComplexIso : SO₂(ℂ) ≅ Diag Spec(ℂ) ℤ :=
   Scheme.Spec.mapIso complexEquiv.toAlgEquiv.toRingEquiv.toCommRingCatIso.symm.op ≪≫
     (diagSpecIso (.of ℂ) ℤ).symm
@@ -303,6 +312,7 @@ instance : SO₂(ℂ).IsSplitTorusOver Spec(ℂ) := .of_iso so₂ComplexIso
 /-! #### `SO(2, ℝ)` is a torus -/
 
 /-- The isomorphism between the base change of `SO₂(ℝ)` to `ℂ` and `SO₂(ℂ)`. -/
+@[expose]
 def pullbackSO₂RealComplex : pullback (SO₂(ℝ) ↘ Spec(ℝ)) (Spec(ℂ) ↘ Spec(ℝ)) ≅ SO₂(ℂ) :=
   pullbackSymmetry .. ≪≫ pullbackSpecIso .. ≪≫ Scheme.Spec.mapIso
     (baseChangeBialgEquiv ℝ ℂ).symm.toAlgEquiv.toRingEquiv.toCommRingCatIso.op

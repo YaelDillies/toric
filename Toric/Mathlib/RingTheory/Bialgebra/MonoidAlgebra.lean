@@ -1,8 +1,10 @@
-import Mathlib.RingTheory.Bialgebra.GroupLike
-import Mathlib.RingTheory.Bialgebra.MonoidAlgebra
-import Toric.Mathlib.RingTheory.Bialgebra.Convolution
+module
 
-noncomputable section
+public import Mathlib.RingTheory.Bialgebra.GroupLike
+public import Mathlib.RingTheory.Bialgebra.MonoidAlgebra
+public import Toric.Mathlib.RingTheory.Bialgebra.Convolution
+
+public noncomputable section
 
 open TensorProduct Bialgebra Coalgebra Function
 
@@ -36,7 +38,7 @@ lemma bialgHom_ext' ⦃φ₁ φ₂ : R[M] →ₐc[R] A⦄
 
 variable (R A) in
 /-- Isomorphic monoids have isomorphic monoid algebras. -/
-@[simps!]
+@[expose, simps!]
 def domCongrBialgHom (e : M ≃* N) : MonoidAlgebra A M ≃ₐc[R] MonoidAlgebra A N :=
   .ofAlgEquiv (domCongr R A e) (by ext; simp) <| by
     apply AlgHom.toLinearMap_injective
@@ -45,6 +47,7 @@ def domCongrBialgHom (e : M ≃* N) : MonoidAlgebra A M ≃ₐc[R] MonoidAlgebra
 
 variable (M) in
 /-- The trivial monoid algebra is isomorphic to the base ring. -/
+@[expose]
 noncomputable def bialgEquivOfSubsingleton [Subsingleton M] : R[M] ≃ₐc[R] R where
   __ := Bialgebra.counitBialgHom ..
   invFun := algebraMap _ _
@@ -192,7 +195,7 @@ lemma mapDomainBialgHom_mapDomainOfBialgHom (f : MonoidAlgebra R G →ₐc[R] Mo
 
 /-- The equivalence between group homs `G → H` and bialgebra homs `R[G] → R[H]` of group algebras
 over a domain. -/
-@[simps]
+@[expose, simps]
 noncomputable def mapDomainBialgHomEquiv :
     (G →* H) ≃ (MonoidAlgebra R G →ₐc[R] MonoidAlgebra R H) where
   toFun := mapDomainBialgHom R
@@ -246,7 +249,7 @@ lemma bialgHom_ext' ⦃φ₁ φ₂ : R[M] →ₐc[R] A⦄
 
 variable (R A) in
 /-- Isomorphic monoids have isomorphic monoid algebras. -/
-@[simps!]
+@[expose, simps!]
 def domCongrBialgHom (e : M ≃+ N) : A[M] ≃ₐc[R] A[N] :=
   .ofAlgEquiv (domCongr R A e) (by ext; simp) <| by
     apply AlgHom.toLinearMap_injective
@@ -255,6 +258,7 @@ def domCongrBialgHom (e : M ≃+ N) : A[M] ≃ₐc[R] A[N] :=
 
 variable (M) in
 /-- The trivial monoid algebra is isomorphic to the base ring. -/
+@[expose]
 noncomputable def bialgEquivOfSubsingleton [Subsingleton M] : R[M] ≃ₐc[R] R where
   __ := Bialgebra.counitBialgHom ..
   invFun := algebraMap _ _
@@ -391,7 +395,7 @@ lemma mapDomainBialgHom_mapDomainOfBialgHom (f : R[G] →ₐc[R] R[H]) :
 
 /-- The equivalence between group homs `G → H` and bialgebra homs `R[G] → R[H]` of group algebras
 over a domain. -/
-@[simps]
+@[expose, simps]
 noncomputable def mapDomainBialgHomEquiv : (G →+ H) ≃ (R[G] →ₐc[R] R[H]) where
   toFun := mapDomainBialgHom R
   invFun := mapDomainOfBialgHom
@@ -417,12 +421,12 @@ namespace MonoidAlgebra
 variable (R A) [CommSemiring R] [Semiring A] [Bialgebra R A]
 
 /-- The `R`-algebra map from the group algebra on the group-like elements of `A` to `A`. -/
-@[simps!]
+@[expose, simps!]
 noncomputable def liftGroupLikeAlgHom : MonoidAlgebra R (GroupLike R A) →ₐ[R] A :=
   lift R A (GroupLike R A) { toFun g := g.1, map_one' := by simp, map_mul' := by simp }
 
 /-- The `R`-bialgebra map from the group algebra on the group-like elements of `A` to `A`. -/
-@[simps!]
+@[expose, simps!]
 noncomputable def liftGroupLikeBialgHom : MonoidAlgebra R (GroupLike R A) →ₐc[R] A :=
   .ofAlgHom (liftGroupLikeAlgHom R A) (by aesop) (by aesop)
 

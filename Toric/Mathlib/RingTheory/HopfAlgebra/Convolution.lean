@@ -3,8 +3,10 @@ Copyright (c) 2025 Yaël Dillies, Michał Mrugała, Yunzhou Xie. All rights rese
 Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Yaël Dillies, Michał Mrugała, Yunzhou Xie
 -/
-import Mathlib.RingTheory.HopfAlgebra.Basic
-import Toric.Mathlib.RingTheory.Bialgebra.Convolution
+module
+
+public import Mathlib.RingTheory.HopfAlgebra.Basic
+public import Toric.Mathlib.RingTheory.Bialgebra.Convolution
 
 /-!
 # Convolution product on Hopf algebra maps
@@ -19,6 +21,8 @@ f * g = f g
          .
 ```
 -/
+
+@[expose] public section
 
 suppress_compilation
 
@@ -158,7 +162,7 @@ lemma inv_def (f : C →ₐc[R] A) : f⁻¹ = antipodeBialgHom.comp f := rfl
 set_option linter.unusedSectionVars false in
 @[simp] lemma inv_apply (f : C →ₐc[R] A) (c : C) : f⁻¹ c = antipode R (f c) := rfl
 
-private lemma inv_convMul_cancel (f : C →ₐc[R] A) : f⁻¹ * f = 1 := sorry
+lemma inv_convMul_cancel (f : C →ₐc[R] A) : f⁻¹ * f = 1 := sorry
 
 instance : CommGroup (C →ₐc[R] A) where inv_mul_cancel := inv_convMul_cancel
 

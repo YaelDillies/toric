@@ -3,20 +3,20 @@ Copyright (c) 2025 Andrew Yang. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Andrew Yang
 -/
-import Mathlib.RingTheory.TensorProduct.MonoidAlgebra
-import Toric.GroupScheme.HopfAffine
-import Toric.Hopf.GrpAlg
-import Toric.Mathlib.RingTheory.Bialgebra.MonoidAlgebra
+module
 
-noncomputable section
+public import Mathlib.RingTheory.TensorProduct.MonoidAlgebra
+public import Toric.GroupScheme.HopfAffine
+public import Toric.Hopf.GrpAlg
+public import Toric.Mathlib.RingTheory.Bialgebra.MonoidAlgebra
+
+@[expose] public noncomputable section
 
 open CategoryTheory Limits Opposite MonoidalCategory MonoidAlgebra MonObj
 
 attribute [local instance] Functor.Monoidal.ofChosenFiniteProducts
 attribute [local instance] MonoidAlgebra.algebraMonoidAlgebra
 attribute [local instance] MonoidAlgebra.isScalarTower_monoidAlgebra
-
-local notation3:max R:max "[" M:max "]" => MonoidAlgebra R M
 
 namespace AlgebraicGeometry.Scheme
 universe v u
@@ -33,7 +33,6 @@ abbrev specCommMonAlgPullbackObjXIso :
     Sf := H ▸ (CommRingCat.isPushout_of_isPushout R S R[M] S[M]).op.map Scheme.Spec
   Over.isoMk H.isoPullback.symm (by dsimp; simp)
 
-private
 lemma specCommMonAlgPullbackObjXIso_one :
     η ≫ (specCommMonAlgPullbackObjXIso M f Sf H).hom = η := by
   subst H
@@ -74,7 +73,6 @@ lemma specCommMonAlgPullbackObjIso_mul_aux :
   dsimp
   ext <;> simp [h₂, h₃, RingHom.algebraMap_toAlgebra]
 
-private
 lemma specCommMonAlgPullbackObjXIso_mul :
     μ ≫ (specCommMonAlgPullbackObjXIso M f Sf H).hom =
     ((specCommMonAlgPullbackObjXIso M f Sf H).hom ⊗ₘ

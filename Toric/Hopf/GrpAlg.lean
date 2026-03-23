@@ -4,9 +4,11 @@ Copyright (c) 2025 Yaël Dillies, Michał Mrugała, Andrew Yang. All rights rese
 Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Yaël Dillies, Michał Mrugała, Andrew Yang
 -/
-import Mathlib.RingTheory.HopfAlgebra.MonoidAlgebra
-import Toric.Mathlib.Algebra.Category.CommHopfAlgCat
-import Toric.Mathlib.RingTheory.Bialgebra.MonoidAlgebra
+module
+
+public import Mathlib.RingTheory.HopfAlgebra.MonoidAlgebra
+public import Toric.Mathlib.Algebra.Category.CommHopfAlgCat
+public import Toric.Mathlib.RingTheory.Bialgebra.MonoidAlgebra
 
 /-!
 # The group algebra functor
@@ -14,6 +16,8 @@ import Toric.Mathlib.RingTheory.Bialgebra.MonoidAlgebra
 We show that, for a domain `R`, `G ↦ R[G]` forms a fully faithful functor from commutative groups to
 commutative `R`-Hopf algebras.
 -/
+
+@[expose] public section
 
 open CategoryTheory Opposite
 

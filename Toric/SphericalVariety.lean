@@ -3,8 +3,10 @@ Copyright (c) 2025 Yaël Dillies, Patrick Luo. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Yaël Dillies, Patrick Luo
 -/
-import Mathlib.AlgebraicGeometry.Pullbacks
-import Mathlib.CategoryTheory.Monoidal.Mod_
+module
+
+public import Mathlib.AlgebraicGeometry.Pullbacks
+public import Mathlib.CategoryTheory.Monoidal.Mod_
 
 /-!
 # Spherical varieties
@@ -16,6 +18,8 @@ equipped with an action `B × X → X` with an open orbit.
 
 This is very experimental. Many conditions are missing.
 -/
+
+public section
 
 open CategoryTheory Limits
 

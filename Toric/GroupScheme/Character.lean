@@ -3,15 +3,17 @@ Copyright (c) 2025 Yaël Dillies, Michał Mrugała, Andrew Yang. All rights rese
 Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Yaël Dillies, Michał Mrugała, Andrew Yang
 -/
-import Mathlib.Algebra.FreeAbelianGroup.Finsupp
-import Mathlib.LinearAlgebra.PerfectPairing.Basic
-import Toric.GroupScheme.Torus
+module
+
+public import Mathlib.Algebra.FreeAbelianGroup.Finsupp
+public import Mathlib.LinearAlgebra.PerfectPairing.Basic
+public import Toric.GroupScheme.Torus
 
 /-!
 # The lattices of characters and cocharacters
 -/
 
-noncomputable section
+@[expose] public noncomputable section
 
 open AddMonoidAlgebra CategoryTheory
 open scoped Hom SpecOfNotation

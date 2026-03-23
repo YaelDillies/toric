@@ -3,9 +3,11 @@ Copyright (c) 2025 Yaël Dillies, Michał Mrugała, Yunzhou Xie. All rights rese
 Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Yaël Dillies, Michał Mrugała, Yunzhou Xie
 -/
-import Mathlib.RingTheory.Bialgebra.TensorProduct
-import Mathlib.RingTheory.Coalgebra.Convolution
-import Toric.Mathlib.RingTheory.Bialgebra.TensorProduct
+module
+
+public import Mathlib.RingTheory.Bialgebra.TensorProduct
+public import Mathlib.RingTheory.Coalgebra.Convolution
+public import Toric.Mathlib.RingTheory.Bialgebra.TensorProduct
 
 /-!
 # Convolution product on bialgebra homs
@@ -21,6 +23,8 @@ f * g = f g
          .
 ```
 -/
+
+public section
 
 suppress_compilation
 

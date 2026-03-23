@@ -3,13 +3,18 @@ Copyright (c) 2025 Andrew Yang. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Andrew Yang
 -/
-import Mathlib.LinearAlgebra.TensorProduct.Tower
-import Mathlib.RingTheory.Coalgebra.Basic
-import Toric.Mathlib.RingTheory.Coalgebra.SimpAttr
+module
+
+public import Mathlib.LinearAlgebra.TensorProduct.Tower
+public import Mathlib.RingTheory.Coalgebra.Basic
+
+public meta import Toric.Mathlib.RingTheory.Coalgebra.SimpAttr
 
 /-!
 # Tactic to reassociate comultiplication in a coalgebra
 -/
+
+public section
 
 open TensorProduct
 

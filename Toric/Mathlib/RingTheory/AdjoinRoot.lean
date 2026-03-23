@@ -1,4 +1,8 @@
-import Mathlib.RingTheory.AdjoinRoot
+module
+
+public import Mathlib.RingTheory.AdjoinRoot
+
+@[expose] public section
 
 open Algebra TensorProduct
 open scoped Polynomial

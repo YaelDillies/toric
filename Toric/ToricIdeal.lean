@@ -3,16 +3,20 @@ Copyright (c) 2025 Yaël Dillies, Michał Mrugała. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Yaël Dillies, Michał Mrugała
 -/
-import Mathlib.AlgebraicGeometry.Pullbacks
-import Mathlib.FieldTheory.IsAlgClosed.Basic
-import Mathlib.GroupTheory.MonoidLocalization.DivPairs
-import Mathlib.GroupTheory.MonoidLocalization.GrothendieckGroup
+module
+
+public import Mathlib.AlgebraicGeometry.Pullbacks
+public import Mathlib.FieldTheory.IsAlgClosed.Basic
+public import Mathlib.GroupTheory.MonoidLocalization.DivPairs
+public import Mathlib.GroupTheory.MonoidLocalization.GrothendieckGroup
 
 /-!
 # Toric ideals
 
 This file defines toric ideals.
 -/
+
+@[expose] public section
 
 open AlgebraicGeometry CategoryTheory.Limits
 open scoped SpecOfNotation

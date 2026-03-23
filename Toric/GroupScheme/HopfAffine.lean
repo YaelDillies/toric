@@ -3,9 +3,11 @@ Copyright (c) 2025 Yaël Dillies, Christian Merten, Michał Mrugała, Andrew Yan
 Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Yaël Dillies, Christian Merten, Michał Mrugała, Andrew Yang
 -/
-import Mathlib.AlgebraicGeometry.Morphisms.FiniteType
-import Mathlib.CategoryTheory.Monoidal.Cartesian.CommGrp_
-import Toric.Mathlib.Algebra.Category.CommHopfAlgCat
+module
+
+public import Mathlib.AlgebraicGeometry.Morphisms.FiniteType
+public import Mathlib.CategoryTheory.Monoidal.Cartesian.CommGrp_
+public import Toric.Mathlib.Algebra.Category.CommHopfAlgCat
 
 /-!
 # The equivalence between Hopf algebras and affine group schemes
@@ -37,6 +39,8 @@ R-Hopf algebras → Affine group schemes over Spec R
 where the top `≌` comes from the essentially surjective functor `Cogrp Mod_R ⥤ Grp Sch_{Spec R}`,
 so that in particular we do not easily know that its inverse is given by `Γ`.
 -/
+
+@[expose] public section
 
 open AlgebraicGeometry Coalgebra Scheme CategoryTheory MonoidalCategory Functor Monoidal Opposite
   Limits TensorProduct MonObj GrpObj

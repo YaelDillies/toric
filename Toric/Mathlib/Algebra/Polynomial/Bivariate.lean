@@ -1,4 +1,8 @@
-import Mathlib.Algebra.Polynomial.Bivariate
+module
+
+public import Mathlib.Algebra.Polynomial.Bivariate
+
+@[expose] public section
 
 local notation3:max R "[X][Y]" => Polynomial (Polynomial R)
 local notation3:max "Y" => Polynomial.C (Polynomial.X)

@@ -4,9 +4,11 @@ All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Yaël Dillies, Paul Lezeau, Patrick Luo, Michał Mrugała, Andrew Yang
 -/
-import Mathlib.AlgebraicGeometry.Morphisms.UnderlyingMap
-import Mathlib.CategoryTheory.Monoidal.Mod_
-import Toric.GroupScheme.Torus
+module
+
+public import Mathlib.AlgebraicGeometry.Morphisms.UnderlyingMap
+public import Mathlib.CategoryTheory.Monoidal.Mod_
+public import Toric.GroupScheme.Torus
 
 /-!
 # Toric varieties
@@ -15,6 +17,8 @@ This file defines a toric variety with torus `T` over a scheme `S` as a scheme `
 dominant open embedding `T → X` over `S` and an action `T × X → X` extending the multiplication on
 `T`.
 -/
+
+public section
 
 open CategoryTheory MonObj MonoidalCategory CartesianMonoidalCategory Limits
   AlgebraicGeometry.Scheme
