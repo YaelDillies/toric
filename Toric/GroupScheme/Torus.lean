@@ -102,7 +102,7 @@ lemma IsTorusOver.of_iso (e : G ≅ H) [e.hom.IsOver Spec(k)] [IsMonHom (e.hom.a
   let e' := (Grp.forget _ ⋙ Over.forget _).mapIso e''
   dsimp at e'
   have : e'.hom.IsOver Spec(L) := by simp [e', e'']
-  have : IsMonHom <| e'.hom.asOver Spec(L) := Mon.instIsMonHomHom e''.hom
+  have : IsMonHom <| e'.hom.asOver Spec(L) := by simpa using Mon.instIsMonHomHom e''.hom.hom
   exact .of_iso e'
 
 lemma IsTorusOver.of_isIso [H.IsTorusOver k]

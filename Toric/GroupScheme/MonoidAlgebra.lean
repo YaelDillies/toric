@@ -14,6 +14,7 @@ open CategoryTheory Limits Opposite MonoidalCategory MonoidAlgebra MonObj
 
 attribute [local instance] Functor.Monoidal.ofChosenFiniteProducts
 attribute [local instance] MonoidAlgebra.algebraMonoidAlgebra
+attribute [local instance] MonoidAlgebra.isScalarTower_monoidAlgebra
 
 local notation3:max R:max "[" M:max "]" => MonoidAlgebra R M
 
