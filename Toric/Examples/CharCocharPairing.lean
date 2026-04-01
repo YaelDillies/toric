@@ -39,9 +39,11 @@ If furthermore `G := 𝔾ₘ[Spec R, σ]` is the explicit torus with finite dime
 then this pairing is perfect.
 -/
 
+set_option backward.isDefEq.respectTransparency false in
 example {R : CommRingCat.{0}} [IsDomain R] {G : Scheme} [G.Over (Spec R)]
     [CommGrpObj (G.asOver (Spec R))] :
     X*(Spec R, G) →ₗ[ℤ] X(Spec R, G) →ₗ[ℤ] ℤ := charPairing R G
 
+set_option backward.isDefEq.respectTransparency false in
 example {R : CommRingCat} [IsDomain R] {σ : Type} [Finite σ] :
     (charPairing R 𝔾ₘ[Spec R, σ]).IsPerfPair := isPerfPair_charPairing

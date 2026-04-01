@@ -34,9 +34,7 @@ def tensorAlgEquiv (p : S[X]) (q : (T ⊗[R] S)[X]) (h : p.map includeRight.toRi
     · simp [Algebra.ofId_apply, ← AlgHom.toRingHom_eq_coe]
       rfl
     simp
-  · ext : 1
-    · ext
-    ext : 2 <;> simp [← AlgHom.toRingHom_eq_coe]
+  · ext : 3 <;> simp [← AlgHom.toRingHom_eq_coe]
     rfl
 
 @[simp] lemma tensorAlgEquiv_root (p : S[X]) (q : Polynomial (T ⊗[R] S)) (h) :

@@ -207,6 +207,7 @@ def commHopfAlgCatEquivCogrpCommAlgCat : CommHopfAlgCat R ≌ (Grp (CommAlgCat R
   counitIso.hom := 𝟙 _
   counitIso.inv := 𝟙 _
 
+set_option backward.isDefEq.respectTransparency false in
 instance {A : CommHopfAlgCat.{u} R} [IsCocomm R A] :
     IsCommMonObj ((commHopfAlgCatEquivCogrpCommAlgCat R).functor.obj A).unop.X := by
   dsimp; infer_instance

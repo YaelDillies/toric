@@ -39,7 +39,10 @@ abbrev SO2Ring : Type _ := AdjoinRoot (X ^ 2 + Y ^ 2 - 1 : R[X][Y])
 namespace SO2Ring
 
 instance : CommRing (SO2Ring R) := by delta SO2Ring; infer_instance
+
+set_option backward.isDefEq.respectTransparency false in
 instance : Algebra R (SO2Ring S) := by delta SO2Ring; infer_instance
+
 instance : IsScalarTower R S (SO2Ring S) := by delta SO2Ring; infer_instance
 
 /-- The quotient map from `R[X, Y]` to `SO2Ring R`. -/
@@ -136,6 +139,7 @@ instance : HopfAlgebra R (SO2Ring R) := by
 
 /-! #### `SO(2, ℂ)` -/
 
+set_option backward.isDefEq.respectTransparency false in
 /-- The group-like element `X + iY` of `SO2Ring ℂ`. -/
 @[simps!, expose]
 def T : GroupLike ℂ (SO2Ring ℂ) where
@@ -148,6 +152,7 @@ private def complexEquivInv : MonoidAlgebra ℂ (Multiplicative ℤ) →ₐc[ℂ
   (MonoidAlgebra.liftGroupLikeBialgHom _ _).comp <| MonoidAlgebra.mapDomainBialgHom ℂ <|
     AddMonoidHom.toMultiplicativeLeft <| zmultiplesHom _ <| .ofMul T
 
+set_option backward.isDefEq.respectTransparency false in
 private lemma complexEquivInv_single (a : Multiplicative ℤ) (b : ℂ) :
     complexEquivInv (.single a b) = b • (T ^ a.toAdd).1 := by
   simp [complexEquivInv, Algebra.smul_def]
@@ -173,12 +178,7 @@ private def complexEquivFun : SO2Ring ℂ →ₐc[ℂ] MonoidAlgebra ℂ (Multip
         smul_smul]
       module
 
--- FIXME: raised heartbeats (?)
-set_option maxHeartbeats 800000 in
--- `IsScalarTower R S[X] A[X]` instances added in
--- https://github.com/leanprover-community/mathlib4/commit/a4330c9914a12dd2bb7122a4f10b004b489f306f
--- greatly expand the typeclass search space for `DistribSMul ℂ (SO2Ring ℂ)`.
-set_option synthInstance.maxHeartbeats 400000 in
+set_option backward.isDefEq.respectTransparency false in
 attribute [-ext] AdjoinRoot.algHom_ext' in
 /-- `SO2Ring ℂ` is isomorphic to Laurent series `ℂ[ℤ]`. -/
 def complexEquiv : SO2Ring ℂ ≃ₐc[ℂ] ℂ[ℤ] where
@@ -198,6 +198,7 @@ def complexEquiv : SO2Ring ℂ ≃ₐc[ℂ] ℂ[ℤ] where
 @[simp high, nolint simpNF] lemma complexEquiv_inv_single (a : ℤ) (b : ℂ) :
     complexEquiv.symm (.single a b) = b • (T ^ a).1 := complexEquivInv_single ..
 
+set_option backward.isDefEq.respectTransparency false in
 @[simp] lemma complexEquiv_inv_C (b : ℂ) :
     complexEquiv.symm (LaurentPolynomial.C b) = algebraMap ℂ (SO2Ring ℂ) b := by
   simp [LaurentPolynomial.C, -LaurentPolynomial.single_eq_C_mul_T, Algebra.algebraMap_eq_smul_one]
@@ -234,22 +235,26 @@ def algHomMulEquiv : (SO2Ring R →ₐ[R] S) ≃* specialOrthogonalGroup (Fin 2)
 
 instance : Algebra S (S ⊗[R] SO2Ring R) := Algebra.TensorProduct.leftAlgebra
 
+set_option backward.isDefEq.respectTransparency false in
 variable (R S) in
 /-- `SO2Ring` is invariant under base change of algebras. -/
 def baseChangeAlgEquiv : S ⊗[R] SO2Ring R ≃ₐ[S] SO2Ring S :=
   (AdjoinRoot.tensorAlgEquiv _ _ rfl).trans <|
     AdjoinRoot.mapAlgEquiv (polyEquivTensor' _ _).symm _ _ (by simp)
 
+set_option backward.isDefEq.respectTransparency false in
 @[simp]
 lemma baseChangeAlgEquiv_X : (baseChangeAlgEquiv R S) (1 ⊗ₜ X) = X := by
   change (baseChangeAlgEquiv R S) (1 ⊗ₜ (AdjoinRoot.root _)) = AdjoinRoot.root _
   simp [baseChangeAlgEquiv]
 
+set_option backward.isDefEq.respectTransparency false in
 @[simp]
 lemma baseChangeAlgEquiv_Y : (baseChangeAlgEquiv R S) (1 ⊗ₜ «Y») = «Y» := by
   change (baseChangeAlgEquiv R S) (1 ⊗ₜ (AdjoinRoot.of _ _)) = AdjoinRoot.of _ _
   simp [baseChangeAlgEquiv]
 
+set_option backward.isDefEq.respectTransparency false in
 attribute [-ext] AdjoinRoot.algHom_ext' in
 variable (R S) in
 /-- `SO2Ring` is invariant under base change of bialgebras. -/
@@ -297,6 +302,7 @@ def so₂ComplexIso : SO₂(ℂ) ≅ Diag Spec(ℂ) ℤ :=
         ((bialgSpec <| .of ℂ).map <| .op <|
           CommBialgCat.ofHom complexEquiv.toBialgHom).hom.left := rfl
 
+set_option backward.isDefEq.respectTransparency false in
 instance : so₂ComplexIso.hom.IsOver Spec(ℂ) := by rw [so₂ComplexIso_hom]; infer_instance
 
 lemma so₂ComplexIso_hom_asOver :
@@ -304,9 +310,11 @@ lemma so₂ComplexIso_hom_asOver :
       ((bialgSpec <| .of ℂ).map <| .op <| CommBialgCat.ofHom complexEquiv.symm.toBialgHom).hom ≫
         (diagSpecIso (.of ℂ) ℤ).inv.asOver Spec(ℂ) := rfl
 
+set_option backward.isDefEq.respectTransparency false in
 instance : IsMonHom <| so₂ComplexIso.hom.asOver Spec(ℂ) := by
   rw [so₂ComplexIso_hom_asOver]; infer_instance
 
+set_option backward.isDefEq.respectTransparency false in
 instance : SO₂(ℂ).IsSplitTorusOver Spec(ℂ) := .of_iso so₂ComplexIso
 
 /-! #### `SO(2, ℝ)` is a torus -/
@@ -322,6 +330,7 @@ def pullbackSO₂RealComplex : pullback (SO₂(ℝ) ↘ Spec(ℝ)) (Spec(ℂ) �
       ((bialgSpec <| .of ℂ).map <| .op <|
         CommBialgCat.ofHom (baseChangeBialgEquiv ℝ ℂ).symm.toBialgHom).hom.left := rfl
 
+set_option backward.isDefEq.respectTransparency false in
 instance : pullbackSO₂RealComplex.hom.IsOver Spec(ℂ) := by
   rw [pullbackSO₂RealComplex_hom]; infer_instance
 
@@ -331,9 +340,11 @@ lemma pullbackSO₂RealComplex_hom_asOver :
         ((bialgSpec <| .of ℂ).map <| .op <|
           CommBialgCat.ofHom (baseChangeBialgEquiv ℝ ℂ).symm.toBialgHom).hom := rfl
 
+set_option backward.isDefEq.respectTransparency false in
 instance : IsMonHom <| pullbackSO₂RealComplex.hom.asOver Spec(ℂ) := by
   rw [pullbackSO₂RealComplex_hom_asOver]; infer_instance
 
+set_option backward.isDefEq.respectTransparency false in
 instance pullback_SO₂_real_isSplitTorusOver_complex :
     (pullback (SO₂(ℝ) ↘ Spec(ℝ)) (Spec(ℂ) ↘ Spec(ℝ))).IsSplitTorusOver Spec(ℂ) :=
   .of_iso pullbackSO₂RealComplex
@@ -381,6 +392,7 @@ private lemma aux3 (σ : Type*) : IsEmpty <| specialOrthogonalGroup (Fin 2) ℝ 
 
 open scoped AddMonoidAlgebra
 
+set_option backward.isDefEq.respectTransparency false in
 /-- `SO(2)` is not a split torus over the real numbers. -/
 theorem not_isSplitTorusOver_SO₂_real : ¬ SO₂(ℝ).IsSplitTorusOver Spec(ℝ) := by
   intro

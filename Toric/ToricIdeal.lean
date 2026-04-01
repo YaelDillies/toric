@@ -16,7 +16,7 @@ public import Mathlib.GroupTheory.MonoidLocalization.GrothendieckGroup
 This file defines toric ideals.
 -/
 
-@[expose] public section
+@[expose] public noncomputable section
 
 open AlgebraicGeometry CategoryTheory.Limits
 open scoped SpecOfNotation

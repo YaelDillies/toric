@@ -23,6 +23,7 @@ universe v u
 variable {R S : CommRingCat.{u}} (M : CommMonCat.{u}) (f : R ⟶ S) (Sf : Spec S ⟶ Spec R)
   (H : Sf = Spec.map f)
 
+set_option backward.isDefEq.respectTransparency false in
 abbrev specCommMonAlgPullbackObjXIso :
     (((commMonAlg R).op ⋙ bialgSpec R ⋙ (Over.pullback Sf).mapMon).obj (.op M)).X ≅
       (((commMonAlg S).op ⋙ bialgSpec S).obj (.op M)).X :=
@@ -33,12 +34,13 @@ abbrev specCommMonAlgPullbackObjXIso :
     Sf := H ▸ (CommRingCat.isPushout_of_isPushout R S R[M] S[M]).op.map Scheme.Spec
   Over.isoMk H.isoPullback.symm (by dsimp; simp)
 
+set_option backward.isDefEq.respectTransparency false in
 lemma specCommMonAlgPullbackObjXIso_one :
     η ≫ (specCommMonAlgPullbackObjXIso M f Sf H).hom = η := by
   subst H
   dsimp [AlgHom.toUnder]
   letI := f.hom.toAlgebra
-  have h₁ := counitAlgHom_comp_mapRangeRingHom f.hom (M := M)
+  have h₁ := counitAlgHom_comp_mapRingHom f.hom (M := M)
   have h₂ := (Bialgebra.counitAlgHom S S[M]).comp_algebraMap
   apply_fun (Spec.map <| CommRingCat.ofHom ·) at h₁ h₂
   simp only [CommRingCat.ofHom_comp, Spec.map_comp, AlgHom.toRingHom_eq_coe] at h₁ h₂
@@ -47,6 +49,7 @@ lemma specCommMonAlgPullbackObjXIso_one :
     simp [Functor.Monoidal.ε_of_cartesianMonoidalCategory, RingHom.algebraMap_toAlgebra, h₁, h₂,
       CommRingCat.mkUnder]
 
+set_option backward.isDefEq.respectTransparency false in
 @[reassoc]
 private
 lemma specCommMonAlgPullbackObjIso_mul_aux :
@@ -56,15 +59,15 @@ lemma specCommMonAlgPullbackObjIso_mul_aux :
       (specCommMonAlgPullbackObjXIso M f Sf H).hom).left ≫
       (pullbackSpecIso S _ _).hom ≫
         Spec.map (CommRingCat.ofHom (Algebra.TensorProduct.mapRingHom f.hom _ _
-          (mapRangeRingHom_comp_algebraMap f.hom (M := M))
-          (mapRangeRingHom_comp_algebraMap f.hom (M := M)))) := by
+          (mapRingHom_comp_algebraMap f.hom (M := M))
+          (mapRingHom_comp_algebraMap f.hom (M := M)))) := by
   subst H
   letI := f.hom.toAlgebra
   letI H := (CommRingCat.isPushout_of_isPushout R S R[M] S[M]).op.map Scheme.Spec
   letI e : (((commMonAlg R).op ⋙ bialgSpec R ⋙ (Over.pullback (Spec.map f)).mapMon).obj (.op M)).X ≅
     (((commMonAlg S).op ⋙ bialgSpec S).obj (.op M)).X :=
       Over.isoMk H.isoPullback.symm (by dsimp; simp; rfl)
-  letI hc := mapRangeRingHom_comp_algebraMap f.hom (M := M)
+  letI hc := mapRingHom_comp_algebraMap f.hom (M := M)
   have h₂ := Algebra.TensorProduct.mapRingHom_comp_includeLeftRingHom _ _ _ hc hc
   have h₃ := Algebra.TensorProduct.mapRingHom_comp_includeRight _ _ _ hc hc
   apply_fun (Spec.map <| CommRingCat.ofHom ·) at h₂ h₃
@@ -73,6 +76,7 @@ lemma specCommMonAlgPullbackObjIso_mul_aux :
   dsimp
   ext <;> simp [h₂, h₃, RingHom.algebraMap_toAlgebra]
 
+set_option backward.isDefEq.respectTransparency false in
 lemma specCommMonAlgPullbackObjXIso_mul :
     μ ≫ (specCommMonAlgPullbackObjXIso M f Sf H).hom =
     ((specCommMonAlgPullbackObjXIso M f Sf H).hom ⊗ₘ
@@ -82,7 +86,7 @@ lemma specCommMonAlgPullbackObjXIso_mul :
   erw [Functor.mapMon_obj_mon_mul, Functor.mapMon_obj_mon_mul]
   subst H
   letI := f.hom.toAlgebra
-  have h₃ := comulAlgHom_comp_mapRangeRingHom f.hom (M := M)
+  have h₃ := comulAlgHom_comp_mapRingHom f.hom (M := M)
   have h₄ := (Bialgebra.comulAlgHom S S[M]).comp_algebraMap
   apply_fun (Spec.map <| CommRingCat.ofHom ·) at h₃ h₄
   simp only [AlgHom.toRingHom_eq_coe, CommRingCat.ofHom_comp, Spec.map_comp] at h₃ h₄
@@ -95,6 +99,7 @@ lemma specCommMonAlgPullbackObjXIso_mul :
   · simp [Functor.Monoidal.μ_of_cartesianMonoidalCategory, RingHom.algebraMap_toAlgebra,
       AlgHom.toUnder, h₄, Algebra.TensorProduct.algebraMap_def, pullback.condition]
 
+set_option backward.isDefEq.respectTransparency false in
 -- should we make something like `BialgHom.toRingHom`?
 /-- The spectrum of a commutative algebra functor commutes with base change. -/
 def specCommMonAlgPullback :
@@ -107,9 +112,9 @@ def specCommMonAlgPullback :
     subst H
     letI := f.hom.toAlgebra
     letI H := (CommRingCat.isPushout_of_isPushout R S R[N.unop] S[N.unop]).op.map Scheme.Spec
-    have h₁ : (mapRangeRingHom M.unop f.hom).comp (mapDomainBialgHom R φ.unop.hom) =
+    have h₁ : (mapRingHom M.unop f.hom).comp (mapDomainBialgHom R φ.unop.hom) =
         (RingHomClass.toRingHom (mapDomainBialgHom S φ.unop.hom)).comp
-          (mapRangeRingHom N.unop f.hom) := mapRangeRingHom_comp_mapDomainRingHom _ _
+          (mapRingHom N.unop f.hom) := mapRingHom_comp_mapDomainRingHom _ _
     have h₂ := (AlgHomClass.toAlgHom (mapDomainBialgHom S φ.unop.hom)).comp_algebraMap
     apply_fun (Spec.map <| CommRingCat.ofHom ·) at h₁ h₂
     simp only [CommRingCat.ofHom_comp, Spec.map_comp] at h₁ h₂
@@ -123,7 +128,7 @@ def specCommMonAlgPullback :
 lemma specCommMonAlgPullback_inv_app_hom_left_fst (M) :
     ((specCommMonAlgPullback f Sf H).inv.app M).hom.left ≫
       pullback.fst (Spec.map (CommRingCat.ofHom (algebraMap R R[↥(unop M)]))) _ =
-        Spec.map (CommRingCat.ofHom (mapRangeRingHom M.unop f.hom)) :=
+        Spec.map (CommRingCat.ofHom (mapRingHom M.unop f.hom)) :=
   letI := f.hom.toAlgebra
   let H' := (CommRingCat.isPushout_of_isPushout R S R[M.unop] S[M.unop]).op.map Scheme.Spec
   H ▸ H'.isoPullback_hom_fst

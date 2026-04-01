@@ -36,10 +36,16 @@ def Diag : Scheme.{u} :=
 
 @[simps! -isSimp]
 instance Diag.canonicallyOver : (Diag S M).CanonicallyOver S := by unfold Diag; infer_instance
+
+set_option backward.isDefEq.respectTransparency false in
 @[simps! -isSimp one_left mul_left]
 instance Diag.monObjAsOver : MonObj (asOver (Diag S M) S) := by unfold Diag; infer_instance
+
+set_option backward.isDefEq.respectTransparency false in
 @[simps! -isSimp inv_left]
 instance Diag.grpObjAsOver : GrpObj (asOver (Diag S G) S) := by unfold Diag; infer_instance
+
+set_option backward.isDefEq.respectTransparency false in
 instance Diag.isCommMonObj_asOver : IsCommMonObj (asOver (Diag S M) S) := by
   unfold Diag; infer_instance
 
@@ -53,12 +59,14 @@ def Diag.map (f : M →+ N) : Diag S N ⟶ Diag S M :=
     (Spec.map <| CommRingCat.ofHom <| MonoidAlgebra.mapDomainRingHom _ f.toMultiplicative)
     (𝟙 S) (𝟙 _) (by simp [specOverSpec_over, ← Spec.map_comp, ← CommRingCat.ofHom_comp]) (by simp)
 
+set_option backward.isDefEq.respectTransparency false in
 attribute [local simp] Diag.map Diag.canonicallyOver_over in
 instance Diag.isOver_map {f : M →+ N} : (Diag.map S f).IsOver S where
 
 instance Diag.isMonHom_map {f : M →+ N} : IsMonHom <| (Diag.map S f).asOver S :=
   inferInstanceAs <| IsMonHom <| ((diagMonFunctor S).map <| .op <| AddCommMonCat.ofHom f).hom
 
+set_option backward.isDefEq.respectTransparency false in
 @[simp] lemma diagMonFunctor_map {M N : AddCommMonCatᵒᵖ} (f : M ⟶ N) :
     (diagMonFunctor S).map f = .mk ((Diag.map S f.unop.hom).asOver S) := rfl
 
@@ -114,11 +122,13 @@ def diagPullbackIso (f : T ⟶ S) : pullback f (Diag S M ↘ S) ≅ Diag T M :=
   pullbackSymmetry _ _ ≪≫ pullbackLeftPullbackSndIso _ _ _ ≪≫
     pullback.congrHom (by simp) (by simp)
 
+set_option backward.isDefEq.respectTransparency false in
 @[reassoc (attr := simp)]
 lemma diagPullbackIso_hom_over (f : T ⟶ S) :
     (diagPullbackIso f).hom ≫ Diag T M ↘ T = pullback.fst _ _ := by
   simp [diagPullbackIso, Diag.canonicallyOver_over]
 
+set_option backward.isDefEq.respectTransparency false in
 @[reassoc (attr := simp)]
 lemma diagPullbackIso_inv_fst (f : T ⟶ S) :
     (diagPullbackIso f).inv ≫ pullback.fst _ _ = Diag T M ↘ T := by
@@ -130,6 +140,7 @@ instance locallyOfFiniteType_diag [AddMonoid.FG M] : LocallyOfFiniteType (Diag S
     CommRingCat.hom_ofHom, RingHom.finiteType_algebraMap]
   infer_instance
 
+set_option backward.isDefEq.respectTransparency false in
 @[simp] lemma locallyOfFiniteType_diag_iff [hS : Nonempty S] :
     LocallyOfFiniteType (Diag S M ↘ S) ↔ AddMonoid.FG M where
   mpr _ := inferInstance
@@ -162,6 +173,7 @@ def diagFunctor : AddCommGrpCatᵒᵖ ⥤ Grp (Over S) :=
 @[simp] lemma diagFunctor_obj (M : AddCommGrpCatᵒᵖ) :
     (diagFunctor S).obj M = ⟨(Diag S M.unop).asOver S⟩ := rfl
 
+set_option backward.isDefEq.respectTransparency false in
 @[simp] lemma diagFunctor_map {M N : AddCommGrpCatᵒᵖ} (f : M ⟶ N) :
     (diagFunctor S).map f = Grp.homMk ((Diag.map S f.unop.hom).asOver S) := rfl
 
@@ -190,6 +202,7 @@ lemma commHopfAlgCatEquivCogrpCommAlgCat_functor_map_ofHom_mul
   congr 1
   ext <;> simp
 
+set_option backward.isDefEq.respectTransparency false in
 lemma diagFunctor_map_add {M N : Type u} [AddCommGroup M] [AddCommGroup N]
     (f g : M →+ N) :
     (diagFunctor S).map (AddCommGrpCat.ofHom (f + g)).op =
@@ -336,10 +349,12 @@ lemma diagHomGrp_comp {M N O : Type u} [AddCommGroup M] [AddCommGroup N] [AddCom
   simpa [HomGrp, diagHomGrp, HomGrp.comp]
     using (S.diagFunctor.map_comp (AddCommGrpCat.ofHom g).op (AddCommGrpCat.ofHom f).op).symm
 
+set_option backward.isDefEq.respectTransparency false in
 lemma diagHomGrp_add {M N : Type u} [AddCommGroup M] [AddCommGroup N] (f g : M →+ N) :
     diagHomGrp S (f + g) = diagHomGrp S f + diagHomGrp S g := by
   simpa [diagHomGrp] using congr(Additive.ofMul $(diagFunctor_map_add (S := S) f g))
 
+set_option backward.isDefEq.respectTransparency false in
 def diagHomEquiv {R M N : Type u} [CommRing R] [IsDomain R] [AddCommGroup M] [AddCommGroup N] :
     (N →+ M) ≃+ HomGrp (Diag Spec(R) M) (Diag Spec(R) N) Spec(R) :=
   letI e := Functor.FullyFaithful.homEquiv (.ofFullyFaithful (diagFunctor Spec(R)))
@@ -367,6 +382,7 @@ class IsDiagonalisable : Prop where
     ∃ (A : Type u) (_ : AddCommGroup A) (e : G ≅ Diag S A) (_ : e.hom.IsOver S),
       IsMonHom <| e.hom.asOver S
 
+set_option backward.isDefEq.respectTransparency false in
 instance {A : Type u} [AddCommGroup A] : IsDiagonalisable S (Diag S A) :=
   ⟨A, ‹_›, by exact .refl _, by dsimp; infer_instance, by dsimp; infer_instance⟩
 
@@ -386,10 +402,12 @@ section CommRing
 variable {R : CommRingCat.{u}} {G : Scheme.{u}} [G.Over (Spec R)] [GrpObj (asOver G (Spec R))]
   {A : Type u} [AddCommGroup A]
 
+set_option backward.isDefEq.respectTransparency false in
 instance : IsDiagonalisable (Spec R) Spec(R[A]) := .of_isIso (diagSpecIso R A).inv
 
 variable [IsDomain R]
 
+set_option backward.isDefEq.respectTransparency false in
 /-- An affine algebraic group `G` over a domain `R` is diagonalisable iff it is affine and `Γ(G)` is
 `R`-spanned by its group-like elements.
 

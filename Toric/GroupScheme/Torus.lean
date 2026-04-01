@@ -39,6 +39,7 @@ class IsSplitTorusOver : Prop where
     ∃ (A : Type u) (_ : AddCommGroup A) (_ : Module.Free ℤ A) (e : G ≅ Diag S A)
       (_ : e.hom.IsOver S), IsMonHom (e.hom.asOver S)
 
+set_option backward.isDefEq.respectTransparency false in
 instance diag_isSplitTorusOver {A : Type u} [AddCommGroup A] [Module.Free ℤ A] :
     (Diag S A).IsSplitTorusOver S :=
   ⟨A, ‹_›, ‹_›, by exact .refl (S.Diag A), by dsimp; infer_instance, by dsimp; infer_instance⟩
@@ -88,6 +89,7 @@ class IsTorusOver : Prop where
       (pullback (G ↘ Spec(k)) <| Spec.map <| CommRingCat.ofHom <|
         algebraMap k L).IsSplitTorusOver Spec(L)
 
+set_option backward.isDefEq.respectTransparency false in
 instance [G.IsSplitTorusOver Spec(k)] : G.IsTorusOver k := by
   refine ⟨k, ‹_›, inferInstance, inferInstance, ?_⟩
   simp only [Algebra.algebraMap_self, CommRingCat.ofHom_id]
@@ -95,6 +97,7 @@ instance [G.IsSplitTorusOver Spec(k)] : G.IsTorusOver k := by
     convert this <;> simp
   exact .of_isIso (pullback.fst (G ↘ Spec(k)) (𝟙 _))
 
+set_option backward.isDefEq.respectTransparency false in
 lemma IsTorusOver.of_iso (e : G ≅ H) [e.hom.IsOver Spec(k)] [IsMonHom (e.hom.asOver Spec(k))]
     [H.IsTorusOver k] : G.IsTorusOver k := by
   obtain ⟨L, _, _, _, hH⟩ := ‹H.IsTorusOver k›

@@ -76,10 +76,10 @@ lemma isGroupLikeElem_single_one (g : G) : IsGroupLikeElem R (single g 1 : Monoi
 lemma span_isGroupLikeElem : Submodule.span A {a : MonoidAlgebra A G | IsGroupLikeElem R a} = ⊤ :=
   eq_top_mono (Submodule.span_mono <| Set.range_subset_iff.2 isGroupLikeElem_of) <| by
     rw [← Finsupp.range_linearCombination]
-    -- TODO: Mathlib doesn't have the identity map `R[M] ≃ (M →₀ R)`. Defeq abuse ensues.
     convert LinearMap.range_id
     ext
     simp
+    rfl
 
 end Group
 end Semiring
@@ -121,14 +121,14 @@ lemma mapDomainBialgHom_mul (f g : M →* N) :
     mapDomainBialgHom R (f * g) = mapDomainBialgHom R f * mapDomainBialgHom R g := by
   ext x : 2; simp
 
-lemma comulAlgHom_comp_mapRangeRingHom :
-    (comulAlgHom S (MonoidAlgebra S M)).toRingHom.comp (mapRangeRingHom M f) =
-      .comp (Algebra.TensorProduct.mapRingHom f (mapRangeRingHom M f) (mapRangeRingHom M f)
+lemma comulAlgHom_comp_mapRingHom :
+    (comulAlgHom S (MonoidAlgebra S M)).toRingHom.comp (mapRingHom M f) =
+      .comp (Algebra.TensorProduct.mapRingHom f (mapRingHom M f) (mapRingHom M f)
         (by ext; simp) (by ext; simp))
         (comulAlgHom R (R[M])).toRingHom := by ext <;> simp
 
-lemma counitAlgHom_comp_mapRangeRingHom :
-    (counitAlgHom S (MonoidAlgebra S M)).toRingHom.comp (mapRangeRingHom M f) =
+lemma counitAlgHom_comp_mapRingHom :
+    (counitAlgHom S (MonoidAlgebra S M)).toRingHom.comp (mapRingHom M f) =
       f.comp (counitAlgHom R (R[M])).toRingHom := by ext <;> simp
 
 end CommMonoid
@@ -243,6 +243,7 @@ lemma bialgHom_ext' ⦃φ₁ φ₂ : R[M] →ₐc[R] A⦄
     (h : (φ₁ : R[M] →* A).comp (of R M) = .comp φ₂ (of R M)) : φ₁ = φ₂ :=
   bialgHom_ext fun x ↦ congr($h x)
 
+set_option backward.isDefEq.respectTransparency false in
 @[simp] lemma counit_domCongr (e : M ≃+ N) (x : A[M]) :
     counit (R := R) (domCongr R A e x) = counit x := by
   induction x using MonoidAlgebra.induction_linear <;> simp [*]
@@ -318,14 +319,14 @@ lemma mapDomainBialgHom_add (f g : M →+ N) :
     mapDomainBialgHom R (f + g) = mapDomainBialgHom R f * mapDomainBialgHom R g :=
   MonoidAlgebra.mapDomainBialgHom_mul f.toMultiplicative g.toMultiplicative
 
-lemma comulAlgHom_comp_mapRangeRingHom :
-    (comulAlgHom S S[M]).toRingHom.comp (mapRangeRingHom M f) =
-      .comp (Algebra.TensorProduct.mapRingHom f (mapRangeRingHom M f) (mapRangeRingHom M f)
+lemma comulAlgHom_comp_mapRingHom :
+    (comulAlgHom S S[M]).toRingHom.comp (mapRingHom M f) =
+      .comp (Algebra.TensorProduct.mapRingHom f (mapRingHom M f) (mapRingHom M f)
         (by ext; simp) (by ext; simp))
         (comulAlgHom R R[M]).toRingHom := by ext <;> simp
 
-lemma counitAlgHom_comp_mapRangeRingHom :
-    (counitAlgHom S S[M]).toRingHom.comp (mapRangeRingHom M f) =
+lemma counitAlgHom_comp_mapRingHom :
+    (counitAlgHom S S[M]).toRingHom.comp (mapRingHom M f) =
       f.comp (counitAlgHom R R[M]).toRingHom := by ext <;> simp
 
 end AddCommMonoid
