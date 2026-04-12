@@ -2,7 +2,7 @@ module
 
 public import Mathlib.RingTheory.Bialgebra.TensorProduct
 public import Mathlib.Tactic.SuppressCompilation
-public import Toric.Mathlib.RingTheory.Coalgebra.Hom
+public import Toric.Mathlib.RingTheory.Coalgebra.TensorProduct
 public import Toric.Mathlib.RingTheory.TensorProduct.Maps
 
 @[expose] public section
