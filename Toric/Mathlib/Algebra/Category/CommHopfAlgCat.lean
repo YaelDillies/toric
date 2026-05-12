@@ -6,7 +6,7 @@ Authors: Yaël Dillies, Michał Mrugała
 module
 
 public import Mathlib.Algebra.Category.CommBialgCat
-public import Mathlib.CategoryTheory.Monoidal.Grp_
+public import Mathlib.CategoryTheory.Monoidal.Grp
 public import Mathlib.RingTheory.HopfAlgebra.TensorProduct
 public import Toric.Mathlib.RingTheory.HopfAlgebra.Convolution
 

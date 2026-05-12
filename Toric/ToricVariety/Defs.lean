@@ -7,7 +7,7 @@ Authors: Yaël Dillies, Paul Lezeau, Patrick Luo, Michał Mrugała, Andrew Yang
 module
 
 public import Mathlib.AlgebraicGeometry.Morphisms.UnderlyingMap
-public import Mathlib.CategoryTheory.Monoidal.Mod_
+public import Mathlib.CategoryTheory.Monoidal.Mod
 public import Toric.GroupScheme.Torus
 
 /-!

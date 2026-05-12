@@ -75,7 +75,7 @@ lemma liftₐ_Y (x y : S) (H : x ^ 2 + y ^ 2 = 1) : liftₐ (R := R) x y H .Y = 
 @[simp]
 lemma relation : SO2Ring.X (R := R) ^ 2 + .Y ^ 2 = 1 := by
   simp_rw [SO2Ring.X, SO2Ring.Y, ← map_pow, ← map_add, ← map_one SO2Ring.mk]
-  exact Ideal.Quotient.eq.mpr <| by simp [Ideal.mem_span_singleton]
+  exact Ideal.Quotient.eq.mpr <| by simp
 
 lemma relation' : SO2Ring.X (R := R) ^ 2 = 1 - .Y ^ 2 := by simp [← relation]
 

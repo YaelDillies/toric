@@ -48,12 +48,10 @@ lemma antipode_mul_antidistrib (a b : A) : antipode R (a * b) = antipode R b * a
 lemma antipode_mul_distrib (a b : A) : antipode R (a * b) = antipode R a * antipode R b := by
   rw [antipode_mul_antidistrib, mul_comm]
 
-alias antipode_mul := antipode_mul_distrib
-
 variable (R A) in
 /-- The antipode of a commutative Hopf algebra as an algebra hom. -/
 @[simps!]
-def antipodeAlgHom : A →ₐ[R] A := .ofLinearMap (antipode R) antipode_one antipode_mul
+def antipodeAlgHom : A →ₐ[R] A := .ofLinearMap (antipode R) antipode_one antipode_mul_distrib
 
 @[simp] lemma toLinearMap_antipodeAlgHom : (antipodeAlgHom R A).toLinearMap = antipode R := rfl
 
@@ -135,7 +133,7 @@ private lemma inv_convMul_cancel (f : C →ₐc[R] A) :
     rw [convMul_def, Algebra.TensorProduct.map_comp]
     simp only [comp_assoc]
   _ = (HopfAlgebra.antipodeAlgHom R A * AlgHom.id R A).comp f := by
-    simp only [convMul_def, BialgHomClass.map_comp_comulAlgHom]
+    simp only [convMul_def, BialgHom.map_comp_comulAlgHom]
     simp only [comp_assoc]
   _ = _ := by simp [antipode_id_cancel, convOne_def, comp_assoc]
 

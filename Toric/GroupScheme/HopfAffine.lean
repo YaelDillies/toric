@@ -93,8 +93,7 @@ set_option backward.isDefEq.respectTransparency false in
 
 set_option backward.isDefEq.respectTransparency false in
 @[simp] lemma algSpec_η_left : (OplaxMonoidal.η (algSpec R)).left = 𝟙 (Spec R) := by
-  convert (OplaxMonoidal.η (algSpec R)).w
-  simpa [-Category.comp_id] using (Category.comp_id _).symm
+  simpa using (OplaxMonoidal.η (algSpec R)).w
 
 @[simp] lemma algSpec_δ_left (X Y : (CommAlgCat R)ᵒᵖ) :
     (OplaxMonoidal.δ (algSpec R) X Y).left = (pullbackSpecIso R X.unop Y.unop).inv :=

@@ -6,7 +6,7 @@ Authors: Yaël Dillies, Patrick Luo
 module
 
 public import Mathlib.AlgebraicGeometry.Pullbacks
-public import Mathlib.CategoryTheory.Monoidal.Mod_
+public import Mathlib.CategoryTheory.Monoidal.Mod
 
 /-!
 # Spherical varieties

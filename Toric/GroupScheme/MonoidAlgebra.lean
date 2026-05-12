@@ -47,7 +47,7 @@ lemma specCommMonAlgPullbackObjXIso_one :
   ext
   apply ((CommRingCat.isPushout_of_isPushout R S R[M] S[M]).op.map Scheme.Spec).hom_ext <;>
     simp [Functor.Monoidal.ε_of_cartesianMonoidalCategory, RingHom.algebraMap_toAlgebra, h₁, h₂,
-      CommRingCat.mkUnder]
+      CommRingCat.mkUnder, CommRingCat.of_carrier]
 
 set_option backward.isDefEq.respectTransparency false in
 @[reassoc]
@@ -112,15 +112,15 @@ def specCommMonAlgPullback :
     subst H
     letI := f.hom.toAlgebra
     letI H := (CommRingCat.isPushout_of_isPushout R S R[N.unop] S[N.unop]).op.map Scheme.Spec
-    have h₁ : (mapRingHom M.unop f.hom).comp (mapDomainBialgHom R φ.unop.hom) =
-        (RingHomClass.toRingHom (mapDomainBialgHom S φ.unop.hom)).comp
+    have h₁ : (mapRingHom M.unop f.hom).comp (mapDomainBialgHom R φ.unop.hom).toAlgHom =
+        (mapDomainBialgHom S φ.unop.hom).toAlgHom.toRingHom.comp
           (mapRingHom N.unop f.hom) := mapRingHom_comp_mapDomainRingHom _ _
-    have h₂ := (AlgHomClass.toAlgHom (mapDomainBialgHom S φ.unop.hom)).comp_algebraMap
+    have h₂ := (mapDomainBialgHom S φ.unop.hom).toAlgHom.comp_algebraMap
     apply_fun (Spec.map <| CommRingCat.ofHom ·) at h₁ h₂
     simp only [CommRingCat.ofHom_comp, Spec.map_comp] at h₁ h₂
     ext
     apply ((CommRingCat.isPushout_of_isPushout R S R[N.unop] S[N.unop]).op.map Scheme.Spec).hom_ext
-    · simp [RingHom.algebraMap_toAlgebra,AlgHom.toUnder, Iso.eq_inv_comp, h₁]
+    · simp [RingHom.algebraMap_toAlgebra, AlgHom.toUnder, Iso.eq_inv_comp, h₁]
     · simp [RingHom.algebraMap_toAlgebra, AlgHom.toUnder, ← h₂]
 
 -- TODO: Make `CommRingCat.mkUnder` abbrev or add dsimp lemmas etc.
