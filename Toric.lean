@@ -1,4 +1,4 @@
-module
+module  -- shake: keep-all
 
 public import Toric.Examples.CharCocharPairing
 public import Toric.Examples.SO2
@@ -10,6 +10,7 @@ public import Toric.GroupScheme.Torus
 public import Toric.Hopf.Diagonalisable
 public import Toric.Hopf.GrpAlg
 public import Toric.Imports
+public import Toric.Mathlib.Algebra.Algebra.Equiv
 public import Toric.Mathlib.Algebra.Category.CommHopfAlgCat
 public import Toric.Mathlib.Algebra.Polynomial.Bivariate
 public import Toric.Mathlib.RingTheory.AdjoinRoot
