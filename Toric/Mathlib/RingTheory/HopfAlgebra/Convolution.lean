@@ -137,7 +137,28 @@ lemma comul_right_inv : toConv δ₁ * toConv 𝑭 = 1 := by
 end LinearMap
 
 namespace AlgHom
-variable [CommSemiring A] [Semiring C] [Bialgebra R C] [HopfAlgebra R A]
+variable [CommSemiring A] [CommSemiring C] [Bialgebra R C] [HopfAlgebra R A]
+
+instance convInv : Inv (WithConv <| A →ₐ[R] C) where
+  inv f := toConv <| f.ofConv.comp (HopfAlgebra.antipodeAlgHom R A)
+
+instance convGroup : Group (WithConv <| A →ₐ[R] C) where
+  inv_mul_cancel f := by
+    have H : (lmul' R).comp (Algebra.TensorProduct.map f.ofConv f.ofConv) =
+      f.ofConv.comp (lmul' R) := by ext <;> simp
+    trans toConv <| ((lmul' R).comp (Algebra.TensorProduct.map f.ofConv f.ofConv)).comp
+      ((Algebra.TensorProduct.map
+      (HopfAlgebra.antipodeAlgHom R A) (.id _ _)).comp (comulAlgHom R A))
+    · rw [AlgHom.comp_assoc, ← AlgHom.comp_assoc (Algebra.TensorProduct.map f.ofConv f.ofConv),
+        ← Algebra.TensorProduct.map_comp]; rfl
+    rw [H, AlgHom.comp_assoc, WithConv.ext_iff, ← AlgHom.toLinearMap_injective.eq_iff]
+    change f.ofConv.toLinearMap.comp (toConv (antipode R (A := A)) * toConv LinearMap.id).ofConv =
+      ofConv (1 : WithConv <| A →ₗ[R] C)
+    rw [LinearMap.antipode_mul_id]
+    ext
+    simp
+
+instance [IsCocomm R A] : CommGroup (WithConv <| A →ₐ[R] C) where
 
 lemma antipode_id_cancel :
     toConv (HopfAlgebra.antipodeAlgHom R A) * toConv (AlgHom.id R A) = 1 := by
