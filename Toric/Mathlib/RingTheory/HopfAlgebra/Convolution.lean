@@ -5,8 +5,9 @@ Authors: Yaël Dillies, Michał Mrugała, Yunzhou Xie
 -/
 module
 
+public import Mathlib.RingTheory.Bialgebra.Convolution
 public import Mathlib.RingTheory.HopfAlgebra.Basic
-public import Toric.Mathlib.RingTheory.Bialgebra.Convolution
+public import Toric.Mathlib.RingTheory.Bialgebra.TensorProduct
 
 /-!
 # Convolution product on Hopf algebra maps
@@ -14,12 +15,15 @@ public import Toric.Mathlib.RingTheory.Bialgebra.Convolution
 This file constructs the ring structure on bialgebra homs `C → A` where `C` and `A` are Hopf
 algebras and multiplication is given by
 ```
-         .
-        / \
+         |
+         μ
+|   |   / \
 f * g = f g
-        \ /
-         .
+|   |   \ /
+         δ
+         |
 ```
+diagrammatically, where `μ` stands for multiplication and `δ` for comultiplication.
 -/
 
 @[expose] public section
@@ -115,7 +119,9 @@ end LinearMap
 namespace AlgHom
 variable [CommSemiring A] [Semiring C] [Bialgebra R C] [HopfAlgebra R A]
 
-lemma antipode_id_cancel : HopfAlgebra.antipodeAlgHom R A * AlgHom.id R A = 1 := by
+lemma antipode_id_cancel :
+    toConv (HopfAlgebra.antipodeAlgHom R A) * toConv (AlgHom.id R A) = 1 := by
+  apply WithConv.ofConv_injective
   apply AlgHom.toLinearMap_injective
   apply WithConv.toConv_injective
   rw [AlgHom.toLinearMap_convMul, AlgHom.toLinearMap_convOne]
@@ -125,14 +131,15 @@ lemma counitAlgHom_comp_antipodeAlgHom :
     (counitAlgHom R A).comp (HopfAlgebra.antipodeAlgHom R A) = counitAlgHom R A :=
   AlgHom.toLinearMap_injective <| by simp
 
-private lemma inv_convMul_cancel (f : C →ₐc[R] A) :
-    (.comp (HopfAlgebra.antipodeAlgHom R A) f : C →ₐ[R] A) * f = 1 := calc
-  _ = (.comp (HopfAlgebra.antipodeAlgHom R A) f : C →ₐ[R] A) * (.comp (.id R A) f) := by simp
-  _ = .comp (lmul' R) (.comp (Algebra.TensorProduct.map (HopfAlgebra.antipodeAlgHom R A)
-       (.id R A)) <| .comp (Algebra.TensorProduct.map f f) (comulAlgHom R C)) := by
+private lemma inv_convMul_cancel (f : WithConv <| C →ₐc[R] A) :
+    (toConv (.comp (antipodeAlgHom R A) f.ofConv) * toConv f.ofConv.toAlgHom) = 1 := calc
+  _ = toConv (.comp (HopfAlgebra.antipodeAlgHom R A) f.ofConv : C →ₐ[R] A) *
+        toConv (.comp (.id R A) f.ofConv) := by simp
+  _ = toConv (.comp (lmul' R) (.comp (Algebra.TensorProduct.map (HopfAlgebra.antipodeAlgHom R A)
+       (.id R A)) <| .comp (Algebra.TensorProduct.map f.ofConv f.ofConv) (comulAlgHom R C))) := by
     rw [convMul_def, Algebra.TensorProduct.map_comp]
     simp only [comp_assoc]
-  _ = (HopfAlgebra.antipodeAlgHom R A * AlgHom.id R A).comp f := by
+  _ = toConv ((toConv (antipodeAlgHom R A) * toConv (AlgHom.id R A)).ofConv.comp f.ofConv) := by
     simp only [convMul_def, BialgHom.map_comp_comulAlgHom]
     simp only [comp_assoc]
   _ = _ := by simp [antipode_id_cancel, convOne_def, comp_assoc]
@@ -147,22 +154,24 @@ variable [HopfAlgebra R A] [HopfAlgebra R C] [IsCocomm R C]
 
 /-- The antipode of a commutative cocommutative Hopf algebra as a coalgebra hom. -/
 def antipodeBialgHom : C →ₐc[R] C where
-  __ := antipodeAlgHom R (A := C)
+  __ := antipodeAlgHom R C
   map_smul' := _
   counit_comp := counit_comp_antipode
-  map_comp_comul := by sorry
+  map_comp_comul := by
+    have : IsCocomm R C := inferInstance
+    sorry
 
-instance : Inv (C →ₐc[R] A) where inv := antipodeBialgHom.comp
+instance : Inv (WithConv <| C →ₐc[R] A) where inv f := toConv <| f.ofConv.comp antipodeBialgHom
 
 set_option linter.unusedSectionVars false in
-lemma inv_def (f : C →ₐc[R] A) : f⁻¹ = antipodeBialgHom.comp f := rfl
+lemma inv_def (f : WithConv <| C →ₐc[R] A) : f⁻¹ = toConv (f.ofConv.comp antipodeBialgHom) := rfl
 
 set_option linter.unusedSectionVars false in
-@[simp] lemma inv_apply (f : C →ₐc[R] A) (c : C) : f⁻¹ c = antipode R (f c) := rfl
+@[simp] lemma inv_apply (f : WithConv <| C →ₐc[R] A) (c : C) : f⁻¹ c = f (antipode R c) := rfl
 
-lemma inv_convMul_cancel (f : C →ₐc[R] A) : f⁻¹ * f = 1 := sorry
+lemma inv_convMul_cancel (f : WithConv <| C →ₐc[R] A) : f⁻¹ * f = 1 := sorry
 
-instance : CommGroup (C →ₐc[R] A) where inv_mul_cancel := inv_convMul_cancel
+instance : CommGroup (WithConv <| C →ₐc[R] A) where inv_mul_cancel := inv_convMul_cancel
 
 end HopfAlgebra
 end BialgHom

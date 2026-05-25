@@ -14,7 +14,6 @@ public import Toric.Mathlib.Algebra.Algebra.Equiv
 public import Toric.Mathlib.Algebra.Category.CommHopfAlgCat
 public import Toric.Mathlib.Algebra.Polynomial.Bivariate
 public import Toric.Mathlib.RingTheory.AdjoinRoot
-public import Toric.Mathlib.RingTheory.Bialgebra.Convolution
 public import Toric.Mathlib.RingTheory.Bialgebra.MonoidAlgebra
 public import Toric.Mathlib.RingTheory.Bialgebra.TensorProduct
 public import Toric.Mathlib.RingTheory.HopfAlgebra.Convolution
