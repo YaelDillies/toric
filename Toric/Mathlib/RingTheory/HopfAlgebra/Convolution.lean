@@ -36,18 +36,38 @@ open scoped RingTheory.LinearMap
 variable {R A C : Type*} [CommSemiring R]
 
 namespace HopfAlgebra
-variable [CommSemiring A] [HopfAlgebra R A]
+section Semiring
+variable [Semiring A] [HopfAlgebra R A]
+
+lemma antipode_comp_mul_comp_comm :
+    antipode R ∘ₗ .mul' R A ∘ₗ (TensorProduct.comm R A A).toLinearMap =
+      .mul' R A ∘ₗ map (antipode R) (antipode R) := by
+  apply WithConv.toConv_injective
+  apply left_inv_eq_right_inv (a := toConv <| LinearMap.mul' R A ∘ₗ TensorProduct.comm R A A) <;>
+    ext a b
+  · simp [((ℛ R a).tmul (ℛ R b)).convMul_apply, ← Bialgebra.counit_mul,
+      ← sum_antipode_mul_eq_algebraMap_counit ((ℛ R b).mul (ℛ R a)),
+      ← Finset.map_swap_product (ℛ R b).index (ℛ R a).index]
+  · simp [((ℛ R a).tmul (ℛ R b)).convMul_apply,
+      ← Finset.map_swap_product (ℛ R a).index (ℛ R b).index,
+      Finset.sum_product (ℛ R b).index, ← Finset.mul_sum, mul_assoc ((ℛ R b).left _),
+      ← mul_assoc ((ℛ R a).left _), ← Finset.sum_mul, sum_mul_antipode_eq_algebraMap_counit,
+      ← (Algebra.commute_algebraMap_left (ε a) (_ : A)).left_comm,
+      ← (Algebra.commute_algebraMap_left (ε a) (_ : A)).eq]
 
 lemma antipode_mul_antidistrib (a b : A) : antipode R (a * b) = antipode R b * antipode R a := by
-  let α := antipode R ∘ₗ .mul' R A
-  let β : A ⊗[R] A →ₗ[R] A := .mul' R A ∘ₗ map (antipode R) (antipode R) ∘ₗ TensorProduct.comm R A A
-  suffices h : toConv α = toConv β from congr($h (a ⊗ₜ b))
-  apply left_inv_eq_right_inv (a := toConv (LinearMap.mul' R A : A ⊗[R] A →ₗ[R] A)) <;> ext a b
-  · simp [α, ((ℛ R a).tmul (ℛ R b)).convMul_apply, ← Bialgebra.counit_mul, mul_comm b a,
-      ← sum_antipode_mul_eq_algebraMap_counit ((ℛ R a).mul (ℛ R b))]
-  · simp [((ℛ R a).tmul (ℛ R b)).convMul_apply, mul_comm, mul_mul_mul_comm, Finset.sum_mul_sum,
-      ← Finset.sum_product', β, ← sum_mul_antipode_eq_algebraMap_counit (ℛ R a),
-      ← sum_mul_antipode_eq_algebraMap_counit (ℛ R b)]
+  exact congr($antipode_comp_mul_comp_comm (b ⊗ₜ a))
+
+variable (R A) in
+@[simps!]
+def antipodeAlgHomOp : A →ₐ[R] Aᵐᵒᵖ := .ofLinearMap
+    ((MulOpposite.opLinearEquiv R).toLinearMap ∘ₗ antipode R)
+    (MulOpposite.op_injective (by simp))
+    (fun x y ↦ MulOpposite.op_injective (by simp [antipode_mul_antidistrib]))
+
+end Semiring
+
+variable [CommSemiring A] [HopfAlgebra R A]
 
 lemma antipode_mul_distrib (a b : A) : antipode R (a * b) = antipode R a * antipode R b := by
   rw [antipode_mul_antidistrib, mul_comm]
