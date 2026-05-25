@@ -31,7 +31,7 @@ lemma comul_includeRight [CommSemiring A] [CommSemiring B] [Bialgebra R B] [Alge
   ext x; simp [← (ℛ R x).eq, tmul_sum]
 
 section CommSemiring
-variable [CommSemiring A] [CommSemiring B] [Bialgebra R A] [Bialgebra R B] {a b : A}
+variable [Semiring A] [Semiring B] [Bialgebra R A] [Bialgebra R B] {a b : A}
 
 /-- Representations of `a` and `b` yield a representation of `a ⊗ b`. -/
 @[expose, simps]
@@ -48,13 +48,10 @@ protected def _root_.Coalgebra.Repr.tmul (ℛa : Coalgebra.Repr R a) (ℛb : Coa
     simp_rw [sum_tmul, tmul_sum, ← Finset.sum_product', map_sum]
     simp
 
-variable {R A B : Type*} [CommSemiring R] [CommSemiring A] [CommSemiring B] [Bialgebra R A]
-  [Bialgebra R B] {a a₁ a₂ : A} {b : B}
-
-/-- Representations of `a₁` and `a₂` yield a representation of `a₁ * a₂`. -/
+/-- Representations of `a` and `b` yield a representation of `a * b`. -/
 @[expose, simps!, simps! index] protected noncomputable
-def _root_.Coalgebra.Repr.mul (ℛ₁ : Coalgebra.Repr R a₁) (ℛ₂ : Coalgebra.Repr R a₂) :
-    Coalgebra.Repr R (a₁ * a₂) := (ℛ₁.tmul ℛ₂).induced (R := R) (mulCoalgHom R A)
+def _root_.Coalgebra.Repr.mul (ℛ₁ : Coalgebra.Repr R a) (ℛ₂ : Coalgebra.Repr R b) :
+    Coalgebra.Repr R (a * b) := (ℛ₁.tmul ℛ₂).induced (R := R) (mulCoalgHom R A)
 
 end CommSemiring
 end Bialgebra
