@@ -214,10 +214,10 @@ open Matrix
 attribute [-ext] AdjoinRoot.algHom_ext' in
 /-- The isomorphism between the `R-algebra` homomorphisms from `SO2Ring(R)` to `S` and the group
   `SO(2,S)`. -/
-def algHomMulEquiv : (SO2Ring R →ₐ[R] S) ≃* specialOrthogonalGroup (Fin 2) S where
+def algHomMulEquiv : WithConv (SO2Ring R →ₐ[R] S) ≃* specialOrthogonalGroup (Fin 2) S where
   toFun f := ⟨!![f .X, f .Y; - f .Y, f .X], by
     simp [← map_mul, ← map_add, mem_specialOrthogonalGroup_fin_two_iff, pow_two]⟩
-  invFun M := SO2Ring.liftₐ (M.1 0 0) (M.1 0 1)
+  invFun M := .toConv <| SO2Ring.liftₐ (M.1 0 0) (M.1 0 1)
     (mem_specialOrthogonalGroup_fin_two_iff.mp M.2).2.2
   left_inv f := by ext <;> simp
   right_inv M := by ext i j; fin_cases i, j <;>
@@ -405,7 +405,7 @@ theorem not_isSplitTorusOver_SO₂_real : ¬ SO₂(ℝ).IsSplitTorusOver Spec(�
   have e₂ : (ℤ[σ] →+ Additive ℝˣ) ≃+ (σ → Additive ℝˣ) := Finsupp.liftAddHom.symm.trans <|
     .piCongrRight («η» := σ) fun _ ↦ (zmultiplesAddHom <| Additive ℝˣ).symm
   exact (aux3 σ).1 <| (pointsMulEquiv ℝ).symm.trans <| e₁.trans <| Spec.mapMulEquiv.symm.trans <|
-    (MonoidAlgebra.liftMulEquiv ..).symm.trans <| MonoidHom.toHomUnitsMulEquiv.trans <|
+    (MonoidAlgebra.liftMulEquiv ℝ ..).symm.trans <| MonoidHom.toHomUnitsMulEquiv.trans <|
       MonoidHom.toAdditiveRightMulEquiv.trans <| e₂.toMultiplicative.trans <| .refl _
 
 end AlgebraicGeometry.SO₂

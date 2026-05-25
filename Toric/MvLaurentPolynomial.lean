@@ -25,7 +25,7 @@ abbrev MvLaurentPolynomial [Semiring R] := AddMonoidAlgebra R <| FreeAbelianGrou
 
 noncomputable
 def MvLaurentPolynomial.liftEquiv [CommRing R] [CommRing S] [Algebra R S] :
-    (σ → Sˣ) ≃* (MvLaurentPolynomial σ R →ₐ[R] S) := by
+    (σ → Sˣ) ≃* (WithConv <| MvLaurentPolynomial σ R →ₐ[R] S) := by
   refine .trans ?_ <| MonoidAlgebra.liftMulEquiv _ _ <| Abelianization <| FreeGroup σ
   exact
   { toFun f := (Units.coeHom S).comp (Abelianization.lift (FreeGroup.lift f))

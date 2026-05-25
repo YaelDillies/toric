@@ -2,7 +2,7 @@ module
 
 public import Mathlib.RingTheory.TensorProduct.Maps
 
-@[expose] public section
+public section
 
 open TensorProduct
 
@@ -29,8 +29,8 @@ variable {R S T R' S' T' : Type*}
   (HT : fT.comp (algebraMap _ _) = (algebraMap _ _).comp fR)
 
 /-- Heterobasic version of `Algebra.TensorProduct.map` as a ring homomorphism. -/
-noncomputable
-def Algebra.TensorProduct.mapRingHom : S ⊗[R] T →+* S' ⊗[R'] T' :=
+@[expose]
+noncomputable def Algebra.TensorProduct.mapRingHom : S ⊗[R] T →+* S' ⊗[R'] T' :=
   letI := fR.toAlgebra
   letI := ((algebraMap R' S').comp fR).toAlgebra
   letI := ((algebraMap R' T').comp fR).toAlgebra

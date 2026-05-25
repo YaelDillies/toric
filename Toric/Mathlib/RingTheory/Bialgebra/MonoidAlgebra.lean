@@ -1,12 +1,13 @@
 module
 
+public import Mathlib.RingTheory.Bialgebra.Convolution
 public import Mathlib.RingTheory.Bialgebra.GroupLike
 public import Mathlib.RingTheory.Bialgebra.MonoidAlgebra
-public import Toric.Mathlib.RingTheory.Bialgebra.Convolution
+public import Toric.Mathlib.RingTheory.TensorProduct.Maps
 
 public noncomputable section
 
-open TensorProduct Bialgebra Coalgebra Function
+open TensorProduct Bialgebra Coalgebra Function WithConv
 
 variable {R S A G H I M N : Type*}
 
@@ -22,6 +23,9 @@ variable [Monoid M] [Monoid N]
 
 /-- A `R`-algebra homomorphism from `R[M]` is uniquely defined by its
 values on the functions `single a 1`. -/
+@[to_additive (dont_translate := R)
+/-- A `R`-algebra homomorphism from `R[M]` is uniquely defined by its
+values on the functions `single a 0`. -/]
 lemma bialgHom_ext ⦃φ₁ φ₂ : R[M] →ₐc[R] A⦄ (h : ∀ x, φ₁ (single x 1) = φ₂ (single x 1)) : φ₁ = φ₂ :=
   BialgHom.coe_algHom_injective <| algHom_ext h
 
@@ -32,13 +36,14 @@ lemma bialgHom_ext' ⦃φ₁ φ₂ : R[M] →ₐc[R] A⦄
     (h : (φ₁ : R[M] →* A).comp (of R M) = .comp φ₂ (of R M)) : φ₁ = φ₂ :=
   bialgHom_ext fun x ↦ congr($h x)
 
-@[simp] lemma counit_domCongr (e : M ≃* N) (x : MonoidAlgebra A M) :
+@[to_additive (attr := simp)]
+lemma counit_domCongr (e : M ≃* N) (x : MonoidAlgebra A M) :
     counit (R := R) (domCongr R A e x) = counit x := by
   induction x using MonoidAlgebra.induction_linear <;> simp [*]
 
 variable (R A) in
 /-- Isomorphic monoids have isomorphic monoid algebras. -/
-@[expose, simps!]
+@[expose, to_additive (attr := simps!) (dont_translate := R)]
 def domCongrBialgHom (e : M ≃* N) : MonoidAlgebra A M ≃ₐc[R] MonoidAlgebra A N :=
   .ofAlgEquiv (domCongr R A e) (by ext; simp) <| by
     apply AlgHom.toLinearMap_injective
@@ -92,12 +97,12 @@ variable [Algebra R A] [Monoid M]
 
 variable (R M A) in
 /-- `MonoidAlgebra.lift` as a `MulEquiv`. -/
-def liftMulEquiv : (M →* A) ≃* (R[M] →ₐ[R] A) where
-  __ := lift R A M
+def liftMulEquiv : (M →* A) ≃* WithConv (R[M] →ₐ[R] A) where
+  toEquiv := (lift R A M).trans (WithConv.equiv _).symm
   map_mul' f g := by ext; simp [AlgHom.convMul_apply]
 
 @[simp]
-lemma convMul_algHom_single (f g : R[M] →ₐ[R] A) (x : M) :
+lemma convMul_algHom_single (f g : WithConv <| R[M] →ₐ[R] A) (x : M) :
     (f * g) (single x 1) = f (single x 1) * g (single x 1) := by simp [AlgHom.convMul_apply]
 
 end Algebra
@@ -105,10 +110,10 @@ end Algebra
 variable [Bialgebra R A]
 
 @[simp]
-lemma convMul_bialgHom_single [CommMonoid M] (f g : R[M] →ₐc[R] A) (x : M) :
+lemma convMul_bialgHom_single [CommMonoid M] (f g : WithConv <| R[M] →ₐc[R] A) (x : M) :
     (f * g) (single x 1) = f (single x 1) * g (single x 1) := by
   simp only [BialgHom.convMul_def, BialgHom.coe_comp, Function.comp_apply]
-  change mulBialgHom R A (Bialgebra.TensorProduct.map f g (comul (single x 1))) = _
+  change mulBialgHom R A (Bialgebra.TensorProduct.map f.ofConv g.ofConv (comul (single x 1))) = _
   simp [MonoidAlgebra.comul_single, Bialgebra.TensorProduct.map_tmul]
 
 end CommSemiring
@@ -118,8 +123,9 @@ variable [CommMonoid M] [CommMonoid N] (f : R →+* S)
 
 @[simp]
 lemma mapDomainBialgHom_mul (f g : M →* N) :
-    mapDomainBialgHom R (f * g) = mapDomainBialgHom R f * mapDomainBialgHom R g := by
-  ext x : 2; simp
+    mapDomainBialgHom R (f * g) =
+      ofConv ((toConv <| mapDomainBialgHom R f) * (toConv <| mapDomainBialgHom R g)) := by
+  ext m : 2; simp
 
 lemma comulAlgHom_comp_mapRingHom :
     (comulAlgHom S (MonoidAlgebra S M)).toRingHom.comp (mapRingHom M f) =
@@ -211,8 +217,8 @@ variable [CommGroup G] [CommGroup H]
 /-- The group isomorphism between group homs `G → H` and bialgebra homs `R[G] → R[H]` of group
 algebras over a domain. -/
 noncomputable def mapDomainBialgHomMulEquiv :
-    (G →* H) ≃* (MonoidAlgebra R G →ₐc[R] MonoidAlgebra R H) where
-  toEquiv := mapDomainBialgHomEquiv
+    (G →* H) ≃* WithConv (MonoidAlgebra R G →ₐc[R] MonoidAlgebra R H) where
+  toEquiv := mapDomainBialgHomEquiv.trans (WithConv.equiv _).symm
   map_mul' f g := by simp
 
 end CommGroup
@@ -231,31 +237,12 @@ variable [Semiring A] [Bialgebra R A]
 section AddMonoid
 variable [AddMonoid M] [AddMonoid N]
 
-/-- A `R`-algebra homomorphism from `R[M]` is uniquely defined by its values on the functions
-`single a 1`. -/
-lemma bialgHom_ext ⦃φ₁ φ₂ : R[M] →ₐc[R] A⦄ (h : ∀ x, φ₁ (single x 1) = φ₂ (single x 1)) : φ₁ = φ₂ :=
-  BialgHom.coe_algHom_injective <| algHom_ext h
-
 -- The priority must be `high`.
 /-- See note [partially-applied ext lemmas]. -/
 @[ext high]
 lemma bialgHom_ext' ⦃φ₁ φ₂ : R[M] →ₐc[R] A⦄
     (h : (φ₁ : R[M] →* A).comp (of R M) = .comp φ₂ (of R M)) : φ₁ = φ₂ :=
   bialgHom_ext fun x ↦ congr($h x)
-
-set_option backward.isDefEq.respectTransparency false in
-@[simp] lemma counit_domCongr (e : M ≃+ N) (x : A[M]) :
-    counit (R := R) (domCongr R A e x) = counit x := by
-  induction x using MonoidAlgebra.induction_linear <;> simp [*]
-
-variable (R A) in
-/-- Isomorphic monoids have isomorphic monoid algebras. -/
-@[expose, simps!]
-def domCongrBialgHom (e : M ≃+ N) : A[M] ≃ₐc[R] A[N] :=
-  .ofAlgEquiv (domCongr R A e) (by ext; simp) <| by
-    apply AlgHom.toLinearMap_injective
-    ext
-    simp [TensorProduct.map_map, TensorProduct.AlgebraTensorModule.map_eq]
 
 variable (M) in
 /-- The trivial monoid algebra is isomorphic to the base ring. -/
@@ -299,14 +286,14 @@ section CommSemiring
 variable [CommSemiring A]
 
 @[simp]
-lemma convMul_algHom_single [Algebra R A] [AddMonoid M] (f g : R[M] →ₐ[R] A) (x : M) :
-    (f * g) (single x 1) = f (single x 1) * g (single x 1) := by simp [AlgHom.convMul_apply]
+lemma convMul_algHom_single [Algebra R A] [AddMonoid M] (f g : WithConv <| R[M] →ₐ[R] A) (m : M) :
+    (f * g) (single m 1) = f (single m 1) * g (single m 1) := by simp [AlgHom.convMul_apply]
 
 @[simp]
-lemma convMul_bialgHom_single [Bialgebra R A] [AddCommMonoid M] (f g : R[M] →ₐc[R] A) (x : M) :
-    (f * g) (single x 1) = f (single x 1) * g (single x 1) := by
+lemma convMul_bialgHom_single [Bialgebra R A] [AddCommMonoid M] (f g : WithConv <| R[M] →ₐc[R] A)
+    (m : M) : (f * g) (single m 1) = f (single m 1) * g (single m 1) := by
   simp only [BialgHom.convMul_def, BialgHom.coe_comp, Function.comp_apply]
-  change mulBialgHom R A (Bialgebra.TensorProduct.map f g (comul (single x 1))) = _
+  change mulBialgHom R A (Bialgebra.TensorProduct.map f.ofConv g.ofConv (comul (single m 1))) = _
   simp [AddMonoidAlgebra.comul_single, Bialgebra.TensorProduct.map_tmul]
 
 end CommSemiring
@@ -316,7 +303,8 @@ variable [AddCommMonoid M] [AddCommMonoid N] (f : R →+* S)
 
 @[simp]
 lemma mapDomainBialgHom_add (f g : M →+ N) :
-    mapDomainBialgHom R (f + g) = mapDomainBialgHom R f * mapDomainBialgHom R g :=
+    mapDomainBialgHom R (f + g) =
+     (toConv (mapDomainBialgHom R f) * toConv (mapDomainBialgHom R g)).ofConv :=
   MonoidAlgebra.mapDomainBialgHom_mul f.toMultiplicative g.toMultiplicative
 
 lemma comulAlgHom_comp_mapRingHom :
@@ -410,8 +398,9 @@ variable [AddCommGroup G] [AddCommGroup H]
 
 /-- The group isomorphism between group homs `G → H` and bialgebra homs `R[G] → R[H]` of group
 algebras over a domain. -/
-noncomputable def mapDomainBialgHomAddEquiv : (G →+ H) ≃+ Additive (R[G] →ₐc[R] R[H]) where
-  toEquiv := mapDomainBialgHomEquiv.trans Additive.ofMul
+noncomputable def mapDomainBialgHomAddEquiv :
+    (G →+ H) ≃+ Additive (WithConv <| R[G] →ₐc[R] R[H]) where
+  toEquiv := mapDomainBialgHomEquiv.trans <| (WithConv.equiv _).symm.trans Additive.ofMul
   map_add' f g := by simp
 
 end AddCommGroup

@@ -186,18 +186,19 @@ instance (M : AddCommGrpCatᵒᵖ) : IsCommMonObj ((diagFunctor S).obj M).X :=
 @[simp]
 lemma commHopfAlgCatEquivCogrpCommAlgCat_functor_map_ofHom_mul
     {R S T : Type u} [CommRing R] [CommRing S] [CommRing T]
-    [HopfAlgebra R S] [HopfAlgebra R T] [Coalgebra.IsCocomm R S] (f g : S →ₐc[R] T) :
-    (commHopfAlgCatEquivCogrpCommAlgCat _).functor.map (CommHopfAlgCat.ofHom (f * g)) =
-      (((commHopfAlgCatEquivCogrpCommAlgCat _).functor.map (CommHopfAlgCat.ofHom f)).unop *
-      ((commHopfAlgCatEquivCogrpCommAlgCat _).functor.map (CommHopfAlgCat.ofHom g)).unop).op := by
+    [HopfAlgebra R S] [HopfAlgebra R T] [Coalgebra.IsCocomm R S] (f g : WithConv <| S →ₐc[R] T) :
+    (commHopfAlgCatEquivCogrpCommAlgCat _).functor.map (CommHopfAlgCat.ofHom (f * g).ofConv) =
+      (((commHopfAlgCatEquivCogrpCommAlgCat _).functor.map (CommHopfAlgCat.ofHom f.ofConv)).unop *
+      ((commHopfAlgCatEquivCogrpCommAlgCat _).functor.map (CommHopfAlgCat.ofHom g.ofConv)).unop).op
+        := by
   apply Quiver.Hom.unop_inj
   ext1
   apply Quiver.Hom.unop_inj
   ext1
-  convert_to f * g =
-    (Algebra.TensorProduct.lift (AlgHomClass.toAlgHom f) (AlgHomClass.toAlgHom g)
+  convert_to (f * g).ofConv =
+    (Algebra.TensorProduct.lift (AlgHomClass.toAlgHom f.ofConv) (AlgHomClass.toAlgHom g.ofConv)
       (fun _ _ ↦ .all _ _)).comp (Bialgebra.comulAlgHom _ _)
-  dsimp [AlgHom.convMul_def]
+  dsimp [BialgHom.convMul_def]
   rw [← AlgHom.comp_assoc]
   congr 1
   ext <;> simp

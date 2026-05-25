@@ -230,7 +230,7 @@ instance asOver.instIsCommMonObj [Bialgebra R A] [IsCocomm R A] :
     ext
     have := LaxMonoidal.μ (algSpec R) (.op <| .of R A) (.op <| .of R A)
     have := congr((pullbackSpecIso R A A).hom ≫ ((bialgSpec R).map <| .op <| CommBialgCat.ofHom <|
-      $(Bialgebra.comm_comp_comulBialgHom R A)).hom.left)
+      $(Bialgebra.comm_comp_comulBialgHom (R := R) (A := A))).hom.left)
     dsimp [commBialgCatEquivComonCommAlgCat] at this ⊢
     have h₁ : (Algebra.TensorProduct.includeRight : A →ₐ[R] A ⊗[R] A) =
       (RingHomClass.toRingHom (Bialgebra.TensorProduct.comm R A A)).comp
@@ -262,14 +262,15 @@ set_option backward.isDefEq.respectTransparency false in
 /-- `Spec.map` as a `MulEquiv` on hom-sets. -/
 def Spec.mapMulEquiv {R S T : Type u} [CommRing R] [CommRing S] [CommRing T] [Bialgebra R S]
     [Algebra R T] :
-    (S →ₐ[R] T) ≃* (Spec(T).asOver Spec(R) ⟶ Spec(S).asOver Spec(R)) where
-  toFun f := (Spec.map (CommRingCat.ofHom f.toRingHom)).asOver _
+    WithConv (S →ₐ[R] T) ≃* (Spec(T).asOver Spec(R) ⟶ Spec(S).asOver Spec(R)) where
+  toFun f := (Spec.map (CommRingCat.ofHom f.ofConv.toRingHom)).asOver _
   invFun f := ⟨(Spec.preimage f.left).hom, by
     suffices CommRingCat.ofHom (algebraMap R S) ≫ Spec.preimage f.left =
       CommRingCat.ofHom (algebraMap R T) from fun r ↦ congr($this r)
     apply Spec.map_injective
     simpa [-comp_over] using f.w⟩
   left_inv f := by
+    apply WithConv.ofConv_injective
     apply AlgHom.coe_ringHom_injective
     simp
   right_inv f := by ext1; simp

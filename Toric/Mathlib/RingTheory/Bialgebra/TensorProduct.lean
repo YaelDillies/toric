@@ -4,7 +4,7 @@ public import Mathlib.RingTheory.Bialgebra.TensorProduct
 public import Mathlib.Tactic.SuppressCompilation
 public import Toric.Mathlib.RingTheory.TensorProduct.Maps
 
-@[expose] public section
+public section
 
 suppress_compilation
 
@@ -30,37 +30,11 @@ lemma comul_includeRight [CommSemiring A] [CommSemiring B] [Bialgebra R B] [Alge
         (RingHomClass.toRingHom (Bialgebra.comulAlgHom R B)) := by
   ext x; simp [← (ℛ R x).eq, tmul_sum]
 
-section Semiring
-variable [Semiring A] [Bialgebra R A] {a b : A}
-
-variable (R A) in
-/-- Multiplication on a bialgebra as a coalgebra hom. -/
-def mulCoalgHom : A ⊗[R] A →ₗc[R] A where
-  __ := LinearMap.mul' R A
-  map_smul' a b := by induction b <;> simp
-  counit_comp := by ext; simp [mul_comm]
-  map_comp_comul := by
-    ext a b
-    simp [← (ℛ R a).eq, ← (ℛ R b).eq, sum_tmul]
-    simp [tmul_sum, Finset.sum_mul_sum]
-
-@[simp] lemma mulCoalgHom_apply (a b : A) : mulCoalgHom R A (a ⊗ₜ b) = a * b := rfl
-
-end Semiring
-
 section CommSemiring
 variable [CommSemiring A] [CommSemiring B] [Bialgebra R A] [Bialgebra R B] {a b : A}
 
-variable (R A) in
-/-- Multiplication on a commutative bialgebra as a bialgebra hom. -/
-def mulBialgHom : A ⊗[R] A →ₐc[R] A where
-  __ := lmul' R
-  __ := mulCoalgHom R A
-
-@[simp] lemma mulBialgHom_apply (a b : A) : mulBialgHom R A (a ⊗ₜ b) = a * b := rfl
-
 /-- Representations of `a` and `b` yield a representation of `a ⊗ b`. -/
-@[simps]
+@[expose, simps]
 protected def _root_.Coalgebra.Repr.tmul (ℛa : Coalgebra.Repr R a) (ℛb : Coalgebra.Repr R b) :
     Coalgebra.Repr R (a ⊗ₜ[R] b) where
   ι := ℛa.ι × ℛb.ι
@@ -78,7 +52,7 @@ variable {R A B : Type*} [CommSemiring R] [CommSemiring A] [CommSemiring B] [Bia
   [Bialgebra R B] {a a₁ a₂ : A} {b : B}
 
 /-- Representations of `a₁` and `a₂` yield a representation of `a₁ * a₂`. -/
-@[simps!, simps! index] protected noncomputable
+@[expose, simps!, simps! index] protected noncomputable
 def _root_.Coalgebra.Repr.mul (ℛ₁ : Coalgebra.Repr R a₁) (ℛ₂ : Coalgebra.Repr R a₂) :
     Coalgebra.Repr R (a₁ * a₂) := (ℛ₁.tmul ℛ₂).induced (R := R) (mulCoalgHom R A)
 
