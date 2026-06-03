@@ -172,12 +172,22 @@ instance CommAlgCat.grpObjOpOf {A : Type u} [CommRing A] [HopfAlgebra R A] :
   inv := (CommAlgCat.ofHom <| antipodeAlgHom R A).op
   left_inv := by
     ext x
-    simpa [← Algebra.TensorProduct.lmul'_comp_map, -mul_antipode_rTensor_comul_apply] using
-      mul_antipode_rTensor_comul_apply (R := R) x
+    -- TODO: Add more simp lemmas to make this `simpa ... using ...` again.
+    simp only [unop_comp, unop_tensorObj, hom_comp, coe_tensorObj, lift_unop_hom,
+      Quiver.Hom.unop_op, ConcreteCategory.hom_ofHom, unop_id, hom_id,
+      ← Algebra.TensorProduct.lmul'_comp_map, mul_op_of_unop_hom, AlgHom.coe_comp,
+      Function.comp_apply, Bialgebra.comulAlgHom_apply, unop_tensorUnit, coe_tensorUnit,
+      toUnit_unop_hom, one_op_of_unop_hom, Bialgebra.counitAlgHom_apply, Algebra.ofId_apply]
+    exact mul_antipode_rTensor_comul_apply (R := R) x
   right_inv := by
     ext x
-    simpa [← Algebra.TensorProduct.lmul'_comp_map, -mul_antipode_lTensor_comul_apply] using
-      mul_antipode_lTensor_comul_apply (R := R) x
+    -- TODO: Add more simp lemmas to make this `simpa ... using ...` again.
+    simp only [unop_comp, unop_tensorObj, hom_comp, coe_tensorObj, lift_unop_hom, unop_id, hom_id,
+      Quiver.Hom.unop_op, ConcreteCategory.hom_ofHom, ← Algebra.TensorProduct.lmul'_comp_map,
+      mul_op_of_unop_hom, AlgHom.coe_comp, Function.comp_apply, Bialgebra.comulAlgHom_apply,
+      unop_tensorUnit, coe_tensorUnit, toUnit_unop_hom, one_op_of_unop_hom,
+      Bialgebra.counitAlgHom_apply, Algebra.ofId_apply]
+    exact mul_antipode_lTensor_comul_apply (R := R) x
 
 open Opposite MonObj
 
@@ -196,8 +206,8 @@ variable (R) in
 @[simps! functor_obj_unop_X inverse_obj unitIso_hom_app
   unitIso_inv_app counitIso_hom_app counitIso_inv_app]
 def commHopfAlgCatEquivCogrpCommAlgCat : CommHopfAlgCat R ≌ (Grp (CommAlgCat R)ᵒᵖ)ᵒᵖ where
-  functor.obj A := .op <| .mk <| .op <| .of R A
-  functor.map {A B} f := .op <| .mk <| .mk' <| .op <| CommAlgCat.ofHom f.hom
+  functor.obj A := op <| .mk <| op <| .of R A
+  functor.map {A B} f := op <| .mk <| .mk' <| op <| CommAlgCat.ofHom f.hom
   inverse.obj A := .of R A.unop.X.unop
   inverse.map {A B} f := CommHopfAlgCat.ofHom <| .ofAlgHom f.unop.hom.hom.unop.hom
     congr(($(IsMonHom.one_hom (f := f.unop.hom.hom))).unop.hom)
@@ -209,5 +219,5 @@ def commHopfAlgCatEquivCogrpCommAlgCat : CommHopfAlgCat R ≌ (Grp (CommAlgCat R
 
 set_option backward.isDefEq.respectTransparency false in
 instance {A : CommHopfAlgCat.{u} R} [IsCocomm R A] :
-    IsCommMonObj ((commHopfAlgCatEquivCogrpCommAlgCat R).functor.obj A).unop.X := by
-  dsimp; infer_instance
+    IsCommMonObj ((commHopfAlgCatEquivCogrpCommAlgCat R).functor.obj A).unop.X :=
+  inferInstanceAs <| IsCommMonObj <| op <| CommAlgCat.of R A

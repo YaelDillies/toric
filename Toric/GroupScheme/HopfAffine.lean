@@ -63,6 +63,10 @@ In this section we construct `Spec` as a functor from `R`-Hopf algebras to affin
 
 section topEdge
 
+set_option allowUnsafeReducibility true in
+attribute [implicit_reducible] commAlgCatEquivUnder Over.opEquivOpUnder Over.post
+  CommRingCat.mkUnder CommRingCat.of
+
 variable (R) in
 /-- `Spec` as a functor from `R`-algebras to schemes over `Spec R`. -/
 noncomputable abbrev algSpec : (CommAlgCat R)ᵒᵖ ⥤ Over (Spec R) :=
@@ -74,8 +78,6 @@ noncomputable abbrev algΓ : Over (Spec R) ⥤ (CommAlgCat R)ᵒᵖ :=
   Over.post Γ.rightOp ⋙ Over.map (ΓSpecIso R).inv.op ⋙
     (Over.opEquivOpUnder R).functor ⋙ (commAlgCatEquivUnder R).inverse.op
 
--- FIXME: Neither `inferInstance` nor `by unfold algSpec; infer_instance` work in the following 3.
--- TODO: Make into a MWE
 instance preservesLimitsOfSize_algSpec : PreservesLimitsOfSize.{w, v} (algSpec R) :=
   inferInstanceAs <| PreservesLimitsOfSize.{w, v} <|
     (commAlgCatEquivUnder R).op.functor ⋙ (Over.opEquivOpUnder R).inverse ⋙ Over.post Scheme.Spec
@@ -85,6 +87,9 @@ instance preservesColimitsOfSize_algΓ : PreservesColimitsOfSize.{w, v} (algΓ R
   unfold algΓ; infer_instance
 
 noncomputable instance braided_algSpec : (algSpec R).Braided := .ofChosenFiniteProducts _
+
+example : ((algSpec R).obj (𝟙_ (CommAlgCat ↑R)ᵒᵖ)).left = Spec R := by
+  simp
 
 set_option backward.isDefEq.respectTransparency false in
 @[simp] lemma algSpec_ε_left : (LaxMonoidal.ε (algSpec R)).left = 𝟙 (Spec R) := by
@@ -121,7 +126,7 @@ lemma prodComparisonIso_algSpec_inv_left (A B : (CommAlgCat R)ᵒᵖ) :
 
 set_option backward.isDefEq.respectTransparency false in
 lemma preservesTerminalIso_algSpec :
-    (CartesianMonoidalCategory.preservesTerminalIso (algSpec R)) =
+    CartesianMonoidalCategory.preservesTerminalIso (algSpec R) =
       Over.isoMk (Iso.refl (Spec R)) (by simp) := by
   ext1; exact CartesianMonoidalCategory.toUnit_unique _ _
 
@@ -257,6 +262,10 @@ instance asOver.instCommGrpObj [HopfAlgebra R A] [IsCocomm R A] :
 instance {R S T : Type u} [CommRing R] [CommRing S] [CommRing T] [Algebra R S] [Algebra R T]
     (f : S →ₐ[R] T) : (Spec.map (CommRingCat.ofHom f.toRingHom)).IsOver Spec(R) where
   comp_over := by simp [specOverSpec_over, ← Spec.map_comp, ← CommRingCat.ofHom_comp]
+
+-- TODO: Fix in mathlib
+set_option allowUnsafeReducibility true in
+attribute [implicit_reducible] OverClass.asOver
 
 set_option backward.isDefEq.respectTransparency false in
 /-- `Spec.map` as a `MulEquiv` on hom-sets. -/
