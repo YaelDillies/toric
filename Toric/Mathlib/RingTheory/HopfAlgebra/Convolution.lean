@@ -39,6 +39,7 @@ namespace HopfAlgebra
 section Semiring
 variable [Semiring A] [HopfAlgebra R A]
 
+set_option backward.isDefEq.respectTransparency false in
 lemma antipode_comp_mul_comp_comm :
     antipode R ∘ₗ .mul' R A ∘ₗ (TensorProduct.comm R A A).toLinearMap =
       .mul' R A ∘ₗ map (antipode R) (antipode R) := by
@@ -48,12 +49,18 @@ lemma antipode_comp_mul_comp_comm :
   · simp [((ℛ R a).tmul (ℛ R b)).convMul_apply, ← Bialgebra.counit_mul,
       ← sum_antipode_mul_eq_algebraMap_counit ((ℛ R b).mul (ℛ R a)),
       ← Finset.map_swap_product (ℛ R b).index (ℛ R a).index]
-  · simp [((ℛ R a).tmul (ℛ R b)).convMul_apply,
-      ← Finset.map_swap_product (ℛ R a).index (ℛ R b).index,
-      Finset.sum_product (ℛ R b).index, ← Finset.mul_sum, mul_assoc ((ℛ R b).left _),
-      ← mul_assoc ((ℛ R a).left _), ← Finset.sum_mul, sum_mul_antipode_eq_algebraMap_counit,
-      ← (Algebra.commute_algebraMap_left (ε a) (_ : A)).left_comm,
+    rfl
+  · simp only [AlgebraTensorModule.curry_apply, LinearMap.restrictScalars_self, curry_apply,
+      ((ℛ R a).tmul (ℛ R b)).convMul_apply, Repr.tmul_index,
+      ← Finset.map_swap_product (ℛ R a).index (ℛ R b).index, Repr.tmul_left, LinearMap.coe_comp,
+      LinearEquiv.coe_coe, Function.comp_apply, TensorProduct.comm_tmul, LinearMap.mul'_apply,
+      Repr.tmul_right, TensorProduct.map_tmul, mul_assoc ((ℛ R b).left _),
+      ← mul_assoc ((ℛ R a).left _), Finset.sum_map, Finset.sum_product (ℛ R b).index,
+      LinearMap.convOne_apply, counit_tmul, smul_eq_mul, map_mul,
       ← (Algebra.commute_algebraMap_left (ε a) (_ : A)).eq]
+    erw [Function.Embedding.coeFn_mk]
+    simp [← Finset.mul_sum, ← Finset.sum_mul, sum_mul_antipode_eq_algebraMap_counit,
+      ← (Algebra.commute_algebraMap_left (ε a) (_ : A)).left_comm]
 
 lemma antipode_mul_antidistrib (a b : A) : antipode R (a * b) = antipode R b * antipode R a := by
   exact congr($antipode_comp_mul_comp_comm (b ⊗ₜ a))

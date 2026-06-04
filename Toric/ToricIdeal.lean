@@ -57,7 +57,9 @@ lemma isToricIdeal_iff_exists_monoidIdeal_eq :
   refine (f.addEquivOfLocalizations <|
     AddLocalization.addMonoidOf _).comapAddSubgroup.toEquiv.exists_congr fun s ↦ ?_
   congr! 1
-  simpa using (monoidIdeal_comap ..).symm
+  simp only [RelIso.coe_fn_toEquiv, AddEquiv.comapAddSubgroup_apply,
+    AddSubgroup.comap_toAddSubmonoid, AddEquiv.toAddMonoidHom_eq_coe]
+  exact (monoidIdeal_comap ..).symm
 
 namespace IsToricIdeal
 

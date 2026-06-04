@@ -1,4 +1,4 @@
-module  -- shake: keep-all
+module  -- shake: keep-all --deprecated_module: ignore
 
 public import Toric.Examples.CharCocharPairing
 public import Toric.Examples.SO2
@@ -16,6 +16,7 @@ public import Toric.Mathlib.Algebra.Polynomial.Bivariate
 public import Toric.Mathlib.RingTheory.AdjoinRoot
 public import Toric.Mathlib.RingTheory.Bialgebra.MonoidAlgebra
 public import Toric.Mathlib.RingTheory.Bialgebra.TensorProduct
+public import Toric.Mathlib.RingTheory.Coalgebra.GroupLike
 public import Toric.Mathlib.RingTheory.HopfAlgebra.Convolution
 public import Toric.Mathlib.RingTheory.TensorProduct.Maps
 public import Toric.MvLaurentPolynomial

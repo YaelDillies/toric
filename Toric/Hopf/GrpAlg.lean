@@ -25,14 +25,14 @@ variable {R : Type*} [CommRing R]
 
 variable (R) in
 /-- The functor of commutative monoid algebras. -/
-@[simps obj map]
+@[simps obj map, implicit_reducible]
 noncomputable def commMonAlg : CommMonCat ⥤ CommBialgCat R where
   obj M := .of R <| MonoidAlgebra R M
   map f := CommBialgCat.ofHom <| MonoidAlgebra.mapDomainBialgHom R f.hom
 
 variable (R) in
 /-- The functor of commutative group algebras. -/
-@[simps obj map]
+@[simps obj map, implicit_reducible]
 noncomputable def commGrpAlg : CommGrpCat ⥤ CommHopfAlgCat R where
   obj G := .of R <| MonoidAlgebra R G
   map f := CommHopfAlgCat.ofHom <| MonoidAlgebra.mapDomainBialgHom R f.hom

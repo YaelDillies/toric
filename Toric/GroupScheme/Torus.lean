@@ -39,11 +39,13 @@ class IsSplitTorusOver : Prop where
     ∃ (A : Type u) (_ : AddCommGroup A) (_ : Module.Free ℤ A) (e : G ≅ Diag S A)
       (_ : e.hom.IsOver S), IsMonHom (e.hom.asOver S)
 
+set_option backward.defeqAttrib.useBackward true in
 set_option backward.isDefEq.respectTransparency false in
 instance diag_isSplitTorusOver {A : Type u} [AddCommGroup A] [Module.Free ℤ A] :
     (Diag S A).IsSplitTorusOver S :=
   ⟨A, ‹_›, ‹_›, by exact .refl (S.Diag A), by dsimp; infer_instance, by dsimp; infer_instance⟩
 
+set_option backward.defeqAttrib.useBackward true in
 lemma IsSplitTorusOver.of_isIso [H.IsSplitTorusOver S] (f : G ⟶ H) [IsIso f] [f.IsOver S]
     [IsMonHom (f.asOver S)] : G.IsSplitTorusOver S :=
   have : IsMonHom ((asIso f).hom.asOver S) := ‹_›
@@ -59,6 +61,7 @@ lemma IsSplitTorusOver.of_isIso' [G.IsSplitTorusOver S]
 lemma IsSplitTorusOver.of_iso [H.IsSplitTorusOver S] (e : G ≅ H) [e.hom.IsOver S]
     [IsMonHom (e.hom.asOver S)] : G.IsSplitTorusOver S := of_isIso e.hom
 
+set_option backward.defeqAttrib.useBackward true in
 variable (G S) in
 /-- Every split torus that's locally of finite type is isomorphic to `𝔾ₘⁿ` for some `n`. -/
 lemma exists_iso_diag_finite_of_isSplitTorusOver_locallyOfFiniteType [G.IsSplitTorusOver S]
@@ -97,6 +100,7 @@ instance [G.IsSplitTorusOver Spec(k)] : G.IsTorusOver k := by
     convert this <;> simp
   exact .of_isIso (pullback.fst (G ↘ Spec(k)) (𝟙 _))
 
+set_option backward.defeqAttrib.useBackward true in
 set_option backward.isDefEq.respectTransparency false in
 lemma IsTorusOver.of_iso (e : G ≅ H) [e.hom.IsOver Spec(k)] [IsMonHom (e.hom.asOver Spec(k))]
     [H.IsTorusOver k] : G.IsTorusOver k := by
@@ -107,7 +111,7 @@ lemma IsTorusOver.of_iso (e : G ≅ H) [e.hom.IsOver Spec(k)] [IsMonHom (e.hom.a
   let e' := (Grp.forget _ ⋙ Over.forget _).mapIso e''
   dsimp at e'
   have : e'.hom.IsOver Spec(L) := by simp [e', e'']
-  have : IsMonHom <| e'.hom.asOver Spec(L) := by simpa using Mon.instIsMonHomHom e''.hom.hom
+  have : IsMonHom <| e'.hom.asOver Spec(L) := by simpa using! Mon.instIsMonHomHom e''.hom.hom
   exact .of_iso e'
 
 lemma IsTorusOver.of_isIso [H.IsTorusOver k]
@@ -150,6 +154,7 @@ notation3 "𝔾ₘ["S"]" => 𝔾ₘ[S, PUnit]
 --   · dsimp [SplitTorus, Diag]
 --     congr 1
 
+set_option backward.defeqAttrib.useBackward true in
 variable (G S : Scheme.{u}) [G.Over S] [GrpObj (G.asOver S)] in
 /-- Every split torus that's locally of finite type is isomorphic to `𝔾ₘⁿ` for some `n`. -/
 lemma exists_iso_splitTorus_of_isSplitTorusOver [G.IsSplitTorusOver S] :

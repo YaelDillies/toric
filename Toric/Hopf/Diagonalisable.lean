@@ -6,8 +6,9 @@ Authors: Sophie Morel
 module
 
 public import Mathlib.RingTheory.HopfAlgebra.GroupLike
-public import Toric.Mathlib.RingTheory.Bialgebra.MonoidAlgebra
 public import Toric.Mathlib.Algebra.Algebra.Equiv
+public import Toric.Mathlib.RingTheory.Bialgebra.MonoidAlgebra
+public import Toric.Mathlib.RingTheory.Coalgebra.GroupLike
 
 /-!
 # Diagonalizable bialgebras
@@ -89,7 +90,8 @@ lemma liftGroupLikeBialgHom_bijective_of_span_isGroupLikeElem_eq_top
   refine ⟨?_, fun b ↦ ?_⟩
   · rw [RingHom.injective_iff_ker_eq_bot, RingHom.ker_eq_bot_iff_eq_zero]
     refine fun x hx ↦ linearIndep_groupLikeVal ?_
-    simpa [Algebra.smul_def, Finsupp.linearCombination_apply] using hx
+    simpa [Algebra.smul_def, Finsupp.linearCombination_apply, liftNC, Finsupp.liftAddHom,
+      Function.comp_def] using hx
   · obtain ⟨x, hx⟩ := (Finsupp.mem_span_iff_linearCombination R {a | IsGroupLikeElem R a} b).mp
       (by rw [h]; exact Submodule.mem_top)
     use x.equivMapDomain GroupLike.valEquiv.symm
