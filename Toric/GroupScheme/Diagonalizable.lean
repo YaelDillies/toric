@@ -122,12 +122,14 @@ def diagPullbackIso (f : T ⟶ S) : pullback f (Diag S M ↘ S) ≅ Diag T M :=
   pullbackSymmetry _ _ ≪≫ pullbackLeftPullbackSndIso _ _ _ ≪≫
     pullback.congrHom (by simp) (by simp)
 
+set_option backward.defeqAttrib.useBackward true in
 set_option backward.isDefEq.respectTransparency false in
 @[reassoc (attr := simp)]
 lemma diagPullbackIso_hom_over (f : T ⟶ S) :
     (diagPullbackIso f).hom ≫ Diag T M ↘ T = pullback.fst _ _ := by
   simp [diagPullbackIso, Diag.canonicallyOver_over]
 
+set_option backward.defeqAttrib.useBackward true in
 set_option backward.isDefEq.respectTransparency false in
 @[reassoc (attr := simp)]
 lemma diagPullbackIso_inv_fst (f : T ⟶ S) :
@@ -203,6 +205,7 @@ lemma commHopfAlgCatEquivCogrpCommAlgCat_functor_map_ofHom_mul
   congr 1
   ext <;> simp
 
+set_option backward.defeqAttrib.useBackward true in
 set_option backward.isDefEq.respectTransparency false in
 lemma diagFunctor_map_add {M N : Type u} [AddCommGroup M] [AddCommGroup N]
     (f g : M →+ N) :
@@ -306,6 +309,7 @@ lemma HomGrp.add_comp [IsCommMonObj (G''.asOver S)] (f : HomGrp G G' S) (g g' : 
 instance {X Y S : Scheme} [X.Over S] [Y.Over S] (e : X ≅ Y) [e.hom.IsOver S] : e.inv.IsOver S where
   comp_over := by rw [Iso.inv_comp_eq, comp_over]
 
+set_option backward.defeqAttrib.useBackward true in
 instance {X Y S : Scheme} [X.Over S] [Y.Over S] [MonObj (X.asOver S)] [MonObj (Y.asOver S)]
     (e : X ≅ Y) [e.hom.IsOver S] [IsMonHom (e.hom.asOver S)] : IsMonHom (e.inv.asOver S) := by
   let e' : X.asOver S ≅ Y.asOver S := Over.isoMk e (by simp)
@@ -383,10 +387,12 @@ class IsDiagonalisable : Prop where
     ∃ (A : Type u) (_ : AddCommGroup A) (e : G ≅ Diag S A) (_ : e.hom.IsOver S),
       IsMonHom <| e.hom.asOver S
 
+set_option backward.defeqAttrib.useBackward true in
 set_option backward.isDefEq.respectTransparency false in
 instance {A : Type u} [AddCommGroup A] : IsDiagonalisable S (Diag S A) :=
   ⟨A, ‹_›, by exact .refl _, by dsimp; infer_instance, by dsimp; infer_instance⟩
 
+set_option backward.defeqAttrib.useBackward true in
 lemma IsDiagonalisable.of_iso [IsDiagonalisable S H]
     (e : G ≅ H) [e.hom.IsOver S] [IsMonHom <| e.hom.asOver S] : IsDiagonalisable S G :=
   let ⟨A, _, e', _, _⟩ := ‹IsDiagonalisable S H›

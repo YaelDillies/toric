@@ -392,6 +392,7 @@ private lemma aux3 (σ : Type*) : IsEmpty <| specialOrthogonalGroup (Fin 2) ℝ 
 
 open scoped AddMonoidAlgebra
 
+set_option backward.defeqAttrib.useBackward true in
 set_option backward.isDefEq.respectTransparency false in
 /-- `SO(2)` is not a split torus over the real numbers. -/
 theorem not_isSplitTorusOver_SO₂_real : ¬ SO₂(ℝ).IsSplitTorusOver Spec(ℝ) := by

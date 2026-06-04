@@ -23,6 +23,7 @@ universe v u
 variable {R S : CommRingCat.{u}} (M : CommMonCat.{u}) (f : R ⟶ S) (Sf : Spec S ⟶ Spec R)
   (H : Sf = Spec.map f)
 
+set_option backward.defeqAttrib.useBackward true in
 set_option backward.isDefEq.respectTransparency false in
 abbrev specCommMonAlgPullbackObjXIso :
     (((commMonAlg R).op ⋙ bialgSpec R ⋙ (Over.pullback Sf).mapMon).obj (.op M)).X ≅
@@ -34,6 +35,7 @@ abbrev specCommMonAlgPullbackObjXIso :
     Sf := H ▸ (CommRingCat.isPushout_of_isPushout R S R[M] S[M]).op.map Scheme.Spec
   Over.isoMk H.isoPullback.symm (by dsimp; simp)
 
+set_option backward.defeqAttrib.useBackward true in
 set_option backward.isDefEq.respectTransparency false in
 lemma specCommMonAlgPullbackObjXIso_one :
     η ≫ (specCommMonAlgPullbackObjXIso M f Sf H).hom = η := by
@@ -49,6 +51,7 @@ lemma specCommMonAlgPullbackObjXIso_one :
     simp [Functor.Monoidal.ε_of_cartesianMonoidalCategory, RingHom.algebraMap_toAlgebra, h₁, h₂,
       CommRingCat.mkUnder, CommRingCat.of_carrier]
 
+set_option backward.defeqAttrib.useBackward true in
 set_option backward.isDefEq.respectTransparency false in
 @[reassoc]
 private
@@ -76,6 +79,7 @@ lemma specCommMonAlgPullbackObjIso_mul_aux :
   dsimp
   ext <;> simp [h₂, h₃, RingHom.algebraMap_toAlgebra]
 
+set_option backward.defeqAttrib.useBackward true in
 set_option backward.isDefEq.respectTransparency false in
 lemma specCommMonAlgPullbackObjXIso_mul :
     μ ≫ (specCommMonAlgPullbackObjXIso M f Sf H).hom =
@@ -99,6 +103,7 @@ lemma specCommMonAlgPullbackObjXIso_mul :
   · simp [Functor.Monoidal.μ_of_cartesianMonoidalCategory, RingHom.algebraMap_toAlgebra,
       AlgHom.toUnder, h₄, Algebra.TensorProduct.algebraMap_def, pullback.condition]
 
+set_option backward.defeqAttrib.useBackward true in
 set_option backward.isDefEq.respectTransparency false in
 -- should we make something like `BialgHom.toRingHom`?
 /-- The spectrum of a commutative algebra functor commutes with base change. -/
