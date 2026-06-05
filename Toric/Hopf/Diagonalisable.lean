@@ -8,7 +8,6 @@ module
 public import Mathlib.RingTheory.HopfAlgebra.GroupLike
 public import Toric.Mathlib.Algebra.Algebra.Equiv
 public import Toric.Mathlib.RingTheory.Bialgebra.MonoidAlgebra
-public import Toric.Mathlib.RingTheory.Coalgebra.GroupLike
 
 /-!
 # Diagonalizable bialgebras

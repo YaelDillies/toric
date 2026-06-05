@@ -16,7 +16,6 @@ public import Toric.Mathlib.Algebra.Polynomial.Bivariate
 public import Toric.Mathlib.RingTheory.AdjoinRoot
 public import Toric.Mathlib.RingTheory.Bialgebra.MonoidAlgebra
 public import Toric.Mathlib.RingTheory.Bialgebra.TensorProduct
-public import Toric.Mathlib.RingTheory.Coalgebra.GroupLike
 public import Toric.Mathlib.RingTheory.HopfAlgebra.Convolution
 public import Toric.Mathlib.RingTheory.TensorProduct.Maps
 public import Toric.MvLaurentPolynomial
