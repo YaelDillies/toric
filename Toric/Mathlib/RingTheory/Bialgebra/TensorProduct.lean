@@ -11,7 +11,7 @@ suppress_compilation
 open Algebra Coalgebra TensorProduct
 
 namespace Bialgebra
-variable {R A B : Type*} [CommSemiring R]
+variable {ι κ R A B : Type*} [CommSemiring R]
 
 @[simp]
 lemma counitAlgHom_comp_includeRight [CommSemiring A] [Semiring B] [Algebra R A] [Bialgebra R B] :
@@ -35,9 +35,8 @@ variable [Semiring A] [Semiring B] [Bialgebra R A] [Bialgebra R B] {a b : A}
 
 /-- Representations of `a` and `b` yield a representation of `a ⊗ b`. -/
 @[expose, simps]
-protected def _root_.Coalgebra.Repr.tmul (ℛa : Coalgebra.Repr R a) (ℛb : Coalgebra.Repr R b) :
-    Coalgebra.Repr R (a ⊗ₜ[R] b) where
-  ι := ℛa.ι × ℛb.ι
+protected def _root_.Coalgebra.Repr.tmul (ℛa : Coalgebra.Repr R a ι) (ℛb : Coalgebra.Repr R b κ) :
+    Coalgebra.Repr R (a ⊗ₜ[R] b) (ι × κ) where
   index := ℛa.index ×ˢ ℛb.index
   left i := ℛa.left i.1 ⊗ₜ ℛb.left i.2
   right i := ℛa.right i.1 ⊗ₜ ℛb.right i.2
@@ -50,8 +49,8 @@ protected def _root_.Coalgebra.Repr.tmul (ℛa : Coalgebra.Repr R a) (ℛb : Coa
 
 /-- Representations of `a` and `b` yield a representation of `a * b`. -/
 @[expose, simps!, simps! index] protected noncomputable
-def _root_.Coalgebra.Repr.mul (ℛ₁ : Coalgebra.Repr R a) (ℛ₂ : Coalgebra.Repr R b) :
-    Coalgebra.Repr R (a * b) := (ℛ₁.tmul ℛ₂).induced (R := R) (mulCoalgHom R A)
+def _root_.Coalgebra.Repr.mul (ℛ₁ : Coalgebra.Repr R a ι) (ℛ₂ : Coalgebra.Repr R b κ) :
+    Coalgebra.Repr R (a * b) (ι × κ) := (ℛ₁.tmul ℛ₂).induced (R := R) (mulCoalgHom R A)
 
 end CommSemiring
 end Bialgebra
