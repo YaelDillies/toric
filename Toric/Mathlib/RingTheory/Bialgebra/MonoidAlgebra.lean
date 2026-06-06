@@ -18,13 +18,13 @@ variable [CommSemiring R] [CommSemiring S]
 section Semiring
 variable [Semiring A] [Bialgebra R A]
 
-@[to_additive (dont_translate := R A) (attr := simp)]
+@[to_additive (dont_translate := R A) (attr := simp) isGroupLikeElem_single_one]
 lemma isGroupLikeElem_single_one (g : G) : IsGroupLikeElem R (single g 1 : A[G]) where
   counit_eq_one := by simp
   comul_eq_tmul_self := by simp [Algebra.TensorProduct.one_def]
 
 /-- A group algebra is spanned by its group-like elements. -/
-@[to_additive (dont_translate := R A) (attr := simp)]
+@[to_additive (dont_translate := R A) (attr := simp) span_isGroupLikeElem]
 lemma span_isGroupLikeElem : Submodule.span A {a : A[G] | IsGroupLikeElem R a} = ⊤ :=
   eq_top_mono (Submodule.span_mono <| Set.range_subset_iff.2 isGroupLikeElem_single_one) <| by
     rw [← Finsupp.range_linearCombination]
@@ -232,11 +232,7 @@ section CommSemiring
 variable [CommSemiring R] [CommSemiring S]
 
 section Semiring
-variable [Semiring A] [Bialgebra R A]
-
-
-section AddMonoid
-variable [AddMonoid M] [AddMonoid N]
+variable [Semiring A] [Bialgebra R A] [AddMonoid M] [AddMonoid N]
 
 -- The priority must be `high`.
 /-- See note [partially-applied ext lemmas]. -/
@@ -258,29 +254,9 @@ noncomputable def bialgEquivOfSubsingleton [Subsingleton M] : R[M] ≃ₐc[R] R 
     simp [Subsingleton.elim g 0]
   right_inv := (Bialgebra.counitAlgHom R R[M]).commutes
 
-end AddMonoid
+lemma isGroupLikeElem_of (m : M) : IsGroupLikeElem R (of A M m) :=
+  MonoidAlgebra.isGroupLikeElem_of (R := R) (A := A) (Multiplicative.ofAdd m)
 
-section AddGroup
-variable [AddGroup G]
-
-lemma isGroupLikeElem_of (g : G) : IsGroupLikeElem R (of A G g) :=
-  MonoidAlgebra.isGroupLikeElem_of (R := R) (A := A) (Multiplicative.ofAdd g)
-
-@[simp]
-lemma isGroupLikeElem_single (g : G) : IsGroupLikeElem R (single g 1 : A[G]) := isGroupLikeElem_of _
-
-/-- A group algebra is spanned by its group-like elements. -/
-@[simp]
-lemma span_isGroupLikeElem : Submodule.span A {a : A[G] | IsGroupLikeElem R a} = ⊤ :=
-  eq_top_mono (Submodule.span_mono <| Set.range_subset_iff.2 isGroupLikeElem_of) <| by
-    rw [← Finsupp.range_linearCombination]
-    -- TODO: Mathlib doesn't have the identity map `R[M] ≃ (M →₀ R)`. Defeq abuse ensues.
-    convert LinearMap.range_id
-    ext
-    simp
-    rfl
-
-end AddGroup
 end Semiring
 
 section CommSemiring

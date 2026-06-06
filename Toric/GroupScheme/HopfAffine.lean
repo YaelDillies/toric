@@ -91,7 +91,7 @@ noncomputable instance braided_algSpec : (algSpec R).Braided := .ofChosenFiniteP
 set_option backward.defeqAttrib.useBackward true in
 set_option backward.isDefEq.respectTransparency false in
 @[simp] lemma algSpec_ε_left : (LaxMonoidal.ε (algSpec R)).left = 𝟙 (Spec R) := by
-  convert (LaxMonoidal.ε (algSpec R)).w
+  convert! (LaxMonoidal.ε (algSpec R)).w
   simpa [-Category.comp_id] using! (Category.comp_id _).symm
 
 set_option backward.defeqAttrib.useBackward true in
@@ -245,7 +245,7 @@ instance asOver.instIsCommMonObj [Bialgebra R A] [IsCocomm R A] :
     have h₂ : (Algebra.TensorProduct.includeLeftRingHom) =
       (RingHomClass.toRingHom (Bialgebra.TensorProduct.comm R A A)).comp
        (Algebra.TensorProduct.includeRight : A →ₐ[R] A ⊗[R] A) := by ext; rfl
-    convert this using 1
+    convert! this using 1
     · simp only [Spec.map_comp, ← Category.assoc, mul_left]
       congr 1
       rw [← Iso.eq_comp_inv, Category.assoc, ← Iso.inv_comp_eq]
@@ -431,7 +431,7 @@ instance [Bialgebra R T] :
         ← CommRingCat.ofHom_comp, OverClass.asOver, AlgebraicGeometry.Scheme.mul_left,
         this, Hom.asOver, OverClass.asOverHom, pullback.condition]
       rfl
-    · convert congr($(μ_pullback_left_fst R S T) ≫ (pullbackSpecIso R T T).hom ≫
+    · convert! congr($(μ_pullback_left_fst R S T) ≫ (pullbackSpecIso R T T).hom ≫
         Spec.map (CommRingCat.ofHom (Bialgebra.comulAlgHom R T).toRingHom)) using 1
       · simp [Scheme.monObjAsOverPullback_mul, pullbackSpecIso', specOverSpec_over,
           OverClass.asOver, Hom.asOver, OverClass.asOverHom, mul_left]
