@@ -6,7 +6,6 @@ Authors: Sophie Morel
 module
 
 public import Mathlib.RingTheory.HopfAlgebra.GroupLike
-public import Toric.Mathlib.Algebra.Algebra.Equiv
 public import Toric.Mathlib.RingTheory.Bialgebra.MonoidAlgebra
 
 /-!
