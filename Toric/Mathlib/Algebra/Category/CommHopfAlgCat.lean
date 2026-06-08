@@ -7,8 +7,8 @@ module
 
 public import Mathlib.Algebra.Category.CommBialgCat
 public import Mathlib.CategoryTheory.Monoidal.Grp
+public import Mathlib.RingTheory.HopfAlgebra.Convolution
 public import Mathlib.RingTheory.HopfAlgebra.TensorProduct
-public import Toric.Mathlib.RingTheory.HopfAlgebra.Convolution
 
 /-!
 # The category of commutative Hopf algebras over a commutative ring

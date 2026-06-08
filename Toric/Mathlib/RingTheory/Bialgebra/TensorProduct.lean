@@ -1,12 +1,9 @@
 module
 
 public import Mathlib.RingTheory.Bialgebra.TensorProduct
-public import Mathlib.Tactic.SuppressCompilation
 public import Toric.Mathlib.RingTheory.TensorProduct.Maps
 
 public section
-
-suppress_compilation
 
 open Algebra Coalgebra TensorProduct
 
@@ -30,27 +27,4 @@ lemma comul_includeRight [CommSemiring A] [CommSemiring B] [Bialgebra R B] [Alge
         (RingHomClass.toRingHom (Bialgebra.comulAlgHom R B)) := by
   ext x; simp [← (ℛ R x).eq, tmul_sum]
 
-section CommSemiring
-variable [Semiring A] [Semiring B] [Bialgebra R A] [Bialgebra R B] {a b : A}
-
-/-- Representations of `a` and `b` yield a representation of `a ⊗ b`. -/
-@[expose, simps]
-protected def _root_.Coalgebra.Repr.tmul (ℛa : Coalgebra.Repr R a ι) (ℛb : Coalgebra.Repr R b κ) :
-    Coalgebra.Repr R (a ⊗ₜ[R] b) (ι × κ) where
-  index := ℛa.index ×ˢ ℛb.index
-  left i := ℛa.left i.1 ⊗ₜ ℛb.left i.2
-  right i := ℛa.right i.1 ⊗ₜ ℛb.right i.2
-  eq := by
-    simp only [comul_def, LinearMap.coe_comp, LinearEquiv.coe_coe, Function.comp_apply,
-      AlgebraTensorModule.map_tmul]
-    rw [← ℛa.eq, ← ℛb.eq]
-    simp_rw [sum_tmul, tmul_sum, ← Finset.sum_product', map_sum]
-    simp
-
-/-- Representations of `a` and `b` yield a representation of `a * b`. -/
-@[expose, simps!, simps! index] protected noncomputable
-def _root_.Coalgebra.Repr.mul (ℛ₁ : Coalgebra.Repr R a ι) (ℛ₂ : Coalgebra.Repr R b κ) :
-    Coalgebra.Repr R (a * b) (ι × κ) := (ℛ₁.tmul ℛ₂).induced (R := R) (mulCoalgHom R A)
-
-end CommSemiring
 end Bialgebra
