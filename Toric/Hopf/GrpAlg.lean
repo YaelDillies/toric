@@ -6,8 +6,8 @@ Authors: Yaël Dillies, Michał Mrugała, Andrew Yang
 -/
 module
 
+public import Mathlib.Algebra.Category.CommHopfAlgCat
 public import Mathlib.RingTheory.HopfAlgebra.MonoidAlgebra
-public import Toric.Mathlib.Algebra.Category.CommHopfAlgCat
 public import Toric.Mathlib.RingTheory.Bialgebra.MonoidAlgebra
 
 /-!

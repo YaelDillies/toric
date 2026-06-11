@@ -10,7 +10,6 @@ public import Toric.GroupScheme.Torus
 public import Toric.Hopf.Diagonalisable
 public import Toric.Hopf.GrpAlg
 public import Toric.Imports
-public import Toric.Mathlib.Algebra.Category.CommHopfAlgCat
 public import Toric.Mathlib.Algebra.Polynomial.Bivariate
 public import Toric.Mathlib.RingTheory.AdjoinRoot
 public import Toric.Mathlib.RingTheory.Bialgebra.MonoidAlgebra

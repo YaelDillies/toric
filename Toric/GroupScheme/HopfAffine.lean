@@ -5,9 +5,9 @@ Authors: Yaël Dillies, Christian Merten, Michał Mrugała, Andrew Yang
 -/
 module
 
+public import Mathlib.Algebra.Category.CommHopfAlgCat
 public import Mathlib.AlgebraicGeometry.Morphisms.FiniteType
 public import Mathlib.CategoryTheory.Monoidal.Cartesian.CommGrp_
-public import Toric.Mathlib.Algebra.Category.CommHopfAlgCat
 public import Toric.Mathlib.RingTheory.Bialgebra.TensorProduct
 
 /-!
