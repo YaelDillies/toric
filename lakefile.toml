@@ -16,12 +16,13 @@ linter.style.header = false
 warn.sorry = false
 
 [[require]]
-name = "mathlib"
-git = "https://github.com/leanprover-community/mathlib4.git"
-
-[[require]]
 name = "checkdecls"
 git = "https://github.com/PatrickMassot/checkdecls.git"
+
+[[require]]
+name = "mathlib"
+git = "https://github.com/leanprover-community/mathlib4.git"
+rev = "v4.31.0"
 
 [[lean_lib]]
 name = "Toric"
