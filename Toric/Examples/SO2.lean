@@ -10,7 +10,6 @@ public import Mathlib.LinearAlgebra.UnitaryGroup
 public import Mathlib.RingTheory.HopfAlgebra.GroupLike
 public import Toric.GroupScheme.Torus
 public import Toric.Mathlib.Algebra.Polynomial.Bivariate
-public import Toric.Mathlib.RingTheory.AdjoinRoot
 
 /-!
 # Demo of `SO(2, ℝ)` as a non-split torus

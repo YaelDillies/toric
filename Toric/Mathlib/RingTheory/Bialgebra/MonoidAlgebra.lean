@@ -47,7 +47,7 @@ values on the functions `single a 1`. -/
 /-- A `R`-algebra homomorphism from `R[M]` is uniquely defined by its
 values on the functions `single a 0`. -/]
 lemma bialgHom_ext ⦃φ₁ φ₂ : R[M] →ₐc[R] A⦄ (h : ∀ x, φ₁ (single x 1) = φ₂ (single x 1)) : φ₁ = φ₂ :=
-  BialgHom.coe_algHom_injective <| algHom_ext h
+  BialgHom.coe_toAlgHom_injective <| algHom_ext h
 
 -- The priority must be `high`.
 /-- See note [partially-applied ext lemmas]. -/
@@ -190,7 +190,7 @@ protected lemma single_mapDomainOfBialgHom (f : MonoidAlgebra R G →ₐc[R] Mon
 @[simp]
 lemma mapDomainBialgHom_mapDomainOfBialgHom (f : MonoidAlgebra R G →ₐc[R] MonoidAlgebra R H) :
     mapDomainBialgHom R (mapDomainOfBialgHom f) = f := by
-  refine BialgHom.coe_algHom_injective ?_
+  refine BialgHom.coe_toAlgHom_injective ?_
   ext x : 2
   simp only [MonoidHom.coe_comp, MonoidHom.coe_coe, BialgHom.coe_toAlgHom, comp_apply, of_apply,
     mapDomainBialgHom_apply, Finsupp.mapDomain_single]
@@ -340,7 +340,7 @@ protected lemma single_mapDomainOfBialgHom (f : R[G] →ₐc[R] R[H]) (g : G) (r
 @[simp]
 lemma mapDomainBialgHom_mapDomainOfBialgHom (f : R[G] →ₐc[R] R[H]) :
     mapDomainBialgHom R (mapDomainOfBialgHom f) = f := by
-  refine BialgHom.coe_algHom_injective <| algHom_ext fun x ↦ ?_
+  refine BialgHom.coe_toAlgHom_injective <| algHom_ext fun x ↦ ?_
   simp only [BialgHom.coe_toAlgHom, mapDomainBialgHom_apply, Finsupp.mapDomain_single]
   exact single_mapDomainOfBialgHomFun_one f x
 

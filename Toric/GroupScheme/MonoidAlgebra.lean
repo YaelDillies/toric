@@ -6,8 +6,8 @@ Authors: Andrew Yang
 module
 
 public import Mathlib.RingTheory.TensorProduct.MonoidAlgebra
-public import Toric.GroupScheme.HopfAffine
 public import Toric.Hopf.GrpAlg
+public import Toric.Mathlib.AlgebraicGeometry.Group.Affine
 public import Toric.Mathlib.RingTheory.Bialgebra.MonoidAlgebra
 
 @[expose] public noncomputable section
