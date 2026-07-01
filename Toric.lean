@@ -11,6 +11,7 @@ public import Toric.Hopf.GrpAlg
 public import Toric.Imports
 public import Toric.Mathlib.Algebra.Polynomial.Bivariate
 public import Toric.Mathlib.AlgebraicGeometry.Group.Affine
+public import Toric.Mathlib.LinearAlgebra.Finsupp.LinearCombination
 public import Toric.Mathlib.RingTheory.Bialgebra.MonoidAlgebra
 public import Toric.Mathlib.RingTheory.Bialgebra.TensorProduct
 public import Toric.Mathlib.RingTheory.HopfAlgebra.Convolution

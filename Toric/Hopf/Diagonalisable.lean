@@ -6,6 +6,7 @@ Authors: Sophie Morel
 module
 
 public import Mathlib.RingTheory.HopfAlgebra.GroupLike
+public import Toric.Mathlib.LinearAlgebra.Finsupp.LinearCombination
 public import Toric.Mathlib.RingTheory.Bialgebra.MonoidAlgebra
 
 /-!
@@ -90,7 +91,7 @@ lemma liftGroupLikeBialgHom_bijective_of_span_isGroupLikeElem_eq_top
     refine fun x hx ↦ linearIndep_groupLikeVal ?_
     simpa [Algebra.smul_def, Finsupp.linearCombination_apply, liftNC, Finsupp.liftAddHom,
       Function.comp_def] using hx
-  · obtain ⟨x, hx⟩ := (Finsupp.mem_span_iff_linearCombination R {a | IsGroupLikeElem R a} b).mp
+  · obtain ⟨x, hx⟩ := (Finsupp.mem_span_setOf_iff_exists_linearCombination (x := b)).mp
       (by rw [h]; exact Submodule.mem_top)
     use x.equivMapDomain GroupLike.valEquiv.symm
     simpa [liftNC, Finsupp.liftAddHom, Algebra.smul_def, Finsupp.linearCombination_apply] using hx
