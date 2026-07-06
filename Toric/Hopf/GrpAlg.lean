@@ -40,12 +40,12 @@ noncomputable def commGrpAlg : CommGrpCat ⥤ CommHopfAlgCat R where
 set_option backward.isDefEq.respectTransparency false in
 instance commMonAlg.instFaithful [Nontrivial R] : (commMonAlg R).Faithful where
   map_injective {G H} f g hfg := by
-    ext a; simpa [Finsupp.single_left_inj one_ne_zero] using congr($hfg <| .single a 1)
+    ext a; simpa [MonoidAlgebra.single_left_inj one_ne_zero] using congr($hfg <| .single a 1)
 
 set_option backward.isDefEq.respectTransparency false in
 instance commGrpAlg.instFaithful [Nontrivial R] : (commGrpAlg R).Faithful where
   map_injective {G H} f g hfg := by
-    ext a; simpa [Finsupp.single_left_inj one_ne_zero] using congr($hfg <| .single a 1)
+    ext a; simpa [MonoidAlgebra.single_left_inj one_ne_zero] using congr($hfg <| .single a 1)
 
 variable [IsDomain R]
 

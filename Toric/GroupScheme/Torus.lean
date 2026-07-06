@@ -75,7 +75,8 @@ lemma exists_iso_diag_finite_of_isSplitTorusOver_locallyOfFiniteType [G.IsSplitT
     assumption
   rw [locallyOfFiniteType_diag_iff] at hG
   exact ⟨Module.Free.ChooseBasisIndex ℤ A, inferInstance,
-    e.trans <| Diag.mapIso S (Module.Free.chooseBasis ℤ A).repr.toAddEquiv,
+    e.trans <| Diag.mapIso S <| (Module.Free.chooseBasis ℤ A).repr.toAddEquiv.trans
+      AddMonoidAlgebra.coeffAddEquiv.symm,
     by dsimp; infer_instance, by dsimp; infer_instance⟩
 
 end IsSplitTorusOver
