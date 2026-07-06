@@ -3,6 +3,7 @@ module
 public import Mathlib.RingTheory.Bialgebra.Convolution
 public import Mathlib.RingTheory.Bialgebra.GroupLike
 public import Mathlib.RingTheory.Bialgebra.MonoidAlgebra
+public import Toric.Mathlib.Algebra.MonoidAlgebra.Basic
 public import Toric.Mathlib.RingTheory.TensorProduct.Maps
 
 public noncomputable section
@@ -28,12 +29,8 @@ lemma isGroupLikeElem_single_one (g : G) : IsGroupLikeElem R (single g 1 : A[G])
 lemma span_isGroupLikeElem : Submodule.span A {a : A[G] | IsGroupLikeElem R a} = ⊤ :=
   eq_top_mono (Submodule.span_mono <| Set.range_subset_iff.2 isGroupLikeElem_single_one) <| by
     rw [← Finsupp.range_linearCombination]
-    refine LinearMap.range_eq_top_of_surjective _ ?_
-    rintro x
-    refine ⟨x.coeff, ?_⟩
-    ext
-    simp [Finsupp.linearCombination_apply]
-    rfl
+    exact LinearMap.range_eq_top_of_surjective _ fun x ↦
+      ⟨x.coeff, by simp [Finsupp.linearCombination_apply]⟩
 
 variable [Monoid M] [Monoid N]
 
@@ -122,8 +119,7 @@ variable [CommMonoid M] [CommMonoid N]
 @[simp]
 lemma mapDomainBialgHom_mul (f g : M →* N) :
     mapDomainBialgHom R (f * g) =
-      ofConv ((toConv <| mapDomainBialgHom R f) * (toConv <| mapDomainBialgHom R g)) := by
-  ext m : 2; simp
+      ofConv ((toConv <| mapDomainBialgHom R f) * (toConv <| mapDomainBialgHom R g)) := by ext; simp
 
 lemma comulAlgHom_comp_mapRingHom (f : R →+* S) :
     (comulAlgHom S (MonoidAlgebra S M)).toRingHom.comp (mapRingHom M f) =
@@ -152,9 +148,10 @@ lemma isGroupLikeElem_iff_mem_range_of {x : MonoidAlgebra R G} :
     by_contra h
     have : LinearIndepOn R id (insert x <| .range (of R G)) :=
       linearIndepOn_isGroupLikeElem.mono <| by simp [Set.subset_def, hx]
-    have : x.sum single ∉ span R (.range (of R G)) := by simpa using this.notMem_span_of_insert h
+    have : x.coeff.sum single ∉ span R (.range (of R G)) := by
+      simpa using this.notMem_span_of_insert h
     refine this <| sum_mem fun g hg ↦ ?_
-    rw [← mul_one (x g), ← smul_eq_mul, ← smul_single]
+    rw [← mul_one (x.coeff g), ← smul_eq_mul, ← smul_single]
     refine smul_mem _ _ <| subset_span <| Set.mem_range_self _
   mpr := by rintro ⟨g, rfl⟩; exact isGroupLikeElem_of _
 
@@ -193,7 +190,7 @@ lemma mapDomainBialgHom_mapDomainOfBialgHom (f : MonoidAlgebra R G →ₐc[R] Mo
   refine BialgHom.coe_toAlgHom_injective ?_
   ext x : 2
   simp only [MonoidHom.coe_comp, MonoidHom.coe_coe, BialgHom.coe_toAlgHom, comp_apply, of_apply,
-    mapDomainBialgHom_apply, Finsupp.mapDomain_single]
+    mapDomainBialgHom_single]
   exact single_mapDomainOfBialgHomFun_one ..
 
 @[simp] lemma mapDomainOfBialgHom_mapDomainBialgHom (f : G →* H) :
@@ -254,17 +251,43 @@ noncomputable def bialgEquivOfSubsingleton [Subsingleton M] : R[M] ≃ₐc[R] R 
     simp [Subsingleton.elim g 0]
   right_inv := (Bialgebra.counitAlgHom R R[M]).commutes
 
-lemma isGroupLikeElem_of (m : M) : IsGroupLikeElem R (of A M m) :=
-  MonoidAlgebra.isGroupLikeElem_of (R := R) (A := A) (Multiplicative.ofAdd m)
+lemma isGroupLikeElem_of (m : M) : IsGroupLikeElem R (of A M m) := isGroupLikeElem_single_one ..
+
+variable (R A M) in
+/-- The bialgebra equivalence between `AddMonoidAlgebra` and `MonoidAlgebra` in terms of
+`Multiplicative`. -/
+@[expose]
+def toMultiplicativeBialgEquiv : A[M] ≃ₐc[R] MonoidAlgebra A (Multiplicative M) :=
+  .ofAlgEquiv (toMultiplicativeAlgEquiv A M)
+    (by ext x; induction x using AddMonoidAlgebra.induction_linear <;> simp_all)
+    (by
+      refine AlgHom.ext fun x ↦ ?_
+      induction x using AddMonoidAlgebra.induction_linear with
+      | zero => simp
+      | add x y hx hy => simp_all
+      | single m a =>
+        simp [← (Coalgebra.Repr.arbitrary R a).eq, TensorProduct.map_tmul, map_sum,
+          Algebra.TensorProduct.map_tmul])
 
 end Semiring
 
 section CommSemiring
 variable [CommSemiring A]
 
+section Algebra
+variable [Algebra R A] [AddMonoid M]
+
+variable (R M A) in
+/-- `AddMonoidAlgebra.lift` as a `MulEquiv`. -/
+def liftMulEquiv : (Multiplicative M →* A) ≃* WithConv (R[M] →ₐ[R] A) where
+  toEquiv := (lift R A M).trans (WithConv.equiv _).symm
+  map_mul' f g := by ext; simp [AlgHom.convMul_apply]
+
 @[simp]
-lemma convMul_algHom_single [Algebra R A] [AddMonoid M] (f g : WithConv <| R[M] →ₐ[R] A) (m : M) :
+lemma convMul_algHom_single (f g : WithConv <| R[M] →ₐ[R] A) (m : M) :
     (f * g) (single m 1) = f (single m 1) * g (single m 1) := by simp [AlgHom.convMul_apply]
+
+end Algebra
 
 @[simp]
 lemma convMul_bialgHom_single [Bialgebra R A] [AddCommMonoid M] (f g : WithConv <| R[M] →ₐc[R] A)
@@ -281,8 +304,7 @@ variable [AddCommMonoid M] [AddCommMonoid N]
 @[simp]
 lemma mapDomainBialgHom_add (f g : M →+ N) :
     mapDomainBialgHom R (f + g) =
-     (toConv (mapDomainBialgHom R f) * toConv (mapDomainBialgHom R g)).ofConv :=
-  MonoidAlgebra.mapDomainBialgHom_mul f.toMultiplicative g.toMultiplicative
+     (toConv (mapDomainBialgHom R f) * toConv (mapDomainBialgHom R g)).ofConv := by ext; simp
 
 lemma comulAlgHom_comp_mapRingHom (f : R →+* S) :
     (comulAlgHom S S[M]).toRingHom.comp (mapRingHom M f) =
@@ -306,8 +328,17 @@ variable [AddGroup G] [AddGroup H] [AddGroup I]
 open Submodule in
 @[simp]
 lemma isGroupLikeElem_iff_mem_range_of {x : R[G]} :
-    IsGroupLikeElem R x ↔ x ∈ Set.range (of R G) :=
-  MonoidAlgebra.isGroupLikeElem_iff_mem_range_of (G := Multiplicative G)
+    IsGroupLikeElem R x ↔ x ∈ Set.range (of R G) where
+  mp hx := by
+    by_contra h
+    have : LinearIndepOn R id (insert x <| .range (of R G)) :=
+      linearIndepOn_isGroupLikeElem.mono <| by simp [Set.subset_def, hx]
+    have : x.coeff.sum single ∉ span R (.range (of R G)) := by
+      simpa using this.notMem_span_of_insert h
+    refine this <| sum_mem fun g hg ↦ ?_
+    rw [← mul_one (x.coeff g), ← smul_eq_mul, ← smul_single]
+    refine smul_mem _ _ <| subset_span <| Set.mem_range_self _
+  mpr := by rintro ⟨g, rfl⟩; exact isGroupLikeElem_of _
 
 private noncomputable def mapDomainOfBialgHomFun (f : R[G] →ₐc[R] R[H]) : G → H :=
   fun g ↦ (isGroupLikeElem_iff_mem_range_of.1 <| (isGroupLikeElem_of g).map f).choose
@@ -341,7 +372,7 @@ protected lemma single_mapDomainOfBialgHom (f : R[G] →ₐc[R] R[H]) (g : G) (r
 lemma mapDomainBialgHom_mapDomainOfBialgHom (f : R[G] →ₐc[R] R[H]) :
     mapDomainBialgHom R (mapDomainOfBialgHom f) = f := by
   refine BialgHom.coe_toAlgHom_injective <| algHom_ext fun x ↦ ?_
-  simp only [BialgHom.coe_toAlgHom, mapDomainBialgHom_apply, Finsupp.mapDomain_single]
+  simp only [BialgHom.coe_toAlgHom, mapDomainBialgHom_single]
   exact single_mapDomainOfBialgHomFun_one f x
 
 @[simp] lemma mapDomainOfBialgHom_mapDomainBialgHom (f : G →+ H) :

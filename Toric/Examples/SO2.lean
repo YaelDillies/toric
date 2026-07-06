@@ -166,21 +166,21 @@ private def complexEquivFun : SO2Ring ℂ →ₐc[ℂ] MonoidAlgebra ℂ (Multip
       (- (.I / 2 : ℂ) • (.single (.ofAdd 1) 1 - .single (.ofAdd (-1)) 1)) ?_) ?_ ?_
   · simp [pow_two, add_mul, mul_add, MonoidAlgebra.single_mul_single, ← ofAdd_add,
       ← two_nsmul, ← mul_smul, ← mul_inv_rev, div_mul_div_comm, neg_div, smul_sub,
-      MonoidAlgebra.one_def]
+      MonoidAlgebra.one_def, -MonoidAlgebra.smul_single]
     module
   · ext <;> simp; norm_num
   · ext
     · simp [smul_add, tmul_add, add_tmul, smul_sub, neg_tmul, tmul_neg, ← smul_tmul', tmul_smul,
-        smul_smul, div_mul_div_comm, Complex.I_mul_I]
+        smul_smul, div_mul_div_comm, Complex.I_mul_I, -MonoidAlgebra.smul_single]
       module
     · simp [smul_add, tmul_add, add_tmul, smul_sub, neg_tmul, tmul_neg, ← smul_tmul', tmul_smul,
-        smul_smul]
+        smul_smul, -MonoidAlgebra.smul_single]
       module
 
 set_option backward.isDefEq.respectTransparency false in
 attribute [-ext] AdjoinRoot.algHom_ext' in
-/-- `SO2Ring ℂ` is isomorphic to Laurent series `ℂ[ℤ]`. -/
-def complexEquiv : SO2Ring ℂ ≃ₐc[ℂ] ℂ[ℤ] where
+/-- `SO2Ring ℂ` is isomorphic to the monoid algebra `ℂ[Multiplicative ℤ]`. -/
+private def complexEquivMul : SO2Ring ℂ ≃ₐc[ℂ] MonoidAlgebra ℂ (Multiplicative ℤ) where
   __ := complexEquivFun
   __ : SO2Ring ℂ ≃ₐ[ℂ] MonoidAlgebra ℂ (Multiplicative ℤ) := by
     refine .symm <| .ofAlgHom (AlgHomClass.toAlgHom complexEquivInv) complexEquivFun ?_ ?_
@@ -191,11 +191,19 @@ def complexEquiv : SO2Ring ℂ ≃ₐc[ℂ] ℂ[ℤ] where
       module
     · ext
       simp [complexEquivFun, complexEquivInv_single, smul_smul, mul_div, smul_sub, neg_div,
-        MonoidAlgebra.single, ← sub_eq_add_neg, ← Finsupp.single_add_apply, -Finsupp.single_add]
+        ← sub_eq_add_neg, ← Finsupp.single_add_apply, -Finsupp.single_add]
       norm_num
 
+/-- `SO2Ring ℂ` is isomorphic to Laurent series `ℂ[ℤ]`. -/
+def complexEquiv : SO2Ring ℂ ≃ₐc[ℂ] ℂ[ℤ] :=
+  complexEquivMul.trans (AddMonoidAlgebra.toMultiplicativeBialgEquiv ℂ ℂ ℤ).symm
+
 @[simp high, nolint simpNF] lemma complexEquiv_inv_single (a : ℤ) (b : ℂ) :
-    complexEquiv.symm (.single a b) = b • (T ^ a).1 := complexEquivInv_single ..
+    complexEquiv.symm (.single a b) = b • (T ^ a).1 := by
+  change complexEquivMul.symm (AddMonoidAlgebra.toMultiplicativeBialgEquiv ℂ ℂ ℤ (.single a b)) = _
+  rw [show AddMonoidAlgebra.toMultiplicativeBialgEquiv ℂ ℂ ℤ (.single a b) =
+    .single (.ofAdd a) b from AddMonoidAlgebra.toMultiplicative_single ..]
+  exact complexEquivInv_single (.ofAdd a) b
 
 set_option backward.isDefEq.respectTransparency false in
 @[simp] lemma complexEquiv_inv_C (b : ℂ) :
@@ -402,10 +410,11 @@ theorem not_isSplitTorusOver_SO₂_real : ¬ SO₂(ℝ).IsSplitTorusOver Spec(�
   haveI : IsMonHom ((e ≪≫ diagSpecIso _ ℤ[σ]).asOver Spec(ℝ)).hom := by dsimp; infer_instance
   have e₁ := Hom.mulEquivCongrRight ((e ≪≫ diagSpecIso _ ℤ[σ]).asOver Spec(ℝ))
     (Spec(ℝ).asOver Spec(ℝ))
-  have e₂ : (ℤ[σ] →+ Additive ℝˣ) ≃+ (σ → Additive ℝˣ) := Finsupp.liftAddHom.symm.trans <|
-    .piCongrRight («η» := σ) fun _ ↦ (zmultiplesAddHom <| Additive ℝˣ).symm
+  have e₂ : (ℤ[σ] →+ Additive ℝˣ) ≃+ (σ → Additive ℝˣ) :=
+    AddMonoidAlgebra.coeffAddEquiv.addMonoidHomCongrLeft.trans <| Finsupp.liftAddHom.symm.trans <|
+      .piCongrRight («η» := σ) fun _ ↦ (zmultiplesAddHom <| Additive ℝˣ).symm
   exact (aux3 σ).1 <| (pointsMulEquiv ℝ).symm.trans <| e₁.trans <| Spec.mapMulEquiv.symm.trans <|
-    (MonoidAlgebra.liftMulEquiv ℝ ..).symm.trans <| MonoidHom.toHomUnitsMulEquiv.trans <|
+    (AddMonoidAlgebra.liftMulEquiv ℝ ℝ ℤ[σ]).symm.trans <| MonoidHom.toHomUnitsMulEquiv.trans <|
       MonoidHom.toAdditiveRightMulEquiv.trans <| e₂.toMultiplicative.trans <| .refl _
 
 end AlgebraicGeometry.SO₂

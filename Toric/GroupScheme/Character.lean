@@ -178,9 +178,11 @@ instance isPerfPair_charPairing [T.IsSplitTorusOver Spec(R)] [LocallyOfFiniteTyp
     (charPairing R T).IsPerfPair := by
   obtain ⟨σ, _, e, _, _⟩ := exists_iso_diag_finite_of_isSplitTorusOver_locallyOfFiniteType T Spec(R)
   refine .congr (.id (R := ℤ) (M := Module.Dual ℤ (σ →₀ ℤ)))
-    ((cocharCongr _ e).trans ((cocharDiag (.of R) ℤ[σ]).trans
-      (addMonoidHomLequivInt ℤ).toAddEquiv)).toIntLinearEquiv
-    ((charCongr _ e).trans <| charDiag (.of R) ℤ[σ]).toIntLinearEquiv _ ?_
+    ((cocharCongr _ e).trans ((cocharDiag (.of R) ℤ[σ]).trans <|
+      AddMonoidAlgebra.coeffAddEquiv.addMonoidHomCongrLeft.trans
+        (addMonoidHomLequivInt ℤ).toAddEquiv)).toIntLinearEquiv
+    ((charCongr _ e).trans <| (charDiag (.of R) ℤ[σ]).trans
+      AddMonoidAlgebra.coeffAddEquiv).toIntLinearEquiv _ ?_
   ext f x
   apply (charTorusUnit (R := R)).symm.injective
   apply Additive.ofMul.symm.injective

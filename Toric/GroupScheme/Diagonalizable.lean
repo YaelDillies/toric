@@ -89,33 +89,29 @@ def Diag.mapIso (f : M ≃+ N) : Diag S M ≅ Diag S N where
   inv_hom_id := by simp [← Diag.map_comp]
 
 variable (R M) in
-def diagSpecIso : Diag (Spec R) M ≅ Spec(MonoidAlgebra R <| Multiplicative M) :=
+/-- The isomorphism `Diag (Spec R) M ≅ Spec R[M]` as monoid schemes over `Spec R`. -/
+def diagSpecIsoMon :
+    (diagMonFunctor (Spec R)).obj (.op <| .of M) ≅ (bialgSpec R).obj (.op <| .of R R[M]) :=
   letI f := (algebraMap ℤ R).comp (ULift.ringEquiv.{0, u} (R := ℤ)).toRingHom
-  (Functor.isoWhiskerRight (specCommMonAlgPullback (CommRingCat.ofHom f) _
-    (specULiftZIsTerminal.hom_ext _ _)) (Mon.forget _ ⋙ Over.forget _)).app <|
-      .op <| .of <| Multiplicative M
+  (specCommMonAlgPullback (CommRingCat.ofHom f) _ (specULiftZIsTerminal.hom_ext _ _)).app
+      (.op <| .of <| Multiplicative M) ≪≫
+    (bialgSpec R).mapIso (CommBialgCat.isoMk <| AddMonoidAlgebra.toMultiplicativeBialgEquiv ..).op
+
+variable (R M) in
+def diagSpecIso : Diag (Spec R) M ≅ Spec(R[M]) :=
+  (Mon.forget _ ⋙ Over.forget _).mapIso (diagSpecIsoMon R M)
 
 instance isOver_diagSpecIso_hom : (diagSpecIso R M).hom.IsOver (Spec R) where
-  comp_over := by
-    rw [← Iso.eq_inv_comp]
-    exact (specCommMonAlgPullback_inv_app_hom_left_snd _ _ (specULiftZIsTerminal.hom_ext _ _) <|
-      .op <| .of <| Multiplicative M).symm
+  comp_over := Over.w (diagSpecIsoMon R M).hom.hom
 
 instance isOver_diagSpecIso_inv : (diagSpecIso R M).inv.IsOver (Spec R) where
-  comp_over := specCommMonAlgPullback_inv_app_hom_left_snd _ _
-      (specULiftZIsTerminal.hom_ext _ _) <| .op <| .of <| Multiplicative M
+  comp_over := Over.w (diagSpecIsoMon R M).inv.hom
 
 instance : IsMonHom ((diagSpecIso R M).hom.asOver (Spec R)) :=
-  letI f := (algebraMap ℤ R).comp (ULift.ringEquiv.{0, u} (R := ℤ)).toRingHom
-  Mon.instIsMonHomHom
-  ((specCommMonAlgPullback (CommRingCat.ofHom f) (specULiftZIsTerminal.from _)
-    (specULiftZIsTerminal.hom_ext _ _)).app <| .op <| .of <| Multiplicative M).hom
+  Mon.instIsMonHomHom (diagSpecIsoMon R M).hom
 
 instance : IsMonHom ((diagSpecIso R M).inv.asOver (Spec R)) :=
-  letI f := (algebraMap ℤ R).comp (ULift.ringEquiv.{0, u} (R := ℤ)).toRingHom
-  Mon.instIsMonHomHom
-  ((specCommMonAlgPullback (CommRingCat.ofHom f) (specULiftZIsTerminal.from _)
-    (specULiftZIsTerminal.hom_ext _ _)).app _).inv
+  Mon.instIsMonHomHom (diagSpecIsoMon R M).inv
 
 /-- `Diag` is invariant under pullback. -/
 def diagPullbackIso (f : T ⟶ S) : pullback f (Diag S M ↘ S) ≅ Diag T M :=
@@ -224,7 +220,9 @@ def diagMonFunctorIso :
       (specULiftZIsTerminal.hom_ext _ _)
 
 lemma diagMonFunctorIso_app (M : AddCommMonCatᵒᵖ) :
-    ((diagMonFunctorIso R).app M).hom.hom.left = (diagSpecIso R M.unop).hom := rfl
+    ((diagMonFunctorIso R).app M).hom.hom.left ≫
+      Spec.map (CommRingCat.ofHom (AddMonoidAlgebra.toMultiplicative R M.unop).toRingHom) =
+      (diagSpecIso R M.unop).hom := rfl
 
 variable (R) in
 def diagFunctorIso :
@@ -236,7 +234,9 @@ def diagFunctorIso :
       (specULiftZIsTerminal.hom_ext _ _)
 
 lemma diagFunctorIso_app (M : AddCommGrpCatᵒᵖ) :
-    ((diagFunctorIso R).app M).hom.hom.hom.left = (diagSpecIso R M.unop).hom := rfl
+    ((diagFunctorIso R).app M).hom.hom.hom.left ≫
+      Spec.map (CommRingCat.ofHom (AddMonoidAlgebra.toMultiplicative R M.unop).toRingHom) =
+      (diagSpecIso R M.unop).hom := rfl
 
 instance faithful_diagFunctor {R : Type*} [CommRing R] [Nontrivial R] :
     (diagFunctor Spec(R)).Faithful :=
