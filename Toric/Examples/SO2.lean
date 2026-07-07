@@ -189,10 +189,10 @@ private def complexEquivMul : SO2Ring ℂ ≃ₐc[ℂ] MonoidAlgebra ℂ (Multip
         module
       simp [complexEquivFun, complexEquivInv_single, smul_smul, div_mul_eq_mul_div]
       module
-    · ext
-      simp [complexEquivFun, complexEquivInv_single, smul_smul, mul_div, smul_sub, neg_div,
-        ← sub_eq_add_neg, ← Finsupp.single_add_apply, -Finsupp.single_add]
-      norm_num
+    · refine MonoidAlgebra.algHom_ext' (MonoidHom.ext_mint ?_) (by ext)
+      simp [complexEquivFun, complexEquivInv_single, smul_smul, smul_sub,
+        ← mul_div_assoc, Complex.I_mul_I, -MonoidAlgebra.smul_single]
+      module
 
 /-- `SO2Ring ℂ` is isomorphic to Laurent series `ℂ[ℤ]`. -/
 def complexEquiv : SO2Ring ℂ ≃ₐc[ℂ] ℂ[ℤ] :=
