@@ -132,6 +132,7 @@ lemma diagPullbackIso_inv_fst (f : T ⟶ S) :
     (diagPullbackIso f).inv ≫ pullback.fst _ _ = Diag T M ↘ T := by
   simp [diagPullbackIso, Diag.canonicallyOver_over]
 
+set_option backward.isDefEq.respectTransparency false in
 instance locallyOfFiniteType_diag [AddMonoid.FG M] : LocallyOfFiniteType (Diag S M ↘ S) := by
   apply MorphismProperty.pullback_snd
   simp only [specOverSpec_over, HasRingHomProperty.Spec_iff (P := @LocallyOfFiniteType),
