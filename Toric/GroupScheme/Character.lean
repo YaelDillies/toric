@@ -16,7 +16,7 @@ public import Toric.GroupScheme.Torus
 @[expose] public noncomputable section
 
 open AddMonoidAlgebra CategoryTheory
-open scoped Hom SpecOfNotation
+open scoped Hom
 
 namespace AlgebraicGeometry.Scheme
 universe u
@@ -172,11 +172,11 @@ noncomputable def charPairing : X*(Spec R, G) →ₗ[ℤ] X(Spec R, G) →ₗ[�
 
 set_option backward.defeqAttrib.useBackward true in
 set_option backward.isDefEq.respectTransparency false in
-set_option maxHeartbeats 0 in
--- FIXME: Get rid of raised heartbeats
-instance isPerfPair_charPairing [T.IsSplitTorusOver Spec(R)] [LocallyOfFiniteType (T ↘ Spec(R))] :
+instance isPerfPair_charPairing [T.IsSplitTorusOver <| Spec <| .of R]
+    [LocallyOfFiniteType (T ↘ Spec (.of R))] :
     (charPairing R T).IsPerfPair := by
-  obtain ⟨σ, _, e, _, _⟩ := exists_iso_diag_finite_of_isSplitTorusOver_locallyOfFiniteType T Spec(R)
+  obtain ⟨σ, _, e, _, _⟩ :=
+    exists_iso_diag_finite_of_isSplitTorusOver_locallyOfFiniteType T <| Spec <| .of R
   refine .congr (.id (R := ℤ) (M := Module.Dual ℤ (σ →₀ ℤ)))
     ((cocharCongr _ e).trans ((cocharDiag (.of R) ℤ[σ]).trans <|
       AddMonoidAlgebra.coeffAddEquiv.addMonoidHomCongrLeft.trans

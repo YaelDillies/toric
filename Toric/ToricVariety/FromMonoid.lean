@@ -20,15 +20,14 @@ suppress_compilation
 
 open Algebra AlgebraicGeometry Scheme CategoryTheory Limits AddMonoidAlgebra AddLocalization
   AffineAddMonoid
-open scoped SpecOfNotation
 
 universe u
 variable {𝕜 M : Type u} [Field 𝕜] [AddCancelCommMonoid M] [AddMonoid.FG M] [IsAddTorsionFree M]
 
 namespace AffineToricVarietyFromMonoid
 
-noncomputable instance instToricVariety : ToricVariety 𝕜 (Diag Spec(𝕜) M) where
-  torus := Diag Spec(𝕜) (GrothendieckAddGroup M)
+noncomputable instance instToricVariety : ToricVariety 𝕜 (Diag (Spec <| .of 𝕜) M) where
+  torus := Diag (Spec <| .of 𝕜) (GrothendieckAddGroup M)
   modObjTorus := sorry
   torusEmb := sorry
   isOver_torusEmb := sorry

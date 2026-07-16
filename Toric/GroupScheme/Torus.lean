@@ -19,7 +19,7 @@ This file defines the standard algebraic torus over `Spec R` as `Spec (R ⊗ ℤ
 public noncomputable section
 
 open CategoryTheory Opposite Limits
-open scoped AddMonoidAlgebra SpecOfNotation
+open scoped AddMonoidAlgebra
 
 universe u
 
@@ -83,43 +83,44 @@ lemma exists_iso_diag_finite_of_isSplitTorusOver_locallyOfFiniteType [G.IsSplitT
 end IsSplitTorusOver
 
 section IsTorusOver
-variable {k : Type u} [Field k] {G H : Scheme.{u}} [G.Over Spec(k)] [H.Over Spec(k)]
-  [GrpObj (G.asOver Spec(k))] [GrpObj (H.asOver Spec(k))]
+variable {k : Type u} [Field k] {G H : Scheme.{u}} [G.Over (Spec <| .of k)] [H.Over (Spec <| .of k)]
+  [GrpObj (G.asOver (Spec <| .of k))] [GrpObj (H.asOver (Spec <| .of k))]
 
 variable (k G) in
 @[mk_iff]
 class IsTorusOver : Prop where
   existsSplit :
     ∃ (L : Type u) (_ : Field L) (_ : Algebra k L) (_ : Algebra.IsSeparable k L),
-      (pullback (G ↘ Spec(k)) <| Spec.map <| CommRingCat.ofHom <|
-        algebraMap k L).IsSplitTorusOver Spec(L)
+      (pullback (G ↘ Spec (.of k)) <| Spec.map <| CommRingCat.ofHom <|
+        algebraMap k L).IsSplitTorusOver (Spec <| .of L)
 
 set_option backward.isDefEq.respectTransparency false in
-instance [G.IsSplitTorusOver Spec(k)] : G.IsTorusOver k := by
+instance [G.IsSplitTorusOver (Spec <| .of k)] : G.IsTorusOver k := by
   refine ⟨k, ‹_›, inferInstance, inferInstance, ?_⟩
   simp only [Algebra.algebraMap_self, CommRingCat.ofHom_id]
-  suffices (pullback (G ↘ Spec(k)) (𝟙 _)).IsSplitTorusOver Spec(k) by
+  suffices (pullback (G ↘ Spec (.of k)) (𝟙 _)).IsSplitTorusOver (Spec <| .of k) by
     convert this <;> simp
-  exact .of_isIso (pullback.fst (G ↘ Spec(k)) (𝟙 _))
+  exact .of_isIso (pullback.fst (G ↘ Spec (.of k)) (𝟙 _))
 
 set_option backward.defeqAttrib.useBackward true in
 set_option backward.isDefEq.respectTransparency false in
-lemma IsTorusOver.of_iso (e : G ≅ H) [e.hom.IsOver Spec(k)] [IsMonHom (e.hom.asOver Spec(k))]
-    [H.IsTorusOver k] : G.IsTorusOver k := by
+lemma IsTorusOver.of_iso (e : G ≅ H) [e.hom.IsOver <| Spec <| .of k]
+    [IsMonHom <| e.hom.asOver <| Spec <| .of k] [H.IsTorusOver k] : G.IsTorusOver k := by
   obtain ⟨L, _, _, _, hH⟩ := ‹H.IsTorusOver k›
   refine ⟨L, _, ‹_›, ‹_›, ?_⟩
   let e'' := (Over.pullback <| Spec.map <| CommRingCat.ofHom <| algebraMap k L).mapGrp.mapIso <|
-    Grp.mkIso' <| e.asOver Spec(k)
+    Grp.mkIso' <| e.asOver <| Spec <| .of k
   let e' := (Grp.forget _ ⋙ Over.forget _).mapIso e''
   dsimp at e'
-  have : e'.hom.IsOver Spec(L) := by simp [e', e'']
-  have : IsMonHom <| e'.hom.asOver Spec(L) := by simpa using! Mon.instIsMonHomHom e''.hom.hom
+  have : e'.hom.IsOver (Spec <| .of L) := by simp [e', e'']
+  have : IsMonHom <| e'.hom.asOver <| Spec <| .of L := by
+    simpa using! Mon.instIsMonHomHom e''.hom.hom
   exact .of_iso e'
 
 lemma IsTorusOver.of_isIso [H.IsTorusOver k]
-    (f : G ⟶ H) [IsIso f] [f.IsOver Spec(k)] [IsMonHom (f.asOver Spec(k))] :
+    (f : G ⟶ H) [IsIso f] [f.IsOver <| Spec <| .of k] [IsMonHom <| f.asOver <| Spec <| .of k] :
     G.IsTorusOver k :=
-  have : IsMonHom (Hom.asOver (asIso f).hom Spec(k)) := ‹_›
+  have : IsMonHom ((asIso f).hom.asOver <| Spec <| .of k) := ‹_›
   .of_iso (asIso f)
 
 end IsTorusOver
@@ -173,6 +174,6 @@ variable {R : CommRingCat} {σ : Type*}
 variable (R σ) in
 /-- The split torus with dimensions `σ` over `Spec R` is isomorphic to `Spec R[ℤ^σ]`. -/
 abbrev splitTorusIso (R : CommRingCat) (σ : Type*) :
-    𝔾ₘ[Spec R, σ] ≅ Spec(MvLaurentPolynomial σ R) := diagSpecIso _ _
+    𝔾ₘ[Spec R, σ] ≅ Spec (.of <| MvLaurentPolynomial σ R) := diagSpecIso _ _
 
 end AlgebraicGeometry.Scheme
