@@ -19,7 +19,6 @@ This file defines toric ideals.
 @[expose] public noncomputable section
 
 open AlgebraicGeometry CategoryTheory.Limits
-open scoped SpecOfNotation
 
 namespace AddMonoidAlgebra
 variable {M G R k H : Type*} [AddCommMonoid M] [AddCommGroup G] [AddCommGroup H]
@@ -78,10 +77,10 @@ lemma isToricIdeal_iff_exists_span_single_sub_single :
   mpr := by
     let G := AddLocalization (⊤ : AddSubmonoid M)
     rintro ⟨_, s, hsI⟩
-    letI V := Spec(k[M] ⧸ I)
-    let : V.Over Spec(k[M]) := sorry
-    let : Spec(k[G]).Over Spec(k[M]) := sorry
-    let VinterT := pullback (V ↘ Spec(k[M])) (Spec(k[G]) ↘ Spec(k[M]))
+    letI V := Spec (.of <| k[M] ⧸ I)
+    let : V.Over (Spec <| .of k[M]) := sorry
+    let : (Spec <| .of k[G]).Over (Spec <| .of k[M]) := sorry
+    let VinterT := pullback (V ↘ Spec (.of k[M])) (Spec (.of k[G]) ↘ Spec (.of k[M]))
     refine ⟨?_⟩
     sorry
 
