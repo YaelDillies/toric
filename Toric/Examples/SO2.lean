@@ -126,6 +126,7 @@ def antipodeAlgHom : SO2Ring R →ₐ[R] SO2Ring R := liftₐ .X (-.Y) (by simp)
 @[simp] lemma antipodeAlgHom_Y : antipodeAlgHom (R := R) .Y = -.Y := by simp [antipodeAlgHom]
 
 attribute [-ext] AdjoinRoot.algHom_ext' in
+set_option backward.isDefEq.respectTransparency false in
 instance : HopfAlgebra R (SO2Ring R) := by
   refine .ofAlgHom antipodeAlgHom ?_ <| by ext <;> simp; ring_nf
   ext
