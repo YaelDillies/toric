@@ -4,7 +4,6 @@ public import Mathlib.RingTheory.Bialgebra.Convolution
 public import Mathlib.RingTheory.Bialgebra.GroupLike
 public import Mathlib.RingTheory.Bialgebra.MonoidAlgebra
 public import Toric.Mathlib.Algebra.MonoidAlgebra.Basic
-public import Toric.Mathlib.RingTheory.TensorProduct.Maps
 
 public noncomputable section
 
@@ -143,7 +142,7 @@ section CommRing
 variable [CommRing R] [IsDomain R]
 
 open Submodule in
-@[to_additive (dont_translate := R) (attr := simp)]
+@[to_additive (dont_translate := R) (attr := simp) isGroupLikeElem_iff_mem_range_single_one]
 lemma isGroupLikeElem_iff_mem_range_single_one {x : R[M]} :
     IsGroupLikeElem R x ↔ x ∈ Set.range (single · 1) where
   mp hx := by
@@ -329,7 +328,7 @@ variable [AddGroup G] [AddGroup H] [AddGroup I]
 open Submodule in
 @[simp]
 lemma isGroupLikeElem_iff_mem_range_of {x : R[G]} :
-    IsGroupLikeElem R x ↔ x ∈ Set.range (of R G) := isAddGroupLikeElem_iff_mem_range_single_zero
+    IsGroupLikeElem R x ↔ x ∈ Set.range (of R G) := isGroupLikeElem_iff_mem_range_single_one
 
 @[simp]
 private lemma single_mapDomainOfBialgHomFun_one (f : R[G] →ₐc[R] R[H]) (g : G) :
@@ -407,12 +406,12 @@ variable (R A) [CommSemiring R] [Semiring A] [Bialgebra R A]
 
 /-- The `R`-algebra map from the group algebra on the group-like elements of `A` to `A`. -/
 @[expose, simps!]
-noncomputable def liftGroupLikeAlgHom : MonoidAlgebra R (GroupLike R A) →ₐ[R] A :=
+noncomputable def liftGroupLikeAlgHom : R[GroupLike R A] →ₐ[R] A :=
   lift R A (GroupLike R A) { toFun g := g.1, map_one' := by simp, map_mul' := by simp }
 
 /-- The `R`-bialgebra map from the group algebra on the group-like elements of `A` to `A`. -/
 @[expose, simps!]
-noncomputable def liftGroupLikeBialgHom : MonoidAlgebra R (GroupLike R A) →ₐc[R] A :=
+noncomputable def liftGroupLikeBialgHom : R[GroupLike R A] →ₐc[R] A :=
   .ofAlgHom (liftGroupLikeAlgHom R A) (by aesop) (by aesop)
 
 end MonoidAlgebra

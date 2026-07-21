@@ -5,9 +5,10 @@ Authors: Andrew Yang
 -/
 module
 
+public import Mathlib.AlgebraicGeometry.Group.Affine
 public import Mathlib.RingTheory.TensorProduct.MonoidAlgebra
 public import Toric.Hopf.GrpAlg
-public import Toric.Mathlib.AlgebraicGeometry.Group.Affine
+public import Toric.Mathlib.Algebra.Category.Ring.Under.Basic
 public import Toric.Mathlib.RingTheory.Bialgebra.MonoidAlgebra
 
 @[expose] public noncomputable section
@@ -29,7 +30,7 @@ abbrev specCommMonAlgPullbackObjXIso :
     (((commMonAlg R).op ⋙ bialgSpec R ⋙ (Over.pullback Sf).mapMon).obj (.op M)).X ≅
       (((commMonAlg S).op ⋙ bialgSpec S).obj (.op M)).X :=
   letI := f.hom.toAlgebra
-  letI H : IsPullback (Spec.map (CommRingCat.ofHom (algebraMap R[M] S[M])))
+  haveI H : IsPullback (Spec.map (CommRingCat.ofHom (algebraMap R[M] S[M])))
     (Spec.map (CommRingCat.ofHom (algebraMap S S[M])))
     (Spec.map (CommRingCat.ofHom (algebraMap R R[M])))
     Sf := H ▸ (CommRingCat.isPushout_of_isPushout R S R[M] S[M]).op.map Scheme.Spec
@@ -37,22 +38,25 @@ abbrev specCommMonAlgPullbackObjXIso :
 
 set_option backward.defeqAttrib.useBackward true in
 set_option backward.isDefEq.respectTransparency false in
+set_option linter.flexible false in
 lemma specCommMonAlgPullbackObjXIso_one :
     η ≫ (specCommMonAlgPullbackObjXIso M f Sf H).hom = η := by
   subst H
-  dsimp [AlgHom.toUnder]
-  letI := f.hom.toAlgebra
-  have h₁ := counitAlgHom_comp_mapRingHom f.hom (M := M)
-  have h₂ := (Bialgebra.counitAlgHom S S[M]).comp_algebraMap
-  apply_fun (Spec.map <| CommRingCat.ofHom ·) at h₁ h₂
-  simp only [CommRingCat.ofHom_comp, Spec.map_comp, AlgHom.toRingHom_eq_coe] at h₁ h₂
+  let := f.hom.toAlgebra
   ext
   apply ((CommRingCat.isPushout_of_isPushout R S R[M] S[M]).op.map Scheme.Spec).hom_ext <;>
-    simp [Functor.Monoidal.ε_of_cartesianMonoidalCategory, RingHom.algebraMap_toAlgebra, h₁, h₂,
-      CommRingCat.mkUnder, CommRingCat.of_carrier]
+  · simp [Functor.Monoidal.ε_of_cartesianMonoidalCategory, RingHom.algebraMap_toAlgebra,
+      CommRingCat.mkUnder, CommRingCat.of_carrier, -AlgHom.toUnder_right']
+    simp [← Spec.map_id, ← Spec.map_comp]
+    congr 1
+    ext <;> simp
 
 set_option backward.defeqAttrib.useBackward true in
 set_option backward.isDefEq.respectTransparency false in
+set_option linter.flexible false in
+-- The `simp` calls are non-terminal merely because the `erw` calls are necessary: the `@[simp]`
+-- lemmas `Over.tensorHom_left_fst/snd` want their target to be syntactically an `Over.mk`, which
+-- `(algSpec R).obj _` isn't syntactically.
 @[reassoc]
 private
 lemma specCommMonAlgPullbackObjIso_mul_aux :
@@ -65,31 +69,39 @@ lemma specCommMonAlgPullbackObjIso_mul_aux :
           (mapRingHom_comp_algebraMap f.hom (M := M))
           (mapRingHom_comp_algebraMap f.hom (M := M)))) := by
   subst H
-  letI := f.hom.toAlgebra
-  letI H := (CommRingCat.isPushout_of_isPushout R S R[M] S[M]).op.map Scheme.Spec
-  letI e : (((commMonAlg R).op ⋙ bialgSpec R ⋙ (Over.pullback (Spec.map f)).mapMon).obj (.op M)).X ≅
+  let := f.hom.toAlgebra
+  have H := (CommRingCat.isPushout_of_isPushout R S R[M] S[M]).op.map Scheme.Spec
+  let e : (((commMonAlg R).op ⋙ bialgSpec R ⋙ (Over.pullback (Spec.map f)).mapMon).obj (.op M)).X ≅
     (((commMonAlg S).op ⋙ bialgSpec S).obj (.op M)).X :=
       Over.isoMk H.isoPullback.symm (by dsimp; simp; rfl)
-  letI hc := mapRingHom_comp_algebraMap f.hom (M := M)
+  have hc := mapRingHom_comp_algebraMap f.hom (M := M)
   have h₂ := Algebra.TensorProduct.mapRingHom_comp_includeLeftRingHom _ _ _ hc hc
   have h₃ := Algebra.TensorProduct.mapRingHom_comp_includeRight _ _ _ hc hc
   apply_fun (Spec.map <| CommRingCat.ofHom ·) at h₂ h₃
   simp only [CommRingCat.ofHom_comp, Spec.map_comp] at h₂ h₃
   rw [← Category.assoc, ← Iso.eq_comp_inv]
   dsimp
-  ext <;> simp [h₂, h₃, RingHom.algebraMap_toAlgebra]
+  ext
+  · simp [h₂]
+    erw [Over.tensorHom_left_fst_assoc]
+    simp [specCommMonAlgPullbackObjXIso, RingHom.algebraMap_toAlgebra]
+    exact Over.prodComparisonIso_pullback_inv_left_fst_fst (Spec.map f) _ _
+  · simp [h₃]
+    erw [Over.tensorHom_left_snd_assoc]
+    simp [specCommMonAlgPullbackObjXIso, RingHom.algebraMap_toAlgebra]
+    exact Over.prodComparisonIso_pullback_inv_left_fst_snd' (Spec.map f) _ _
 
 set_option backward.defeqAttrib.useBackward true in
 set_option backward.isDefEq.respectTransparency false in
+set_option linter.flexible false in
 lemma specCommMonAlgPullbackObjXIso_mul :
     μ ≫ (specCommMonAlgPullbackObjXIso M f Sf H).hom =
     ((specCommMonAlgPullbackObjXIso M f Sf H).hom ⊗ₘ
       (specCommMonAlgPullbackObjXIso M f Sf H).hom) ≫ μ := by
   dsimp [AlgHom.toUnder]
   -- FIXME: `erw?` says nothing
-  erw [Functor.mapMon_obj_mon_mul, Functor.mapMon_obj_mon_mul]
   subst H
-  letI := f.hom.toAlgebra
+  let := f.hom.toAlgebra
   have h₃ := comulAlgHom_comp_mapRingHom f.hom (M := M)
   have h₄ := (Bialgebra.comulAlgHom S S[M]).comp_algebraMap
   apply_fun (Spec.map <| CommRingCat.ofHom ·) at h₃ h₄
@@ -102,6 +114,9 @@ lemma specCommMonAlgPullbackObjXIso_mul :
           (Spec.map (CommRingCat.ofHom (Bialgebra.comulAlgHom R R[M]).toRingHom))
   · simp [Functor.Monoidal.μ_of_cartesianMonoidalCategory, RingHom.algebraMap_toAlgebra,
       AlgHom.toUnder, h₄, Algebra.TensorProduct.algebraMap_def, pullback.condition]
+    erw [Over.tensorHom_left_snd_assoc]
+    simp [specCommMonAlgPullbackObjXIso, RingHom.algebraMap_toAlgebra]
+    exact Over.prodComparisonIso_pullback_inv_left_snd' (Spec.map f) ..
 
 set_option backward.defeqAttrib.useBackward true in
 set_option backward.isDefEq.respectTransparency false in
@@ -115,8 +130,8 @@ def specCommMonAlgPullback :
     (specCommMonAlgPullbackObjXIso_mul M.unop f Sf H))
   fun {M N} φ ↦ by
     subst H
-    letI := f.hom.toAlgebra
-    letI H := (CommRingCat.isPushout_of_isPushout R S R[N.unop] S[N.unop]).op.map Scheme.Spec
+    let := f.hom.toAlgebra
+    have H := (CommRingCat.isPushout_of_isPushout R S R[N.unop] S[N.unop]).op.map Scheme.Spec
     have h₁ : (mapRingHom M.unop f.hom).comp (mapDomainBialgHom R φ.unop.hom).toAlgHom =
         (mapDomainBialgHom S φ.unop.hom).toAlgHom.toRingHom.comp
           (mapRingHom N.unop f.hom) := mapRingHom_comp_mapDomainRingHom _ _
@@ -134,8 +149,8 @@ lemma specCommMonAlgPullback_inv_app_hom_left_fst (M) :
     ((specCommMonAlgPullback f Sf H).inv.app M).hom.left ≫
       pullback.fst (Spec.map (CommRingCat.ofHom (algebraMap R R[↥(unop M)]))) _ =
         Spec.map (CommRingCat.ofHom (mapRingHom M.unop f.hom)) :=
-  letI := f.hom.toAlgebra
-  let H' := (CommRingCat.isPushout_of_isPushout R S R[M.unop] S[M.unop]).op.map Scheme.Spec
+  let := f.hom.toAlgebra
+  have H' := (CommRingCat.isPushout_of_isPushout R S R[M.unop] S[M.unop]).op.map Scheme.Spec
   H ▸ H'.isoPullback_hom_fst
 
 @[reassoc (attr := simp)]
@@ -143,8 +158,8 @@ lemma specCommMonAlgPullback_inv_app_hom_left_snd (M) :
     ((specCommMonAlgPullback f Sf H).inv.app M).hom.left ≫
       pullback.snd (Spec.map (CommRingCat.ofHom (algebraMap R R[↥(unop M)]))) _ =
         Spec.map (CommRingCat.ofHom (algebraMap _ _)) :=
-  letI := f.hom.toAlgebra
-  let H' := (CommRingCat.isPushout_of_isPushout R S R[M.unop] S[M.unop]).op.map Scheme.Spec
+  let := f.hom.toAlgebra
+  have H' := (CommRingCat.isPushout_of_isPushout R S R[M.unop] S[M.unop]).op.map Scheme.Spec
   H ▸ H'.isoPullback_hom_snd
 
 /-- The spectrum of a group algebra functor commutes with base change. -/
