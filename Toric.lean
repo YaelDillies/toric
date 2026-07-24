@@ -10,8 +10,6 @@ public import Toric.Hopf.Diagonalisable
 public import Toric.Hopf.GrpAlg
 public import Toric.Imports
 public import Toric.Mathlib.Algebra.Category.Ring.Under.Basic
-public import Toric.Mathlib.Algebra.MonoidAlgebra.Basic
-public import Toric.Mathlib.Algebra.MonoidAlgebra.MapDomain
 public import Toric.Mathlib.Algebra.Polynomial.Bivariate
 public import Toric.Mathlib.LinearAlgebra.Finsupp.LinearCombination
 public import Toric.Mathlib.RingTheory.Bialgebra.MonoidAlgebra

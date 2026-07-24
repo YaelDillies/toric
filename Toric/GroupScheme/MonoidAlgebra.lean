@@ -9,7 +9,6 @@ public import Mathlib.AlgebraicGeometry.Group.Affine
 public import Mathlib.RingTheory.TensorProduct.MonoidAlgebra
 public import Toric.Hopf.GrpAlg
 public import Toric.Mathlib.Algebra.Category.Ring.Under.Basic
-public import Toric.Mathlib.RingTheory.Bialgebra.MonoidAlgebra
 
 @[expose] public noncomputable section
 
