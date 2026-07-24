@@ -3,7 +3,6 @@ module
 public import Mathlib.RingTheory.Bialgebra.Convolution
 public import Mathlib.RingTheory.Bialgebra.GroupLike
 public import Mathlib.RingTheory.Bialgebra.MonoidAlgebra
-public import Toric.Mathlib.Algebra.MonoidAlgebra.Basic
 
 public noncomputable section
 
@@ -262,16 +261,6 @@ noncomputable def bialgEquivOfSubsingleton [Subsingleton M] : R[M] ≃ₐc[R] R 
   right_inv := (Bialgebra.counitAlgHom R R[M]).commutes
 
 lemma isGroupLikeElem_of (m : M) : IsGroupLikeElem R (of A M m) := isGroupLikeElem_single_one ..
-
-variable (R A M) in
-/-- The bialgebra equivalence between `AddMonoidAlgebra` and `MonoidAlgebra` in terms of
-`Multiplicative`. -/
-@[expose]
-def toMultiplicativeBialgEquiv : A[M] ≃ₐc[R] MonoidAlgebra A (Multiplicative M) :=
-  .ofAlgEquiv (toMultiplicativeAlgEquiv A M) (by ext <;> simp) <| by
-    ext a
-    · simp
-    · simp [← (Coalgebra.Repr.arbitrary R a).eq]
 
 end Semiring
 
