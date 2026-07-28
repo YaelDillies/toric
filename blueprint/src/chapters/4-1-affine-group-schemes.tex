@@ -20,7 +20,7 @@ so we leave this as future work.
 \begin{definition}[Spec as a functor on algebras]
   \label{0-spec-alg}
   % \uses{}
-  \lean{algSpec}
+  \lean{AlgebraicGeometry.algSpec}
   \leanok
 
   Spec is a contravariant functor from the category of $R$-algebras
@@ -31,7 +31,7 @@ so we leave this as future work.
 \begin{proposition}[Spec as a functor on algebras is fully faithful]
   \label{0-full-faithful-spec-alg}
   \uses{0-spec-alg}
-  \lean{preservesLimitsOfSize_algSpec, algSpec.instFull, algSpec.instFaithful, algSpec.fullyFaithful}
+  \lean{AlgebraicGeometry.preservesLimitsOfSize_algSpec, AlgebraicGeometry.algSpec.instFull, AlgebraicGeometry.algSpec.instFaithful, AlgebraicGeometry.algSpec.fullyFaithful}
   \leanok
 
   Spec is a fully faithful contravariant functor from the category of $R$-algebras
@@ -53,7 +53,7 @@ so we leave this as future work.
 \begin{definition}[Spec as a functor on bialgebras]
   \label{0-spec-bialg}
   \uses{0-full-faithful-spec-alg}
-  \lean{bialgSpec}
+  \lean{AlgebraicGeometry.bialgSpec}
   \leanok
 
   Spec is a contravariant functor from the category of $R$-bialgebras
@@ -64,7 +64,7 @@ so we leave this as future work.
 \begin{proposition}[Spec as a functor on bialgebras is fully faithful]
   \label{0-full-faithful-spec-bialg}
   \uses{0-spec-bialg}
-  \lean{bialgSpec.instFull, bialgSpec.instFaithful, bialgSpec.fullyFaithful}
+  \lean{AlgebraicGeometry.bialgSpec.instFull, AlgebraicGeometry.bialgSpec.instFaithful, AlgebraicGeometry.bialgSpec.fullyFaithful}
   \leanok
 
   Spec is a fully faithful contravariant functor from the category of $R$-bialgebras
@@ -84,7 +84,7 @@ so we leave this as future work.
 \begin{proposition}[Spec sends cocommutative bialgebras to commutative monoid schemes]
   \label{0-spec-cocomm-bialg}
   \uses{0-spec-hopf}
-  \lean{AlgebraicGeometry.Scheme.asOver.instIsCommMonObj, AlgebraicGeometry.Scheme.asOver.instCommGrpObj}
+  \lean{AlgebraicGeometry.isCommMonObj_spec_asOver_spec, AlgebraicGeometry.instCommGrpObjSpecAsOverSpec}
   \leanok
 
   If $A$ is a cocommutative bialgebra over $R$, then $\Spec A$ is a commutative monoid scheme.
@@ -103,7 +103,7 @@ so we leave this as future work.
 \begin{definition}[Spec as a functor on Hopf algebras]
   \label{0-spec-hopf}
   \uses{0-full-faithful-spec-alg}
-  \lean{hopfSpec}
+  \lean{AlgebraicGeometry.hopfSpec}
   \leanok
 
   Spec is a contravariant functor from the category of $R$-Hopf algebras to the category of group schemes over $\Spec_R$.
@@ -113,7 +113,7 @@ so we leave this as future work.
 \begin{proposition}[Spec as a functor on Hopf algebras is fully faithful]
   \label{0-full-faithful-spec-hopf}
   \uses{0-spec-hopf}
-  \lean{hopfSpec.instFull, hopfSpec.instFaithful, hopfSpec.fullyFaithful}
+  \lean{AlgebraicGeometry.hopfSpec.instFull, AlgebraicGeometry.hopfSpec.instFaithful, AlgebraicGeometry.hopfSpec.fullyFaithful}
   \leanok
 
   Spec is a fully faithful contravariant functor from the category of $R$-Hopf algebras to the category of group schemes over $\Spec_R$.
@@ -135,7 +135,7 @@ so we leave this as future work.
 \begin{proposition}[Essential image of Spec on algebras]
   \label{0-ess-image-spec-alg}
   \uses{0-spec-alg}
-  \lean{essImage_algSpec}
+  \lean{AlgebraicGeometry.essImage_algSpec}
   \leanok
 
   The essential image of $\Spec : \Ring_R \to \Sch_{\Spec R}$ is precisely
@@ -152,7 +152,7 @@ so we leave this as future work.
 \begin{proposition}[Essential image of Spec on bialgebras]
   \label{0-ess-image-spec-bialg}
   \uses{0-spec-bialg}
-  \lean{essImage_bialgSpec}
+  \lean{AlgebraicGeometry.essImage_bialgSpec}
   \leanok
 
   The essential image of $\Spec : \Bialg_R \to \GrpSch_{\Spec R}$ is precisely
@@ -169,7 +169,7 @@ so we leave this as future work.
 \begin{proposition}[Essential image of Spec on Hopf algebras]
   \label{0-ess-image-spec-hopf}
   \uses{0-spec-hopf}
-  \lean{essImage_hopfSpec}
+  \lean{AlgebraicGeometry.essImage_hopfSpec}
   \leanok
 
   The essential image of $\Spec : \Hopf_R \to \GrpSch_{\Spec R}$ is precisely affine group schemes over $\Spec R$.
