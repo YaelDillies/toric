@@ -3,7 +3,7 @@
 
 \begin{proposition}[Sliced adjoint functors]
   \label{0-slice-adj}
-  \uses{}
+  % \uses{}
   \lean{CategoryTheory.Over.postAdjunctionRight}
   \leanok
   \mathlibok
@@ -11,7 +11,7 @@
   If $a : F \vdash G$ is an adjunction between $F : C \to D$ and $G : D \to C$ and $X : C$, then there is an adjunction between $F / X : C / X \to D / F(X)$ and $G / X : D / F(X) \to C / X$.
 \end{proposition}
 \begin{proof}
-  \uses{}
+  % \uses{}
   \leanok
 
   See https://ncatlab.org/nlab/show/sliced+adjoint+functors+--+section.
@@ -20,7 +20,7 @@
 
 \begin{proposition}[Limit-preserving functors lift to over categories]
   \label{0-over-lim}
-  \uses{}
+  % \uses{}
   \lean{CategoryTheory.Limits.PreservesLimitsOfShape.overPost, CategoryTheory.Limits.PreservesLimitsOfSize.overPost}
   \leanok
 
@@ -28,7 +28,7 @@
   If $F : C \to D$ is a functor preserving limits of shape $\widetilde J$, then the obvious functor $C / X \to D / F(X)$ preserves limits of shape $J$.
 \end{proposition}
 \begin{proof}
-  \uses{}
+  % \uses{}
   \leanok
 
   Extend a functor $K\colon  J \to C / X$ to a functor $\widetilde K\colon \widetilde J \to C$, by letting $\widetilde K (*) = X$.
@@ -37,14 +37,14 @@
 
 \begin{proposition}[Essential image of a sliced functor]
   \label{0-ess-image-over}
-  \uses{}
+  % \uses{}
   \lean{CategoryTheory.Functor.essImage_overPost}
   \leanok
 
   If $F : C \to D$ is a full functor between cartesian-monoidal categories, then $F / X : C / X \hom D / F(X)$ has the same essential image as $F$.
 \end{proposition}
 \begin{proof}
-  \uses{}
+  % \uses{}
   \leanok
 
   Transfer all diagrams.
