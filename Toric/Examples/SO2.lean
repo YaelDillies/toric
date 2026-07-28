@@ -149,7 +149,7 @@ def T : GroupLike ℂ (SO2Ring ℂ) where
     simp [tmul_add, add_tmul, ← smul_tmul', smul_smul]; ring_nf
 
 private def complexEquivInv : MonoidAlgebra ℂ (Multiplicative ℤ) →ₐc[ℂ] SO2Ring ℂ :=
-  (MonoidAlgebra.liftGroupLikeBialgHom _ _).comp <| MonoidAlgebra.mapDomainBialgHom ℂ <|
+  MonoidAlgebra.liftGroupLikeBialgHom.comp <| MonoidAlgebra.mapDomainBialgHom ℂ <|
     AddMonoidHom.toMultiplicativeLeft <| zmultiplesHom _ <| .ofMul T
 
 set_option backward.isDefEq.respectTransparency false in

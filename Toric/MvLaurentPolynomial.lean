@@ -6,7 +6,7 @@ Authors: Yaël Dillies, Patrick Luo, Paul Lezeau
 module
 
 public import Mathlib.GroupTheory.FreeAbelianGroup
-public import Toric.Mathlib.RingTheory.Bialgebra.MonoidAlgebra
+public import Mathlib.RingTheory.Bialgebra.MonoidAlgebra
 
 /-!
 # Multivariate Laurent polynomials
