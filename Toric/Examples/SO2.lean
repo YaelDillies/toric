@@ -410,8 +410,8 @@ theorem not_isSplitTorusOver_SO₂_real : ¬ SO₂(ℝ).IsSplitTorusOver (Spec <
   intro
   obtain ⟨σ, _, e, _, _⟩ := exists_iso_diag_finite_of_isSplitTorusOver_locallyOfFiniteType SO₂(ℝ) <|
     Spec <| .of ℝ
-  haveI : (e ≪≫ diagSpecIso _ ℤ[σ]).hom.IsOver (Spec <| .of ℝ) := by dsimp; infer_instance
-  haveI : IsMonHom ((e ≪≫ diagSpecIso _ ℤ[σ]).asOver <| Spec <| .of ℝ).hom := by
+  have : (e ≪≫ diagSpecIso _ ℤ[σ]).hom.IsOver (Spec <| .of ℝ) := by dsimp; infer_instance
+  have : IsMonHom ((e ≪≫ diagSpecIso _ ℤ[σ]).asOver <| Spec <| .of ℝ).hom := by
     dsimp; infer_instance
   have e₁ := Hom.mulEquivCongrRight ((e ≪≫ diagSpecIso _ ℤ[σ]).asOver <| Spec <| .of ℝ)
     ((Spec <| .of ℝ).asOver <| Spec <| .of ℝ)

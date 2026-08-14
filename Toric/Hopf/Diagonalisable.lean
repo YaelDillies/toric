@@ -59,7 +59,7 @@ lemma IsDiagonalisable.ofBialgEquiv {B : Type*} [Semiring B] [Bialgebra R B]
   obtain ⟨G, _, ⟨e'⟩⟩ := hA
   replace e := e'.symm.trans e
   have eG := Equiv.ofInjective _ (e.injective.comp of_injective)
-  letI := eG.symm.group
+  let := eG.symm.group
   exact ⟨_, _, ⟨((domCongrBialgEquiv R R eG.symm.mulEquiv).trans e).symm⟩⟩
 
 instance : IsDiagonalisable R R := .ofBialgEquiv <| bialgEquivOfSubsingleton Unit

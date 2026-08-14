@@ -77,7 +77,7 @@ lemma isToricIdeal_iff_exists_span_single_sub_single :
   mpr := by
     let G := AddLocalization (⊤ : AddSubmonoid M)
     rintro ⟨_, s, hsI⟩
-    letI V := Spec (.of <| k[M] ⧸ I)
+    let V := Spec (.of <| k[M] ⧸ I)
     let : V.Over (Spec <| .of k[M]) := sorry
     let : (Spec <| .of k[G]).Over (Spec <| .of k[M]) := sorry
     let VinterT := pullback (V ↘ Spec (.of k[M])) (Spec (.of k[G]) ↘ Spec (.of k[M]))
