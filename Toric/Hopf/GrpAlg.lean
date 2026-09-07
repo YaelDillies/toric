@@ -26,14 +26,14 @@ variable (R) in
 /-- The functor of commutative monoid algebras. -/
 @[simps obj map, implicit_reducible]
 noncomputable def commMonAlg : CommMonCat ⥤ CommBialgCat R where
-  obj M := .of R <| MonoidAlgebra R M
+  obj M := ↧(MonoidAlgebra R M)
   map f := CommBialgCat.ofHom <| MonoidAlgebra.mapDomainBialgHom R f.hom
 
 variable (R) in
 /-- The functor of commutative group algebras. -/
 @[simps obj map, implicit_reducible]
 noncomputable def commGrpAlg : CommGrpCat ⥤ CommHopfAlgCat R where
-  obj G := .of R <| MonoidAlgebra R G
+  obj G := ↧(MonoidAlgebra R G)
   map f := CommHopfAlgCat.ofHom <| MonoidAlgebra.mapDomainBialgHom R f.hom
 
 set_option backward.isDefEq.respectTransparency false in

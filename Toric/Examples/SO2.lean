@@ -289,78 +289,78 @@ namespace AlgebraicGeometry.SO₂
 open Scheme
 
 /-- Notation for the special orghogonal group of 2x2 matrices as a scheme. -/
-scoped notation3 "SO₂("R")" => Spec <| .of <| SO2Ring R
+scoped notation3 "SO₂("R")" => Spec ↧(SO2Ring R)
 
 /-! #### `SO(2, ℂ)` is a split torus -/
 
 /-- The isomorphism between `SO₂(ℂ)` and the 1-dimensional `ℂ`-torus. -/
 @[expose]
-def so₂ComplexIso : SO₂(ℂ) ≅ Diag (Spec <| .of ℂ) ℤ :=
+def so₂ComplexIso : SO₂(ℂ) ≅ Diag (Spec ↧ℂ) ℤ :=
   Scheme.Spec.mapIso complexEquiv.toAlgEquiv.toRingEquiv.toCommRingCatIso.symm.op ≪≫
-    (diagSpecIso (.of ℂ) ℤ).symm
+    (diagSpecIso ↧ℂ ℤ).symm
 
 @[simp] lemma so₂ComplexIso_hom :
     so₂ComplexIso.hom =
-      ((bialgSpec <| .of ℂ).map <| .op <| CommBialgCat.ofHom complexEquiv.symm.toBialgHom).hom.left
-        ≫ (diagSpecIso (.of ℂ) ℤ).inv := rfl
+      ((bialgSpec ↧ℂ).map <| .op <| CommBialgCat.ofHom complexEquiv.symm.toBialgHom).hom.left
+        ≫ (diagSpecIso ↧ℂ ℤ).inv := rfl
 
 @[simp] lemma so₂ComplexIso_inv :
     so₂ComplexIso.inv =
-      (diagSpecIso (.of ℂ) ℤ).hom ≫
-        ((bialgSpec <| .of ℂ).map <| .op <|
+      (diagSpecIso ↧ℂ ℤ).hom ≫
+        ((bialgSpec ↧ℂ).map <| .op <|
           CommBialgCat.ofHom complexEquiv.toBialgHom).hom.left := rfl
 
 set_option backward.isDefEq.respectTransparency false in
-instance : so₂ComplexIso.hom.IsOver <| Spec <| .of ℂ := by rw [so₂ComplexIso_hom]; infer_instance
+instance : so₂ComplexIso.hom.IsOver <| Spec ↧ℂ := by rw [so₂ComplexIso_hom]; infer_instance
 
 lemma so₂ComplexIso_hom_asOver :
-    so₂ComplexIso.hom.asOver (Spec <| .of ℂ) =
-      ((bialgSpec <| .of ℂ).map <| .op <| CommBialgCat.ofHom complexEquiv.symm.toBialgHom).hom ≫
-        (diagSpecIso (.of ℂ) ℤ).inv.asOver (Spec <| .of ℂ) := rfl
+    so₂ComplexIso.hom.asOver (Spec ↧ℂ) =
+      ((bialgSpec ↧ℂ).map <| .op <| CommBialgCat.ofHom complexEquiv.symm.toBialgHom).hom ≫
+        (diagSpecIso ↧ℂ ℤ).inv.asOver (Spec ↧ℂ) := rfl
 
 set_option backward.isDefEq.respectTransparency false in
-instance : IsMonHom <| so₂ComplexIso.hom.asOver <| Spec <| .of ℂ := by
+instance : IsMonHom <| so₂ComplexIso.hom.asOver <| Spec ↧ℂ := by
   rw [so₂ComplexIso_hom_asOver]; infer_instance
 
 set_option backward.isDefEq.respectTransparency false in
-instance : SO₂(ℂ).IsSplitTorusOver <| Spec <| .of ℂ := .of_iso so₂ComplexIso
+instance : SO₂(ℂ).IsSplitTorusOver <| Spec ↧ℂ := .of_iso so₂ComplexIso
 
 /-! #### `SO(2, ℝ)` is a torus -/
 
 /-- The isomorphism between the base change of `SO₂(ℝ)` to `ℂ` and `SO₂(ℂ)`. -/
 @[expose]
 def pullbackSO₂RealComplex :
-    pullback (SO₂(ℝ) ↘ Spec (.of ℝ)) (Spec (.of ℂ) ↘ Spec (.of ℝ)) ≅ SO₂(ℂ) :=
+    pullback (SO₂(ℝ) ↘ Spec ↧ℝ) (Spec ↧ℂ ↘ Spec ↧ℝ) ≅ SO₂(ℂ) :=
   pullbackSymmetry .. ≪≫ pullbackSpecIso .. ≪≫ Scheme.Spec.mapIso
     (baseChangeBialgEquiv ℝ ℂ).symm.toAlgEquiv.toRingEquiv.toCommRingCatIso.op
 
 @[simp] lemma pullbackSO₂RealComplex_hom :
     pullbackSO₂RealComplex.hom = (pullbackSymmetry .. ≪≫ pullbackSpecIso' ℝ ℂ (SO2Ring ℝ)).hom ≫
-      ((bialgSpec <| .of ℂ).map <| .op <|
+      ((bialgSpec ↧ℂ).map <| .op <|
         CommBialgCat.ofHom (baseChangeBialgEquiv ℝ ℂ).symm.toBialgHom).hom.left := rfl
 
 set_option backward.isDefEq.respectTransparency false in
-instance : pullbackSO₂RealComplex.hom.IsOver <| Spec <| .of ℂ := by
+instance : pullbackSO₂RealComplex.hom.IsOver <| Spec ↧ℂ := by
   rw [pullbackSO₂RealComplex_hom]; infer_instance
 
 lemma pullbackSO₂RealComplex_hom_asOver :
-    pullbackSO₂RealComplex.hom.asOver (Spec <| .of ℂ) =
-      (pullbackSymmetry .. ≪≫ pullbackSpecIso' ℝ ℂ (SO2Ring ℝ)).hom.asOver (Spec <| .of ℂ) ≫
-        ((bialgSpec <| .of ℂ).map <| .op <|
+    pullbackSO₂RealComplex.hom.asOver (Spec ↧ℂ) =
+      (pullbackSymmetry .. ≪≫ pullbackSpecIso' ℝ ℂ (SO2Ring ℝ)).hom.asOver (Spec ↧ℂ) ≫
+        ((bialgSpec ↧ℂ).map <| .op <|
           CommBialgCat.ofHom (baseChangeBialgEquiv ℝ ℂ).symm.toBialgHom).hom := rfl
 
 set_option backward.isDefEq.respectTransparency false in
-instance : IsMonHom <| pullbackSO₂RealComplex.hom.asOver (Spec <| .of ℂ) := by
+instance : IsMonHom <| pullbackSO₂RealComplex.hom.asOver (Spec ↧ℂ) := by
   rw [pullbackSO₂RealComplex_hom_asOver]; infer_instance
 
 set_option backward.isDefEq.respectTransparency false in
 instance pullback_SO₂_real_isSplitTorusOver_complex :
-    (pullback (SO₂(ℝ) ↘ Spec (.of ℝ)) (Spec (.of ℂ) ↘ Spec (.of ℝ))).IsSplitTorusOver <|
-      Spec <| .of ℂ :=
+    (pullback (SO₂(ℝ) ↘ Spec ↧ℝ) (Spec ↧ℂ ↘ Spec ↧ℝ)).IsSplitTorusOver <|
+      Spec ↧ℂ :=
   .of_iso pullbackSO₂RealComplex
 
 /-- `SO(2)` is a torus over the reals. -/
-instance : (Spec <| .of <| SO2Ring ℝ).IsTorusOver ℝ where
+instance : (Spec ↧(SO2Ring ℝ)).IsTorusOver ℝ where
   existsSplit :=
     ⟨ℂ, inferInstance, inferInstance, inferInstance, pullback_SO₂_real_isSplitTorusOver_complex⟩
 
@@ -371,7 +371,7 @@ open Matrix
 variable (R) in
 /-- The `R`-points of `SO₂(R)` as a group `R`-scheme are isomorphic to the group `SO(2, R)`. -/
 def pointsMulEquiv :
-    ((Spec <| .of R).asOver (Spec <| .of R) ⟶ SO₂(R).asOver (Spec <| .of R)) ≃*
+    ((Spec ↧R).asOver (Spec ↧R) ⟶ SO₂(R).asOver (Spec ↧R)) ≃*
        specialOrthogonalGroup (Fin 2) R :=
   Spec.mapMulEquiv.symm.trans algHomMulEquiv
 
@@ -406,15 +406,15 @@ open scoped AddMonoidAlgebra
 set_option backward.defeqAttrib.useBackward true in
 set_option backward.isDefEq.respectTransparency false in
 /-- `SO(2)` is not a split torus over the real numbers. -/
-theorem not_isSplitTorusOver_SO₂_real : ¬ SO₂(ℝ).IsSplitTorusOver (Spec <| .of ℝ) := by
+theorem not_isSplitTorusOver_SO₂_real : ¬ SO₂(ℝ).IsSplitTorusOver (Spec ↧ℝ) := by
   intro
   obtain ⟨σ, _, e, _, _⟩ := exists_iso_diag_finite_of_isSplitTorusOver_locallyOfFiniteType SO₂(ℝ) <|
-    Spec <| .of ℝ
-  have : (e ≪≫ diagSpecIso _ ℤ[σ]).hom.IsOver (Spec <| .of ℝ) := by dsimp; infer_instance
-  have : IsMonHom ((e ≪≫ diagSpecIso _ ℤ[σ]).asOver <| Spec <| .of ℝ).hom := by
+    Spec ↧ℝ
+  have : (e ≪≫ diagSpecIso _ ℤ[σ]).hom.IsOver (Spec ↧ℝ) := by dsimp; infer_instance
+  have : IsMonHom ((e ≪≫ diagSpecIso _ ℤ[σ]).asOver <| Spec ↧ℝ).hom := by
     dsimp; infer_instance
-  have e₁ := Hom.mulEquivCongrRight ((e ≪≫ diagSpecIso _ ℤ[σ]).asOver <| Spec <| .of ℝ)
-    ((Spec <| .of ℝ).asOver <| Spec <| .of ℝ)
+  have e₁ := Hom.mulEquivCongrRight ((e ≪≫ diagSpecIso _ ℤ[σ]).asOver <| Spec ↧ℝ)
+    ((Spec ↧ℝ).asOver <| Spec ↧ℝ)
   have e₂ : (ℤ[σ] →+ Additive ℝˣ) ≃+ (σ → Additive ℝˣ) :=
     AddMonoidAlgebra.coeffAddEquiv.addMonoidHomCongrLeft.trans <| Finsupp.liftAddHom.symm.trans <|
       .piCongrRight («η» := σ) fun _ ↦ (zmultiplesAddHom <| Additive ℝˣ).symm

@@ -24,14 +24,14 @@ variable {S T : Scheme.{u}} {R : CommRingCat.{u}} {M N O G : Type u} [AddCommMon
 variable (S) in
 def diagMonFunctor : AddCommMonCatᵒᵖ ⥤ Mon (Over S) :=
   AddCommMonCat.equivalence.functor.op ⋙
-    (commMonAlg (ULift.{u} ℤ)).op ⋙ bialgSpec (.of <| ULift.{u} ℤ) ⋙
+    (commMonAlg (ULift.{u} ℤ)).op ⋙ bialgSpec ↧(ULift.{u} ℤ) ⋙
       (Over.pullback (specULiftZIsTerminal.from S)).mapMon
 
 variable (S M) in
 /-- The spectrum of a monoid algebra over an arbitrary base scheme `S`. -/
 def Diag : Scheme.{u} :=
   pullback
-    (Spec (.of <| MonoidAlgebra (ULift.{u} ℤ) <| Multiplicative M) ↘ Spec (.of <| ULift.{u} ℤ))
+    (Spec ↧(MonoidAlgebra (ULift.{u} ℤ) <| Multiplicative M) ↘ Spec ↧(ULift.{u} ℤ))
     (specULiftZIsTerminal.from S)
 
 @[simps! -isSimp]
@@ -91,14 +91,14 @@ def Diag.mapIso (f : M ≃+ N) : Diag S M ≅ Diag S N where
 variable (R M) in
 /-- The isomorphism `Diag (Spec R) M ≅ Spec R[M]` as monoid schemes over `Spec R`. -/
 def diagSpecIsoMon :
-    (diagMonFunctor (Spec R)).obj (.op <| .of M) ≅ (bialgSpec R).obj (.op <| .of R R[M]) :=
+    (diagMonFunctor (Spec R)).obj (.op ↧M) ≅ (bialgSpec R).obj (.op ↧R[M]) :=
   letI f := (algebraMap ℤ R).comp (ULift.ringEquiv.{0, u} (R := ℤ)).toRingHom
   (specCommMonAlgPullback (CommRingCat.ofHom f) _ (specULiftZIsTerminal.hom_ext _ _)).app
-      (.op <| .of <| Multiplicative M) ≪≫
+      (.op ↧(Multiplicative M)) ≪≫
     (bialgSpec R).mapIso (CommBialgCat.isoMk <| AddMonoidAlgebra.toMultiplicativeBialgEquiv ..).op
 
 variable (R M) in
-def diagSpecIso : Diag (Spec R) M ≅ Spec (.of R[M]) :=
+def diagSpecIso : Diag (Spec R) M ≅ Spec ↧R[M] :=
   (Mon.forget _ ⋙ Over.forget _).mapIso (diagSpecIsoMon R M)
 
 instance isOver_diagSpecIso_hom : (diagSpecIso R M).hom.IsOver (Spec R) where
@@ -155,7 +155,7 @@ set_option backward.isDefEq.respectTransparency false in
       infer_instance
     obtain ⟨R, rfl⟩ := hS
     rw [Spec_carrier, PrimeSpectrum.nonempty_iff_nontrivial] at hS
-    replace h : LocallyOfFiniteType (Spec (.of R[M]) ↘ Spec R) := by
+    replace h : LocallyOfFiniteType (Spec ↧R[M] ↘ Spec R) := by
       rw [← MorphismProperty.cancel_left_of_respectsIso @LocallyOfFiniteType
         (diagSpecIso R M).hom]
       erw [comp_over]
@@ -166,7 +166,7 @@ set_option backward.isDefEq.respectTransparency false in
 variable (S) in
 def diagFunctor : AddCommGrpCatᵒᵖ ⥤ Grp (Over S) :=
   commGroupAddCommGroupEquivalence.inverse.op ⋙
-    (commGrpAlg (ULift.{u} ℤ)).op ⋙ hopfSpec (.of <| ULift.{u} ℤ) ⋙
+    (commGrpAlg (ULift.{u} ℤ)).op ⋙ hopfSpec ↧(ULift.{u} ℤ) ⋙
       (Over.pullback (specULiftZIsTerminal.from S)).mapGrp
 
 @[simp] lemma diagFunctor_obj (M : AddCommGrpCatᵒᵖ) :
@@ -240,14 +240,14 @@ lemma diagFunctorIso_app (M : AddCommGrpCatᵒᵖ) :
       (diagSpecIso R M.unop).hom := rfl
 
 instance faithful_diagFunctor {R : Type*} [CommRing R] [Nontrivial R] :
-    (diagFunctor <| Spec <| .of R).Faithful :=
-  have : (hopfSpec (.of R)).Faithful := hopfSpec.instFaithful
-  .of_iso (diagFunctorIso (.of R)).symm
+    (diagFunctor <| Spec ↧R).Faithful :=
+  have : (hopfSpec ↧R).Faithful := hopfSpec.instFaithful
+  .of_iso (diagFunctorIso ↧R).symm
 
 instance full_diagFunctor {R : Type*} [CommRing R] [IsDomain R] :
-   (diagFunctor <| Spec <| .of R).Full :=
-  have : (hopfSpec <| .of R).Full := hopfSpec.instFull
-  .of_iso (diagFunctorIso (.of R)).symm
+   (diagFunctor <| Spec ↧R).Full :=
+  have : (hopfSpec ↧R).Full := hopfSpec.instFull
+  .of_iso (diagFunctorIso ↧R).symm
 
 section
 
@@ -363,9 +363,9 @@ lemma diagHomGrp_add {M N : Type u} [AddCommGroup M] [AddCommGroup N] (f g : M �
 
 set_option backward.isDefEq.respectTransparency false in
 def diagHomEquiv {R M N : Type u} [CommRing R] [IsDomain R] [AddCommGroup M] [AddCommGroup N] :
-    (N →+ M) ≃+ HomGrp (Diag (Spec <| .of R) M) (Diag (Spec <| .of R) N) (Spec <| .of R) :=
-  letI e := Functor.FullyFaithful.homEquiv (.ofFullyFaithful <| diagFunctor <| Spec <| .of R)
-    (X := .op (.of M)) (Y := .op (.of N))
+    (N →+ M) ≃+ HomGrp (Diag (Spec ↧R) M) (Diag (Spec ↧R) N) (Spec ↧R) :=
+  letI e := Functor.FullyFaithful.homEquiv (.ofFullyFaithful <| diagFunctor <| Spec ↧R)
+    (X := .op ↧M) (Y := .op ↧N)
   { toFun f := Additive.ofMul <| by have := e (AddCommGrpCat.ofHom f).op; dsimp at this; exact this
     invFun f := (e.symm <| by dsimp; exact f.toMul).unop.hom
     left_inv _ := by dsimp at *; erw [e.symm_apply_apply]; rfl
@@ -412,7 +412,7 @@ variable {R : CommRingCat.{u}} {G : Scheme.{u}} [G.Over (Spec R)] [GrpObj (asOve
   {A : Type u} [AddCommGroup A]
 
 set_option backward.isDefEq.respectTransparency false in
-instance : IsDiagonalisable (Spec R) (Spec <| .of R[A]) := .of_isIso (diagSpecIso R A).inv
+instance : IsDiagonalisable (Spec R) (Spec ↧R[A]) := .of_isIso (diagSpecIso R A).inv
 
 variable [IsDomain R]
 

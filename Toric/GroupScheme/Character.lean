@@ -172,16 +172,16 @@ noncomputable def charPairing : X*(Spec R, G) →ₗ[ℤ] X(Spec R, G) →ₗ[�
 
 set_option backward.defeqAttrib.useBackward true in
 set_option backward.isDefEq.respectTransparency false in
-instance isPerfPair_charPairing [T.IsSplitTorusOver <| Spec <| .of R]
-    [LocallyOfFiniteType (T ↘ Spec (.of R))] :
+instance isPerfPair_charPairing [T.IsSplitTorusOver <| Spec ↧R]
+    [LocallyOfFiniteType (T ↘ Spec ↧R)] :
     (charPairing R T).IsPerfPair := by
   obtain ⟨σ, _, e, _, _⟩ :=
-    exists_iso_diag_finite_of_isSplitTorusOver_locallyOfFiniteType T <| Spec <| .of R
+    exists_iso_diag_finite_of_isSplitTorusOver_locallyOfFiniteType T <| Spec ↧R
   refine .congr (.id (R := ℤ) (M := Module.Dual ℤ (σ →₀ ℤ)))
-    ((cocharCongr _ e).trans ((cocharDiag (.of R) ℤ[σ]).trans <|
+    ((cocharCongr _ e).trans ((cocharDiag ↧R ℤ[σ]).trans <|
       AddMonoidAlgebra.coeffAddEquiv.addMonoidHomCongrLeft.trans
         (addMonoidHomLequivInt ℤ).toAddEquiv)).toIntLinearEquiv
-    ((charCongr _ e).trans <| (charDiag (.of R) ℤ[σ]).trans
+    ((charCongr _ e).trans <| (charDiag ↧R ℤ[σ]).trans
       AddMonoidAlgebra.coeffAddEquiv).toIntLinearEquiv _ ?_
   ext f x
   apply (charTorusUnit (R := R)).symm.injective
