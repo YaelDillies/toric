@@ -19,6 +19,7 @@ commutative `R`-Hopf algebras.
 @[expose] public section
 
 open CategoryTheory Opposite
+open scoped MonoidAlgebra
 
 variable {R : Type*} [CommRing R]
 
@@ -26,14 +27,14 @@ variable (R) in
 /-- The functor of commutative monoid algebras. -/
 @[simps obj map, implicit_reducible]
 noncomputable def commMonAlg : CommMonCat ⥤ CommBialgCat R where
-  obj M := ↧(MonoidAlgebra R M)
+  obj M := ↧R[M]
   map f := CommBialgCat.ofHom <| MonoidAlgebra.mapDomainBialgHom R f.hom
 
 variable (R) in
 /-- The functor of commutative group algebras. -/
 @[simps obj map, implicit_reducible]
 noncomputable def commGrpAlg : CommGrpCat ⥤ CommHopfAlgCat R where
-  obj G := ↧(MonoidAlgebra R G)
+  obj G := ↧R[G]
   map f := CommHopfAlgCat.ofHom <| MonoidAlgebra.mapDomainBialgHom R f.hom
 
 set_option backward.isDefEq.respectTransparency false in

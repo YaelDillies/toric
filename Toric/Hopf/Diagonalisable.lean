@@ -41,10 +41,10 @@ variable (R A) in
 /-- A bialgebra is called diagonalisable if it is isomorphic to a group algebra. -/
 @[mk_iff]
 class IsDiagonalisable : Prop where
-  existsIso : ∃ (G : Type u) (_ : Group G), Nonempty (A ≃ₐc[R] MonoidAlgebra R G)
+  existsIso : ∃ (G : Type u) (_ : Group G), Nonempty (A ≃ₐc[R] R[G])
 
 /-- A group algebra is diagonalisable. -/
-instance [Group G] : IsDiagonalisable R (MonoidAlgebra R G) :=
+instance [Group G] : IsDiagonalisable R R[G] :=
   ⟨⟨ULift G, _, ⟨domCongrBialgEquiv R R MulEquiv.ulift.symm⟩⟩⟩
 
 instance [Subsingleton R] : IsDiagonalisable R A := by
@@ -68,7 +68,7 @@ instance : IsDiagonalisable R R := .ofBialgEquiv <| bialgEquivOfSubsingleton Uni
 lemma span_isGroupLikeElem_eq_top_of_isDiagonalisable :
     IsDiagonalisable R A → Submodule.span R {a : A | IsGroupLikeElem R a} = ⊤ := by
   rintro ⟨⟨G, _, ⟨e⟩⟩⟩
-  rw [← Submodule.comap_top (e : A ≃ₗ[R] MonoidAlgebra R G).toLinearMap,
+  rw [← Submodule.comap_top (e : A ≃ₗ[R] R[G]).toLinearMap,
     ← span_isGroupLikeElem (R := R), Submodule.comap_equiv_eq_map_symm, Submodule.map_span]
   simp [AlgEquiv.image_symm_eq_preimage]
 
