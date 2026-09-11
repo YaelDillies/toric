@@ -184,7 +184,7 @@ attribute [-ext] AdjoinRoot.algHom_ext' in
 private def complexEquivMul : SO2Ring ℂ ≃ₐc[ℂ] MonoidAlgebra ℂ (Multiplicative ℤ) where
   __ := complexEquivFun
   __ : SO2Ring ℂ ≃ₐ[ℂ] MonoidAlgebra ℂ (Multiplicative ℤ) := by
-    refine .symm <| .ofAlgHom (AlgHomClass.toAlgHom complexEquivInv) complexEquivFun ?_ ?_
+    refine .symm <| .ofAlgHom complexEquivInv complexEquivFun ?_ ?_
     · ext
       · simp [complexEquivInv_single, complexEquivFun]
         module
