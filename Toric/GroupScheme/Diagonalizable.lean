@@ -194,8 +194,8 @@ lemma commHopfAlgCatEquivCogrpCommAlgCat_functor_map_ofHom_mul
   ext1
   apply Quiver.Hom.unop_inj
   ext1
-  convert_to! (f * g).ofConv =
-    (Algebra.TensorProduct.lift (AlgHomClass.toAlgHom f.ofConv) (AlgHomClass.toAlgHom g.ofConv)
+  convert_to! (f * g).ofConv.toAlgHom =
+    (Algebra.TensorProduct.lift f.ofConv g.ofConv
       (fun _ _ ↦ .all _ _)).comp (Bialgebra.comulAlgHom _ _)
   dsimp [BialgHom.convMul_def]
   rw [← AlgHom.comp_assoc]
