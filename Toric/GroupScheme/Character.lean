@@ -189,7 +189,7 @@ instance isPerfPair_charPairing [T.IsSplitTorusOver <| Spec ↧R]
   dsimp [charDiag_symm_apply, charPairing, charTorusUnit, charTorus,
     cocharDiag_symm_apply, AddMonoidAlgebra, CommRingCat.of_carrier]
   simp only [Char, cocharCongr_comp_charCongr, diagHomGrp_comp, charDiag_diagHomGrp, PUnit.zero_eq,
-    AddMonoidHom.coe_comp, AddMonoidHom.coe_coe, Function.comp_apply,
+    AddMonoidHom.coe_comp, AddMonoidHom.coe_ofClass, Function.comp_apply,
     FreeAbelianGroup.lift_apply_of, AddEquiv.symm_apply_apply, EmbeddingLike.apply_eq_iff_eq]
   simp
 
