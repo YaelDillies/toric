@@ -22,7 +22,7 @@ open Algebra AlgebraicGeometry Scheme CategoryTheory Limits AddMonoidAlgebra Add
   AffineAddMonoid
 
 universe u
-variable {𝕜 M : Type u} [Field 𝕜] [AddCancelCommMonoid M] [AddMonoid.FG M] [IsAddTorsionFree M]
+variable {𝕜 M : Type u} [Field 𝕜] [AddCancelCommMonoid M] [AddMonoid.FG M] [HasUniqueDiv M]
 
 namespace AffineToricVarietyFromMonoid
 
