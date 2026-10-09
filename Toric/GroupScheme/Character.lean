@@ -153,9 +153,6 @@ variable [CommGrpObj (G.asOver (Spec R))] [CommGrpObj (T.asOver (Spec R))]
 
 set_option backward.isDefEq.respectTransparency false in
 variable (R G) in
-attribute [local instance 1000000] AddEquivClass.instAddHomClass AddMonoidHomClass.toAddHomClass
-  AddEquivClass.instAddMonoidHomClass in
-attribute [-simp] charPairingAux_apply_apply in
 /-- The `ℤ`-valued perfect pairing between characters and cocharacters of group schemes over a
 domain.
 
