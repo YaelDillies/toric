@@ -29,7 +29,7 @@ def MvLaurentPolynomial.liftEquiv [CommRing R] [CommRing S] [Algebra R S] :
   refine .trans ?_  <| AddMonoidAlgebra.liftMulEquiv ..
   refine .trans ?_ (.monoidHomCongrLeft <| .symm <| .multiplicativeAdditive _)
   exact
-  { toFun f := (Units.coeHom S).comp (Abelianization.lift (FreeGroup.lift f))
+  { toFun f := (Units.coeHom S).comp (Group.Abelianization.lift (FreeGroup.lift f))
     invFun f n := f.toHomUnits (.of (.of n))
     left_inv _ := by ext; simp
     right_inv f := by ext; simp
