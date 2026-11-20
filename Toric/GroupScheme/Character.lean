@@ -98,11 +98,11 @@ variable (R G) in
 
 Note: This is true over a general base using Cartier duality, but we do not prove that. -/
 def charDiag : X(Spec R, Diag (Spec R) G) ≃+ G :=
-  diagHomEquiv.symm.trans <| FreeAbelianGroup.liftAddEquiv.symm.trans <| .piUnique fun _ ↦ G
+  diagHomEquiv.symm.trans <| FreeAddCommGroup.liftAddEquiv.symm.trans <| .piUnique fun _ ↦ G
 
 set_option backward.isDefEq.respectTransparency false in
 lemma charDiag_symm_apply (g : G) :
-    (charDiag R G).symm g = diagHomGrp _ (FreeAbelianGroup.lift fun _ ↦ g) := rfl
+    (charDiag R G).symm g = diagHomGrp _ (FreeAddCommGroup.lift fun _ ↦ g) := rfl
 
 set_option backward.isDefEq.respectTransparency false in
 lemma charDiag_diagHomGrp (f : _ →+ G) : charDiag R G (diagHomGrp _ f) = f (.of 0) := by
@@ -110,7 +110,7 @@ lemma charDiag_diagHomGrp (f : _ →+ G) : charDiag R G (diagHomGrp _ f) = f (.o
   simp only [AddEquiv.symm_apply_apply, PUnit.zero_eq, charDiag_symm_apply]
   congr 1
   ext
-  simp only [FreeAbelianGroup.lift_apply_of]
+  simp only [FreeAddCommGroup.lift_apply_of]
 
 set_option backward.isDefEq.respectTransparency false in
 variable (R G) in
@@ -118,12 +118,12 @@ variable (R G) in
 
 Note: This is true over a general base using Cartier duality, but we do not prove that. -/
 def cocharDiag : X*(Spec R, Diag (Spec R) G) ≃+ (G →+ ℤ) :=
-  diagHomEquiv.symm.trans <| .addMonoidHomCongrRight <| FreeAbelianGroup.uniqueEquiv _
+  diagHomEquiv.symm.trans <| .addMonoidHomCongrRight <| FreeAddCommGroup.uniqueEquiv _
 
 set_option backward.isDefEq.respectTransparency false in
 lemma cocharDiag_symm_apply (g : G →+ ℤ) :
     (cocharDiag R G).symm g =
-      diagHomGrp _ ((FreeAbelianGroup.uniqueEquiv _).symm.toAddMonoidHom.comp g) := rfl
+      diagHomGrp _ ((FreeAddCommGroup.uniqueEquiv _).symm.toAddMonoidHom.comp g) := rfl
 
 end AddCommGroup
 
@@ -133,12 +133,12 @@ variable (R σ) in
 
 Note: This is true over a general base using Cartier duality, but we do not prove that. -/
 def charTorus : X(Spec R, 𝔾ₘ[Spec R, σ]) ≃+ (σ →₀ ℤ) :=
-  (charDiag R _).trans (FreeAbelianGroup.equivFinsupp _)
+  (charDiag R _).trans (FreeAddCommGroup.equivFinsupp _)
 
 set_option backward.isDefEq.respectTransparency false in
 variable (R) in
 def charTorusUnit : X(Spec R, 𝔾ₘ[Spec R]) ≃+ ℤ :=
-  (charDiag R _).trans (FreeAbelianGroup.uniqueEquiv _)
+  (charDiag R _).trans (FreeAddCommGroup.uniqueEquiv _)
 
 set_option backward.isDefEq.respectTransparency false in
 variable (R σ) in
@@ -146,7 +146,7 @@ variable (R σ) in
 
 Note: This is true over a general base using Cartier duality, but we do not prove that. -/
 def cocharTorus : X*(Spec R, 𝔾ₘ[Spec R, σ]) ≃+ (σ → ℤ) :=
-  (cocharDiag R _).trans ⟨FreeAbelianGroup.lift.symm, fun _ _ ↦ rfl⟩
+  (cocharDiag R _).trans ⟨FreeAddCommGroup.lift.symm, fun _ _ ↦ rfl⟩
 
 section CommGrpObj
 variable [CommGrpObj (G.asOver (Spec R))] [CommGrpObj (T.asOver (Spec R))]
@@ -187,7 +187,7 @@ instance isPerfPair_charPairing [T.IsSplitTorusOver <| Spec ↧R]
     cocharDiag_symm_apply, AddMonoidAlgebra, CommRingCat.of_carrier]
   simp only [Char, cocharCongr_comp_charCongr, diagHomGrp_comp, charDiag_diagHomGrp, PUnit.zero_eq,
     AddMonoidHom.coe_comp, AddMonoidHom.coe_ofClass, Function.comp_apply,
-    FreeAbelianGroup.lift_apply_of, AddEquiv.symm_apply_apply, EmbeddingLike.apply_eq_iff_eq]
+    FreeAddCommGroup.lift_apply_of, AddEquiv.symm_apply_apply, EmbeddingLike.apply_eq_iff_eq]
   simp
 
 end CommGrpObj

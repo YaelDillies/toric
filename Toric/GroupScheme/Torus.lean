@@ -126,7 +126,7 @@ lemma IsTorusOver.of_isIso [H.IsTorusOver k]
 end IsTorusOver
 
 /-- The (split) algebraic torus over `S` indexed by `σ`. -/
-abbrev SplitTorus (S : Scheme) (σ : Type u) : Scheme.{u} := Diag S <| FreeAbelianGroup σ
+abbrev SplitTorus (S : Scheme) (σ : Type u) : Scheme.{u} := Diag S <| FreeAddCommGroup σ
 
 @[inherit_doc SplitTorus]
 notation3 "𝔾ₘ[" S ", " σ "]" => SplitTorus S σ
@@ -166,7 +166,7 @@ lemma exists_iso_splitTorus_of_isSplitTorusOver [G.IsSplitTorusOver S] :
   obtain ⟨A, _, _, e, _, _⟩ := ‹G.IsSplitTorusOver S›
   exact ⟨Module.Free.ChooseBasisIndex ℤ A,
     e.trans <| Diag.mapIso S ((Module.Free.chooseBasis ℤ A).repr.toAddEquiv.trans
-      (FreeAbelianGroup.equivFinsupp _).symm),
+      (FreeAddCommGroup.equivFinsupp _).symm),
     by dsimp; infer_instance, by dsimp; infer_instance⟩
 
 variable {R : CommRingCat} {σ : Type*}
