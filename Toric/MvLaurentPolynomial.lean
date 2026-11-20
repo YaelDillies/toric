@@ -21,7 +21,7 @@ open AddMonoidAlgebra
 
 variable (σ R S : Type*)
 
-abbrev MvLaurentPolynomial [Semiring R] := R[FreeAbelianGroup σ]
+abbrev MvLaurentPolynomial [Semiring R] := R[FreeAddCommGroup σ]
 
 noncomputable
 def MvLaurentPolynomial.liftEquiv [CommRing R] [CommRing S] [Algebra R S] :

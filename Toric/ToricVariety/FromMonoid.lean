@@ -35,11 +35,11 @@ noncomputable instance instToricVariety : ToricVariety 𝕜 (Diag (Spec ↧𝕜)
     stop
     obtain ⟨s, hsgen⟩ := AddMonoid.FG.fg_top (N := M)
     let x : R[M] := ∏ z ∈ s, single z 1
-    let alg : Algebra R[M] R[FreeAbelianGroup <| Fin <| dim M] :=
+    let alg : Algebra R[M] R[FreeAddCommGroup <| Fin <| dim M] :=
       (AddMonoidAlgebra.mapDomainAlgHom R _ <| embedding M).toAlgebra
-    have _ : IsLocalization.Away x R[FreeAbelianGroup <| Fin <| dim M] := by
+    have _ : IsLocalization.Away x R[FreeAddCommGroup <| Fin <| dim M] := by
       sorry
-    exact .of_isLocalization x (M := R[FreeAbelianGroup <| Fin <| dim M])
+    exact .of_isLocalization x (M := R[FreeAddCommGroup <| Fin <| dim M])
   isDominant_torusEmb := by -- integral + open nonempty
     stop
     let img := RingHom.range (AddMonoidAlgebra.mapDomainRingHom R <| embedding M)
