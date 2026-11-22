@@ -27,10 +27,10 @@ noncomputable
 def MvLaurentPolynomial.liftEquiv [CommRing R] [CommRing S] [Algebra R S] :
     (σ → Sˣ) ≃* (WithConv <| MvLaurentPolynomial σ R →ₐ[R] S) := by
   refine .trans ?_  <| AddMonoidAlgebra.liftMulEquiv ..
-  refine .trans ?_ (.monoidHomCongrLeft <| .symm <| .multiplicativeAdditive _)
+  refine .trans ?_ FreeCommGroup.freeCommGroupEquivMultiplicative.monoidHomCongrLeft
   exact
-  { toFun f := (Units.coeHom S).comp (Group.Abelianization.lift (FreeGroup.lift f))
-    invFun f n := f.toHomUnits (.of (.of n))
+  { toFun f := (Units.coeHom S).comp (FreeCommGroup.lift f)
+    invFun f n := f.toHomUnits (.of n)
     left_inv _ := by ext; simp
-    right_inv f := by ext; simp
+    right_inv f := by ext x; simp [← FreeCommGroup.lift_unique _ f.toHomUnits]
     map_mul' x y := by ext; simp }

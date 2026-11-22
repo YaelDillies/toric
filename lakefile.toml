@@ -22,7 +22,7 @@ git = "https://github.com/PatrickMassot/checkdecls.git"
 [[require]]
 name = "mathlib"
 git = "https://github.com/leanprover-community/mathlib4.git"
-rev = "96f6b8b8e029545577421f198a89fb174a4d62e6"
+rev = "25c283c121b9107cfa8b04407ab4942a932d8db5"
 
 [[lean_lib]]
 name = "Toric"
