@@ -32,5 +32,5 @@ def MvLaurentPolynomial.liftEquiv [CommRing R] [CommRing S] [Algebra R S] :
   { toFun f := (Units.coeHom S).comp (FreeCommGroup.lift f)
     invFun f n := f.toHomUnits (.of n)
     left_inv _ := by ext; simp
-    right_inv f := by ext x; simp [← FreeCommGroup.lift_unique _ f.toHomUnits fun _ ↦ rfl]
+    right_inv f := by ext x; simp [← FreeCommGroup.lift_unique _ f.toHomUnits]
     map_mul' x y := by ext; simp }
