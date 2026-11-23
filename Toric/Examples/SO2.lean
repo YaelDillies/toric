@@ -154,7 +154,7 @@ private def complexEquivInv : MonoidAlgebra ℂ (Multiplicative ℤ) →ₐc[ℂ
 
 set_option backward.isDefEq.respectTransparency false in
 private lemma complexEquivInv_single (a : Multiplicative ℤ) (b : ℂ) :
-    complexEquivInv (.single a b) = b • (T ^ a.toAdd).1 := by
+    complexEquivInv (.single a b) = b • (T ^ a.toAdd).val := by
   simp [complexEquivInv, Algebra.smul_def]
 
 set_option allowUnsafeReducibility true in
@@ -200,7 +200,7 @@ def complexEquiv : SO2Ring ℂ ≃ₐc[ℂ] ℂ[ℤ] :=
   complexEquivMul.trans (AddMonoidAlgebra.toMultiplicativeBialgEquiv ℂ ℂ ℤ).symm
 
 @[simp high, nolint simpNF] lemma complexEquiv_inv_single (a : ℤ) (b : ℂ) :
-    complexEquiv.symm (.single a b) = b • (T ^ a).1 := by
+    complexEquiv.symm (.single a b) = b • (T ^ a).val := by
   change complexEquivMul.symm (AddMonoidAlgebra.toMultiplicativeBialgEquiv ℂ ℂ ℤ (.single a b)) = _
   rw [show AddMonoidAlgebra.toMultiplicativeBialgEquiv ℂ ℂ ℤ (.single a b) =
     .single (.ofAdd a) b from AddMonoidAlgebra.toMultiplicative_single ..]
@@ -225,12 +225,12 @@ attribute [-ext] AdjoinRoot.algHom_ext' in
 def algHomMulEquiv : WithConv (SO2Ring R →ₐ[R] S) ≃* specialOrthogonalGroup (Fin 2) S where
   toFun f := ⟨!![f .X, f .Y; - f .Y, f .X], by
     simp [← map_mul, ← map_add, mem_specialOrthogonalGroup_fin_two_iff, pow_two]⟩
-  invFun M := .toConv <| SO2Ring.liftₐ (M.1 0 0) (M.1 0 1)
-    (mem_specialOrthogonalGroup_fin_two_iff.mp M.2).2.2
+  invFun M := .toConv <| SO2Ring.liftₐ (M.val 0 0) (M.val 0 1)
+    (mem_specialOrthogonalGroup_fin_two_iff.mp M.property).2.2
   left_inv f := by ext <;> simp
   right_inv M := by ext i j; fin_cases i, j <;>
-    simp [(mem_specialOrthogonalGroup_fin_two_iff.mp M.2).2.1,
-      (mem_specialOrthogonalGroup_fin_two_iff.mp M.2).1]
+    simp [(mem_specialOrthogonalGroup_fin_two_iff.mp M.property).2.1,
+      (mem_specialOrthogonalGroup_fin_two_iff.mp M.property).1]
   map_mul' f g := by
     ext i j
     fin_cases i, j
@@ -418,7 +418,8 @@ theorem not_isSplitTorusOver_SO₂_real : ¬ SO₂(ℝ).IsSplitTorusOver (Spec �
   have e₂ : (ℤ[σ] →+ Additive ℝˣ) ≃+ (σ → Additive ℝˣ) :=
     AddMonoidAlgebra.coeffAddEquiv.addMonoidHomCongrLeft.trans <| Finsupp.liftAddHom.symm.trans <|
       .piCongrRight («η» := σ) fun _ ↦ (zmultiplesAddHom <| Additive ℝˣ).symm
-  exact (aux3 σ).1 <| (pointsMulEquiv ℝ).symm.trans <| e₁.trans <| Spec.mapMulEquiv.symm.trans <|
+  exact (aux3 σ).false <| (pointsMulEquiv ℝ).symm.trans <| e₁.trans <|
+    Spec.mapMulEquiv.symm.trans <|
     (AddMonoidAlgebra.liftMulEquiv ℝ ℝ ℤ[σ]).symm.trans <| MonoidHom.toHomUnitsMulEquiv.trans <|
       MonoidHom.toAdditiveRightMulEquiv.trans <| e₂.toMultiplicative.trans <| .refl _
 
