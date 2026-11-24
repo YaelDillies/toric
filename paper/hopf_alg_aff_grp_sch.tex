@@ -1,0 +1,586 @@
+% !TeX program = xelatex
+% !TEX options = --shell-escape paper/hopf_alg_aff_grp_sch.tex
+\documentclass{article}
+
+\title{Correspondence of affine group schemes and Hopf algebras in Lean 4}
+\author{Yaël Dillies, Michał Mrugała, Andrew Yang\footnote{All authors contributed equally to this work.}}
+\date{\today}
+
+\usepackage{amsmath}
+\usepackage{amsthm}
+\usepackage{amssymb}
+\usepackage{enumerate}
+\usepackage{mathtools}
+\usepackage{graphicx}
+\usepackage{tikz}
+\usepackage{mathrsfs}
+\usepackage{parskip}
+\usepackage{relsize}
+\usepackage[hypcap=true]{caption}
+\usepackage[shortlabels]{enumitem}
+\usepackage{hyperref}
+
+\usepackage[capitalise,noabbrev]{cleveref}
+\usepackage{nameref}
+\usepackage[margin=1in,a4paper]{geometry}
+
+%%% Lean listings setup %%%
+
+\usepackage{fontspec}
+\usepackage{minted}
+
+% JuliaMono has all the symbols needed for Lean code
+\setmonofont[Scale=MatchLowercase]{JuliaMono}[
+  Extension=.ttf,
+  UprightFont=*-Regular,
+  BoldFont=*-Bold,
+  ItalicFont=*-RegularItalic,
+  BoldItalicFont=*-BoldItalic,
+  RawFeature={-calt},
+]
+
+% autogobble lets us indent the lean code to distinguish it from the latex
+\setminted{frame=single}
+\newmintinline[lean]{lean}{breaklines,breakbefore={. },breakafter={_}}
+\newminted[leancode]{lean}{autogobble}
+
+% Configure the appearance of minted.
+% We adjust the spacing around minted environments, which stretches badly by default
+\fvset{listparameters=\setlength{\topsep}{0pt}\setlength{\parsep}{0pt}}
+\AtBeginEnvironment{minted}{\vspace{4pt}}
+\renewcommand{\floatpagefraction}{.99}
+\renewcommand{\bottomfraction}{.7}
+
+%%% Lean listings setup %%%
+
+% Theorems
+\newtheorem{thm}{Theorem}[section]
+\newtheorem{lem}[thm]{Lemma}
+\newtheorem{prop}[thm]{Proposition}
+\newtheorem{corollary}[thm]{Corollary}
+\newtheorem{dfn}[thm]{Definition}
+\newtheorem{eg}[thm]{Example}
+\newtheorem{egs}[thm]{Examples}
+\newtheorem{conj}{Conjecture}
+\newtheorem{prob}[thm]{Problem}
+\newtheorem{question}{Question}
+
+% Command redirections
+\let\P\oldP
+\let\oldemptyset\emptyset
+\let\emptyset\varnothing
+
+% Letter shorthands
+\newcommand{\C}{\mathbb C}
+\newcommand{\bbE}{\mathbb E}
+\newcommand{\F}{\mathbb F}
+\newcommand{\K}{\mathbb K}
+\newcommand{\N}{\mathbb N}
+\newcommand{\Q}{\mathbb Q}
+\newcommand{\R}{\mathbb R}
+\newcommand{\Z}{\mathbb Z}
+\newcommand{\mcA}{\mathcal A}
+\newcommand{\mcB}{\mathcal B}
+\newcommand{\mcC}{\mathcal C}
+\newcommand{\mcD}{\mathcal D}
+\newcommand{\mcE}{\mathcal E}
+\newcommand{\mcF}{\mathcal F}
+\newcommand{\mcG}{\mathcal G}
+\newcommand{\mcH}{\mathcal H}
+\newcommand{\mcM}{\mathcal M}
+\newcommand{\mcN}{\mathcal N}
+\newcommand{\mcO}{\mathcal O}
+\newcommand{\mcP}{\mathcal P}
+\newcommand{\mcQ}{\mathcal Q}
+\newcommand{\mcR}{\mathcal R}
+\newcommand{\mcS}{\mathcal S}
+\newcommand{\mcT}{\mathcal T}
+\newcommand{\mcU}{\mathcal U}
+\newcommand{\mcV}{\mathcal V}
+\newcommand{\eps}{\varepsilon}
+\newcommand{\Eps}{\mathcal E}
+
+
+\DeclareMathOperator{\Set}{Set}
+\DeclareMathOperator{\Ring}{Ring}
+\DeclareMathOperator{\Alg}{Alg}
+\DeclareMathOperator{\CommRing}{CommRing}
+\DeclareMathOperator{\CommAlg}{CommAlg}
+\DeclareMathOperator{\CommBialg}{CommBialg}
+\DeclareMathOperator{\CommHopfAlg}{CommHopfAlg}
+
+
+\begin{document}
+
+
+\maketitle
+
+
+\begin{abstract}
+  We formalise the correspondence between affine group schemes and Hopf algebras in Lean 4.
+  For a field $k$, we show that the category of affine group $k$-schemes is equivalent
+  to the category of commutative Hopf algebras over $k$.
+  As an application, we construct the perfect pairing of characters and cocharacters of a split torus over a field.
+  Our work is largely a reproduction of \cite{CrazyAffine},
+  with the major difference being that we work with group objects
+  as defined by the usual diagrams as opposed to presheaves of groups.
+  Our code is made available as part of Mathlib, the Lean 4 library of formalised mathematics.
+\end{abstract}
+
+
+\section{Introduction}\label{sec:intro}
+
+
+Algebraic groups are a central object of study in algebraic geometry. {\bf TODO: Expand}
+
+Hopf algebras ... {\bf TODO: Expand}
+
+Since we have no use for not necessarily commutative rings, we drop henceforth the ``commutative'' prefix in front of ``ring'', ``algebra'', ``bialgebra'', ``Hopf algebra''.
+We keep ``Comm'' in the names of our categories, for consistency with the Lean code.
+
+Lean is an interactive theorem prover and functional programming language. {\bf TODO: Expand}
+
+Here is a sample of Lean code, claiming that composition of morphisms is associative:
+\begin{leancode}
+  variable {𝒞 : Type u} [Category.{v} 𝒞] {W X Y Z : 𝒞}
+
+  lemma comp_assoc (f : W ⟶ X) (g : X ⟶ Y) (h : Y ⟶ Z) : f ≫ (g ≫ h) = (f ≫ g) ≫ h := ...
+\end{leancode}
+
+\lean{variable} is a keyword to introduce variables.
+The combination \lean{{𝒞 : Type u} [Category.{v} 𝒞]} translates to ``Let $\mcC$ be a category with objects and morphisms in the $u$-th and $v$-th universes respectively''.
+We will not have much use of universes and therefore will explain them no further.
+All there is to know is that the categories relevant to the present paper have $u = v + 1$, corresponding to the fact that their objects form a proper class and their hom sets $X \to Y$ truly are sets.
+\lean{{W X Y Z : 𝒞}} declares $W, X, Y, Z$ as objects in the category $\mcC$, and \lean{(f : W ⟶ X) (g : X ⟶ Y) (h : Y ⟶ Z)} declares morphisms between them.
+\lean{f ≫ g} represents composition of morphisms, with the twist that the morphism $f$ is applied first, as opposed to the usual function composition notation \lean{g ∘ f}.
+\lean{...} is not valid Lean syntax, but instead a placeholder we use throughout this paper to elide irrelevant details.
+The full code for code snippets in each section is available on GitHub. See \url{https://github.com/YaelDillies/Toric/tree/master/HopfAlgAffGrpSchPaper}.
+
+Our motivation for this work is not correctness.
+Certainly, the material we formalise is part of the standard algebraic geometry curriculum and is correct without a doubt.
+Our goal is instead to clear the prerequisites to more advanced topics, such as toric varieties.
+In fact, we started off formalising toric varieties within the Toric project
+\footnote{Available on GitHub. See \url{https://yaeldillies.github.io/Toric/}.}
+before quickly realising that we first needed a solid theory of algebraic tori, which itself is most conveniently expressed in the language of group schemes.
+Simultaneously, group schemes are needed for Kevin Buzzard's ongoing project to formalise Fermat's Last Theorem in Lean.
+\footnote{Available on GitHub. See \url{https://imperialcollegelondon.github.io/FLT/}.}
+
+The paper is structured as follows:
+\cref{sec:informal} provides the mathematical background necessary to understand the formalisation.
+\cref{sec:hopf,sec:concrete-categories,sec:grp,sec:yoneda} illustrate the design decisions we made, specific painpoints we identified and how we circumvented them, all grouped according to the relevant mathematical concepts.
+These developments culminate in the definition of the perfect pairing between characters and cocharacters of an algebraic group, as described in \cref{sec:char-cochar}.
+
+
+\section{The character-cocharacter pairing}
+
+
+TODO(Michał)
+
+
+
+\section{The correspondence between affine group schemes and Hopf algebras}
+
+
+TODO(Yaël)
+
+
+\subsection{Convolution product}\label{sec:conv-prod}
+
+
+TODO(Yaël)
+
+
+\subsection{A tactic for Hopf algebra tautologies}\label{sec:coassoc-simps}
+
+
+TODO(Andrew): coassoc simps
+
+
+\subsection{Concrete categories}\label{sec:concrete-categories}
+
+
+TODO(Yaël)
+
+
+\subsection{\texorpdfstring{$\CommBialg, \CommHopfAlg$}{CommBialg, CommHopfAlg}}\label{sec:comm-hopf-alg}
+
+
+TODO(Yaël)
+
+
+
+\section{Abstract nonsense}\section{sec:abstract-nonsense}
+
+
+\subsection{Fully faithful functors on monoid objects}
+
+
+TODO(Yaël): mapMon, Essential image computation
+
+
+\subsection{The Yoneda embedding}
+
+
+TODO(Andrew)
+
+
+\subsection{Cartesian-monoidal categories}
+
+
+TODO(Yaël): Monoidal functors, CartesianMonoidalCategory
+
+
+\subsection{A tactic for monoid object tautologies}
+
+
+TODO(Yaël): mon_tauto
+
+
+\section{Diagonalisable group schemes}
+
+
+TODO(Michał)
+
+
+\section{The special orthogonal group in 2D}
+
+
+TODO(Michał)
+
+
+
+\section{REWORK FROM HERE}
+
+
+\section{Informal description of the correspondence}\label{sec:informal}
+
+
+In this section, we explain the mathematics behind the correspondence.
+Before we get into the details, here's a summary of how the story goes.
+Definitions and detailed explanations will follow
+
+For $R$ a commutative ring, the \emph{prime spectrum} of $R$ is the set of prime ideals of $R$,
+made into a scheme denoted $\Spec R$.
+$\Spec$ is in fact a \emph{contravariant functor} from commutative rings to schemes:
+For $f : R \to S$, we get a corresponding morphism $\Spec f : \Spec S \to \Spec R$
+at the level of schemes, obtained by taking the preimage of each prime ideal.
+Furthermore, $\Spec$ is \emph{fully faithful},
+meaning that $f \mapsto \Spec f$ is a bijection for all $R, S$.
+
+These properties together show that one can lift $\Spec$ to a functor on commutative $R$-algebras:
+If $A$ is a commutative $R$-algebra, then there is a distinguished ring homomorphism $R \to A$
+and therefore a distinguished scheme morphism $\Spec A \to \Spec R$.
+This yields $\Spec$ as a functor $\Spec_R : R / \CommRing \to \Sch / \Spec R$,
+and it is easily checked that $\Spec_R$ is fully faithful and essentially on affine schemes over $R$.
+We can now state a further property of $\Spec$:
+It sends the tensor product of two $R$-algebras to the product of the corresponding schemes:
+\[
+\Spec_R (A \otimes_R B) \cong \Spec_R A \times_R \Spec_R B.
+\]
+$\Spec_R$ is fully faithful since $\Spec$ is.
+
+In turn, these properties imply that $\Spec$ sends cogroup objects to group objects
+(i.e. Hopf algebras to group schemes), is fully faithful on such,
+and has essential image the affine group schemes.
+
+The main player in this story is $\Spec$,
+but the storytelling requires almost no property of $\Spec$ at all.
+All we use is that $\Spec$ is a fully faithful contravariant functor
+from a cocartesian-monoidal category to a cartesian-monoidal one sending pushouts to pullbacks.
+The rest is abstract nonsense.
+
+
+\subsection{Monoidal categories}
+
+
+\subsection{The over category and algebras}
+
+
+Let $R$ be a commutative ring.
+A commutative $R$-algebra is the data of a commutative ring $A$ along with a ring homomorphism
+$R \to A$, called the \emph{structure morphism}.
+For two commutative $R$-algebras $A, B$,
+an algebra homomorphism $f : A \to B$ is a ring homomorphism that commutes
+with the structure morphisms $R \to A, R \to B$.
+
+Similarly, for $S$ a scheme, a $S$-scheme if the data of a scheme $X$ along with a
+\emph{structure morphism} $X \to S$
+
+This setup generalises to any category $\mathsf C$ with a distinguished object $B$:
+The \emph{under category} of $B$ is the category of pairs $(X, f)$ of an object $X \in \mathsf C$
+and a morphism $f : B \to X$, with a morphism $h : (X, f) \to (Y, g)$ being defined asa
+
+
+
+\subsection{Group objects}
+
+
+Recall the definition of a group. A \emph{group structure} on a set $G$ consists of:
+\begin{enumerate}
+  \item An \emph{identity} $e \in G$.
+  \item A \emph{multiplication} $(\cdot * \cdot) : G \times G \to G$.
+  \item An \emph{inverse} $(\cdot^{-1}) : G \to G$.
+\end{enumerate}
+
+respecting the following \emph{group axioms}:
+\begin{enumerate}
+  \item For all $g \in G$, $e * g = g$ (and $g * e = g$).
+  \item For all $g, h, k \in G$, $(g * h) * k = g * (h * k)$.
+  \item For all $g \in G$, $g^{-1} * g = e$ (and $g * g^{-1} = e$).
+\end{enumerate}
+
+Groups show up in almost all areas of mathematics, and come in different flavours. For example:
+When doing topology, one might ask for the group operations to be continuous,
+obtaining the concept of a \emph{topological group}.
+In Lie theory, one might want to talk about a group with a manifold structure on it
+making the group operations $C^n$-differentiable, i.e a \emph{Lie group}.
+
+These examples share commonalities: Each time, the group comes with some structure,
+and the group operations are required to respect that structure.
+This observation can be realised categorically:
+In any category $\mathsf C$ where $(\cdot \times \cdot)$ and $\{*\}$ make sense,
+i.e. with a binary product $(\cdot \otimes \cdot)$ and terminal object $\mathbf 1_C$,
+a \emph{group object} $G \in \mathsf C$ consists of:
+\begin{enumerate}
+  \item A \emph{unit morphism} $\eta : \mathbf 1_C \to G$.
+  \item A \emph{multiplication morphism} $\mu : G \otimes G \to G$.
+  \item An \emph{inverse morphism} $\iota : G \to G$.
+\end{enumerate}
+
+making the following diagrams commute:
+{\bf TODO: Add diagrams}
+
+If the following further diagram commutes, then $G$ is a \emph{commutative group object}:
+{\bf TODO: Add diagrams}
+
+Analogously to group homomorphisms, if $G$ and $H$ are group objects,
+then a morphism $f : G \to H$ is a \emph{group morphism} if the following two diagrams commute:
+{\bf TODO: Add diagrams}
+
+
+\subsection{Group schemes}
+
+
+A group object in the category of schemes is called a \emph{group scheme}.
+
+The prototypical example of a group scheme is the \emph{standard algebraic torus},
+defined as the scheme $\mathbb G_m^n$ along with (morphisms corresponding to):
+\begin{enumerate}
+  \item The unit morphism $\eta ²: \{*\} \to (\mathbb C^\times)^n$ taking $* \mapsto (1, \dots, 1)$.
+  \item The multiplication morphism $\mu : (\mathbb C^\times)^n \times (\mathbb C^\times)^n \to (\mathbb C^\times)^n$
+  given by $\mu((t_1, \dots, t_n),(s_1, \dots, s_n)) = (t_1s_1, \dots, t_n s_n)$.
+  \item The inverse morphism $\iota : (\mathbb C^\times)^n \to (\mathbb C^\times)^n$
+  given by $\iota(t_1, \dots, t_n) = (t_1^{-1}, \dots, t_n^{-1})$.
+\end{enumerate}
+
+
+\subsection{Hopf algebras}
+
+
+Given a commutative ring $R$, a \emph{commutative $R$-Hopf algebra}
+is a commutative $R$-algebra $A$ equipped with
+\begin{itemize}
+  \item A \emph{counit homomorphism} $\varepsilon: R\to\mathbb{C}$,
+  \item A \emph{comultiplication homomorphism} $\Delta: R \to R \otimes R$,
+  \item An \emph{antipode homomorphism} $S: R \to R$
+\end{itemize}
+such that the following diagrams commute:
+
+{\bf TODO: Insert diagrams}
+
+If the following further diagram commutes, then $H$ is a \emph{commutative $R$-Hopf algebra}have furthermore the fo
+
+A \emph{$R$-Hopf algebra} is a $R$-bialgebra $A$ further equipped with an antipode $\iota : A \to A$
+such that the following diagram commutes:
+
+TODO: Insert diagram
+
+This looks suspiciously like the diagrams describing a group object.
+Indeed they are precisely the same, up to reversing all arrows.
+Theref
+
+
+\section{Hopf algebras}\label{sec:hopf}
+
+
+TODO(Michał)
+
+
+\section{The role of concrete categories}\label{sec:concrete-categories}
+
+
+To make the most of our categorical tools when constructing the equivalence, we need to turn the plain Hopf algebras described in \cref{sec:hopf} into a category.
+We want this category to be easily interfaced with both plain Hopf algebras {\bf and} categorical concepts.
+These two goals are in tension:
+Categorically, Hopf algebras are cogroup objects in the category of algebras, but this description is several layers of abstraction away from the usual definition in terms of counit, comultiplication and antipode. therefore a careful definition of this category is in order.
+
+Two more categories will be needed along the way: those of algebras and of bialgebras.
+
+Let us set some terminology straight.
+For $R$ a ring, we call $\CommAlg_R, \CommBialg_R, \CommHopfAlg_R$ the categories of $R$-algebras, $R$-bialgebras and $R$-Hopf algebras respectively.
+These three categories are all \emph{concrete categories}, meaning that their objects are sets with extra structure and their morphisms are structure-preserving maps.
+Formally, a concrete category is a category $\mcC$ equipped with a faithful functor $F : \mcC \to \Set$, called the \emph{forgetful functor}.
+To distinguish between a $R$-algebra and an object of $\CommAlg_R$, we call the former an \emph{unbundled algebra} and the latter a \emph{bundled algebra}, and similarly for bialgebras and Hopf algebras.
+\footnote{\emph{Bundling} is a more general notion in theorem proving. See TODO for more details.}
+
+The category of algebras poses a significant problem not found in the other two, so we discuss it first.
+
+
+\subsection{\texorpdfstring{$\CommAlg$}{CommAlg}}\label{sec:comm-alg}
+
+
+There are two approaches to building $\CommAlg_R$.
+
+The \emph{bundling approach} is to define the objects of $\CommAlg_R$ as $R$-algebras $A$ and morphisms from $R$-algebras $A$ and $B$ as $R$-algebra homomorphisms $f : A \to B$.
+
+\begin{leancode}
+
+\end{leancode}
+
+The \emph{categorical approach} is to define $\CommAlg_R$ as the under category $R / \CommRing$ of $R$ in $\CommRing$.
+\footnote{One cannot similarly construct $\Alg_R$, the category of not necessarily commutative $R$-algebras, as $R / \Ring$ even if $R$ is commutative.
+Indeed, the structure morphism $\varphi : R \to A$ of an $R$-algebra $A$ is by definition valued in the center of $A$, ie $\varphi(r) * a = a * \varphi(r)$ for all $r \in R, a \in A$.}
+
+The bundling approach is rather straightforward, but cannot a priori benefit from the many results on over and under categories that Mathlib provides.
+For example, for $X$ an object in a category $\mcC$, Mathlib knows that pushouts in $\mcC$ correspond coproducts in $X/𝒞$.
+\footnote{Not accessing the \emph{generic} pushout-coproduct correspondence turns out to be a good thing.
+See \cref{sec:grp} for more details.}
+
+In turn, the categorical approach is more abstract and less directly related to unbundled algebras, but it allows us to use the many results on over and under categories that Mathlib provides.
+
+For a long time, Mathlib resisted acquiring TODO Find refs to relevant Zulip conversations.
+
+The first way is to define
+
+
+
+The two  We can now describe the two approaches we have to
+
+
+
+These three categories can be obtained through purely categorical operations starting from $\CommRing$, the category of \emph{commutative} rings, tonce we have defined the
+
+There are several ways to build these three concrete categories.
+
+The first way would be to start from $\CommRing$, the category of \emph{commutative} rings, take the under category of $R \in \CommRing$ to get $\CommAlg_R$, the category of \emph{commutative} $R$-algebras,
+then take the categories of comonoid or cogroup objects in $\CommAlg_R$ to obtain $\CommBialg_R$ and $\CommHopfAlg_R$, the categories of commutative $R$-bialgebras and commutative $R$-Hopf algebras respectively.
+
+This approach has the advantage that we can reuse one needn't define any more categories than the following categories, which Mathlib already contains all the ingredients necessary to define the category of commutative $R$-Hopf algebras that Way:
+
+\begin{leancode}
+  /-- The category of commutative rings. -/
+  structure CommRingCat : Type (u + 1) := ...
+
+  /-- The category under `X`. -/
+  def Under {C : Type u} [Category.{v} C] (X : C) : Type (max u v) := ...
+
+  /-- A monoid object internal to a monoidal category. -/
+  structure Mon_ (C : Type u) [Category.{v} C] [MonoidalCategory C] : Type (max u v)
+
+  /-- A group object internal to a cartesian monoidal category. -/
+  structure Grp_ (C : Type u) [Category.{v} C] [CartesianMonoidalCategory C] : Type (max u v)
+
+  /-- The opposite of a category, where the objects are the same and the morphisms are
+  reversed, with notation `Cᵒᵖ`. -/
+  structure Opposite (C : Type u) : Type u
+\end{leancode}
+
+Note that Mathlib does not define comonoid and cogroup objects, as they can be obtained as the opposite category of monoid/group objects in the opposite category, ie \lean{(Mon_ Cᵒᵖ)ᵒᵖ}.
+\footnote{This is a simplication, as \lean{Comon_} does exist in Mathlib.
+The truth is that it is barely used and not developed enough to support our use case, especially in relation to the absence of \lean{Cogrp_}.}
+That first way to implement our concrete categories would therefore look like this:
+\begin{leancode}
+  /-- The category of commutative $R$-algebras. -/
+  abbrev CommAlg (R : CommRingCat.{u}) : Type (u + 1) := Under R
+
+  /-- The category of commutative $R$-bialgebras. -/
+  abbrev CommBialg (R : CommRingCat.{u}) : Type (u + 1) := (Mon_ (CommAlg R)ᵒᵖ)ᵒᵖ
+
+  /-- The category of commutative $R$-Hopf algebras. -/
+  abbrev CommHopfAlg (R : CommRingCat.{u}) : Type (u + 1) := (Grp_ (CommAlg R)ᵒᵖ)ᵒᵖ
+\end{leancode}
+
+This is a fine definition of the \emph{categories}, but it is difficult to work with their \emph{objects}. For example, something one obviously needs about the category of $R$-algebras is that its objects are $R$-algebras, and that its morphisms are $R$-algebra morphisms.
+
+Let's see how that looks for our way of defining $\CommAlg_R$:
+\begin{leancode}
+  /-- A commutative $R$-algebra gives an object of `CommAlg R`. -/
+  abbrev CommAlg.of (R A : Type u) [CommRing R] [CommRing A] [Algebra R A] : CommAlg R :=
+    .mk <| algebraMap R A
+
+  /-- An $R$-algebra homomorphism gives a morphism in `CommAlg R`. -/
+  abbrev CommAlg.homMk (R A B : Type u) [CommRing R] [CommRing A] [Algebra R A]
+      [CommRing B] [Algebra R B] (f : A →ₐ[R] B) : CommAlg.mk R A ⟶ CommAlg.mk R B :=
+    Under.homMk f
+\end{leancode}
+
+This doesn't
+
+\begin{leancode}
+  instance (R A : Type u) [CommRing R] [CommRing A] [Bialgebra R A] :
+      Mon_Class <| op <| CommAlg.of R A where
+    one := (CommAlg.homMk <| Bialgebra.counitAlgHom R A).op
+    mul := (CommAlg.homMk <| Bialgebra.comulAlgHom R A).op
+    one_mul' := Quiver.Hom.unop_inj Coalgebra.rTensor_counit_comp_comul
+    mul_one' := Quiver.Hom.unop_inj Coalgebra.lTensor_counit_comp_comul
+    mul_assoc' := Quiver.Hom.unop_inj Coalgebra.coassoc_symm_apply
+
+  /-- A commutative `R`-bialgebra gives an object of `CommBialg R`. -/
+  abbrev CommBialg.of (R A : Type u) [CommRing R] [CommRing A] [Bialgebra R A] : CommBialg R :=
+    .op <| .mk <| .of R A
+
+  instance isMon_Hom_commAlgHomMk (R A B : Type u) [CommRing R] [CommRing A] [Bialgebra R A]
+      [CommRing B] [Bialgebra R B] (f : A →ₐc[R] B) :
+      IsMon_Hom (CommAlg.homMk (f : A →ₐ[R] B)).op where
+    one_hom := Quiver.Hom.unop_inj <| by ext; simp [one]
+    mul_hom := Quiver.Hom.unop_inj <| by ext; simp [mul]
+
+  /-- An `R`-bialgebra homomorphism gives a morphism in `CommBialg R`. -/
+  abbrev CommBialg.homMk (R A B : Type u) [CommRing R] [CommRing A] [Bialgebra R A]
+      [CommRing B] [Bialgebra R B] (f : A →ₐc[R] B) : CommBialg.mk R A ⟶ CommBialg.mk R B :=
+    (Mon_.Hom.mk (CommAlg.homMk (f : A →ₐ[R] B)).op).op
+\end{leancode}
+
+
+\subsection{\texorpdfstring{$\CommBialg, \CommHopfAlg$}{CommBialg, CommHopfAlg}}\label{sec:comm-hopf-alg}
+
+
+
+
+\section{Group objects}\label{sec:grp}
+
+
+TODO(Yaël)
+
+
+\section{The Yoneda embedding}\label{sec:yoneda}
+
+
+TODO(Andrew)
+
+
+\section{Applications}
+
+
+\subsection{The pairing of characters and cocharacters}\label{subsec:char-cochar}
+
+
+TODO(Michał)
+
+
+\subsection{\texorpdfstring{$SO(2)$}{SO2} is a non-split torus over \texorpdfstring{$\R$}{R}}\label{subsec:so2}
+
+
+TODO(Michał)
+
+
+\section{Conclusion}\label{sec:conclusion}
+
+
+TODO
+
+
+\bibliographystyle{plain}
+\bibliography{hopf_alg_aff_grp_sch.bib}
+
+\end{document}
